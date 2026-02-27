@@ -7,6 +7,16 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 
 import { ensureI18n } from "../../src/i18n"; // make sure i18n is initialized on the client
+import type { NgoInviteMeta } from "./server";
+
+type Props = {
+  loggedIn: boolean;
+  displayName: string | null;
+  initialLang: string;
+
+  inviteToken?: string | null;
+  inviteMeta?: NgoInviteMeta | null;
+};
 
 const LANGS = [
   { code: "en", label: "EN", emoji: "🇬🇧" },
@@ -17,18 +27,28 @@ const LANGS = [
   { code: "hr", label: "HR", emoji: "🇭🇷" }
 ];
 
-type Props = {
-  loggedIn: boolean;
-  displayName: string | null;
-  initialLang: string; // from ?lang=
-};
-
-    export default function WelcomeClient({ loggedIn, displayName, initialLang }: Props) {
+    export default function WelcomeClient({
+  loggedIn,
+  displayName,
+  initialLang,
+  inviteToken,
+  inviteMeta,
+}: Props) {
   // ✅ Initialize i18n once (safe in client)
   ensureI18n();
 
   const { t, i18n } = useTranslation("common");
   const router = useRouter();
+
+  // 👉 Add this helper here
+const qs = new URLSearchParams();
+if (inviteToken) qs.set("invite", inviteToken);
+if (initialLang) qs.set("lang", initialLang);
+
+const withQs = (path: string) => {
+  const s = qs.toString();
+  return s ? `${path}?${s}` : path;
+};
 
   // ✅ Sync client language with URL (?lang=)
   useEffect(() => {
@@ -91,18 +111,21 @@ type Props = {
 
           {!loggedIn ? (
             <>
-              <Link
-                href="/signup"
-                className="hidden rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white/60 sm:inline-flex"
-              >
-                {t("nav.register")}
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm sm:text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white/10"
-              >
-                {t("nav.login")}
-              </Link>
+           
+           <Link
+            href={withQs("/signup")}
+             className="hidden rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-white focus:outline-none focus-visible:ring-2"           
+           >
+             {t("nav.register")}
+           </Link>
+
+           <Link
+            href={withQs("/login")}
+             className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm sm:text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring"
+           >
+             {t("nav.login")}
+           </Link>
+
             </>
           ) : (
             <Link
