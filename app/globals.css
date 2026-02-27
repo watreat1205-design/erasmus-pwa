@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Nice defaults */
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* react-pdf styles */
+.react-pdf__Page__canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.react-pdf__Page__canvas {
+  scroll-behavior: smooth;
+}
+
+.react-pdf__Page__textContent {
+  max-width: 100%;
+}
+
+.react-pdf__Page__annotations {
+  max-width: 100%;
+}
+
+.react-pdf__Page {
+  display: flex;
+  justify-content: center;
+}
+
+.video-modal { position: fixed; inset: 0; z-index: 9999; }
+.video-modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.7); }
+.video-modal__panel { position: relative; max-width: 900px; width: calc(100% - 32px); margin: 40px auto; background: #000; border-radius: 14px; overflow: hidden; }
+.video-modal__close { position: absolute; right: 10px; top: 10px; color: #fff; background: rgba(255,255,255,.15); border: 0; width: 40px; height: 40px; border-radius: 999px; cursor: pointer; font-size: 20px; }
+.video-modal__iframe-wrap { aspect-ratio: 16/9; }
+.video-modal__iframe-wrap iframe { width: 100%; height: 100%; border: 0; }
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}

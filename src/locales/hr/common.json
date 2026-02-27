@@ -1,0 +1,28 @@
+{
+  "appName": "Erasmus PWA",
+
+  "brand": {
+    "name": "DROPS",
+    "tagline": "E-learning platforma",
+    "logoAlt": "DROPS of Sustainable Development"
+  },
+
+  "nav": {
+    "languageLabel": "Jezik {{lang}}",
+    "register": "Registracija",
+    "login": "Prijava",
+    "logout": "Odjava"
+  },
+
+  "welcome": {
+    "title": "DROPS of Sustainable Development",
+    "subtitle": "Digitalna platforma za učenje za trenere i edukatore.",
+    "back": "Dobrodošli natrag 👋",
+    "backWithName": "Dobrodošli natrag, {{name}} 👋"
+  },
+
+  "buttons": {
+    "goToCourses": "Idi na Tečajeve",
+    "goToDashboard": "Idi na Dashboard"
+  }
+}

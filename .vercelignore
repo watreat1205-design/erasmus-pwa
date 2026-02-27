@@ -1,0 +1,11 @@
+node_modules
+.next
+.turbo
+.git
+.DS_Store
+*.log
+
+# If you have uploads/assets that are large, exclude them:
+uploads
+tmp
+data
