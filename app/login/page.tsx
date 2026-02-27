@@ -7,9 +7,16 @@ import bgTemplate3 from "../../Templates/3b.jpg";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{
+    next?: string | string[];
+    invite?: string;
+    lang?: string;
+  }>;
 }) {
   const sp = await searchParams;
+
+  const inviteToken = (sp?.invite ?? "").trim() || null;
+  const lang = (sp?.lang ?? "").trim() || null;
 
   const nextParam = sp?.next;
 
@@ -17,14 +24,34 @@ export default async function LoginPage({
     typeof nextParam === "string"
       ? nextParam
       : Array.isArray(nextParam)
-        ? nextParam[0]
-        : "/welcome";
+      ? nextParam[0]
+      : "/welcome";
 
   // prevent open redirects
-  const nextUrl = raw.startsWith("/") ? raw : "/welcome";
+  const safeBase = raw.startsWith("/") ? raw : "/welcome";
+
+  // Build next URL with invite + lang preserved
+  const params = new URLSearchParams();
+  if (inviteToken) params.set("invite", inviteToken);
+  if (lang) params.set("lang", lang);
+
+  const nextUrl =
+    params.toString().length > 0
+      ? `${safeBase}${safeBase.includes("?") ? "&" : "?"}${params}`
+      : safeBase;
+
+  const signupHref =
+    inviteToken || lang
+      ? `/signup?${params.toString()}`
+      : "/signup";
+
+  const welcomeHref =
+    inviteToken || lang
+      ? `/welcome?${params.toString()}`
+      : "/welcome";
 
   return (
-     <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
       {/* Portrait FULL-COLOR template */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
@@ -39,11 +66,18 @@ export default async function LoginPage({
       </div>
 
       {/* Login form card */}
-        <div className="w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
+      <div className="w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
         <form action={login} className="space-y-2">
           <h1 className="text-2xl font-semibold mb-3 text-gray-900">Login</h1>
 
+          {/* Hidden redirect */}
           <input type="hidden" name="next" value={nextUrl} />
+
+          {inviteToken && (
+            <div className="rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800">
+              You’re logging in via an NGO invite. We’ll continue after login.
+            </div>
+          )}
 
           <input
             name="email"
@@ -70,13 +104,13 @@ export default async function LoginPage({
 
           <p className="mt-3 text-sm text-gray-600">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-medium text-emerald-700">
+            <Link href={signupHref} className="font-medium text-emerald-700">
               Register
             </Link>
           </p>
 
           <p className="text-xs text-gray-500">
-            <Link href="/welcome" className="hover:underline">
+            <Link href={welcomeHref} className="hover:underline">
               Back to Welcome
             </Link>
           </p>

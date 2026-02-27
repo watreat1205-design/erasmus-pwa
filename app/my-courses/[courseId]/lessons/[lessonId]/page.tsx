@@ -3,7 +3,7 @@ import Image from "next/image";
 import bgTemplate5 from "../../../../../Templates/5.jpg";
 
 import { redirect } from "next/navigation";
-import { markLessonComplete, markLessonIncomplete } from "@/app/courses/actions";
+import { markLessonComplete, markLessonIncomplete } from "../../../../courses/actions";
 import { createClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LessonMaterialsClient from "@/components/lesson/LessonMaterialsClient";
