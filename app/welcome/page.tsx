@@ -2,7 +2,7 @@
 import Image from "next/image";
 import bgTemplate5 from "../../Templates/8.jpg";
 import { getMyProfile } from "../../src/lib/auth/getProfile";
-import WelcomeClient from "./WelcomeClient";
+import WelcomeClient, { type WelcomeClientProps } from "./WelcomeClient";
 import { getNgoInviteMeta } from "./server";
 
 export const dynamic = "force-dynamic";
