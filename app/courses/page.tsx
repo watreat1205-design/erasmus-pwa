@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import EnrollButton from "./EnrollButton";
 import CoursesHeaderClient from "./CoursesHeaderClient";
 
 import bgTemplate5 from "../../Templates/5.jpg";
@@ -44,35 +43,6 @@ export default async function CoursesPublicPage() {
     );
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Read role using the SAME supabase server client
-  let role: string | null = null;
-  if (user) {
-    const { data: prof, error: rErr } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (!rErr) role = prof?.role ?? null;
-  }
-
-  // Enrollment set
-  let enrolledSet = new Set<string>();
-  if (user) {
-    const { data: enrollments, error: eErr } = await supabase
-      .from("course_enrollments")
-      .select("course_id")
-      .eq("user_id", user.id);
-
-    if (eErr) throw eErr;
-
-    enrolledSet = new Set((enrollments ?? []).map((e) => e.course_id));
-  }
-
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background (nudged up) */}
@@ -86,7 +56,7 @@ export default async function CoursesPublicPage() {
         />
       </div>
 
-      {/* Overlay for readability */}
+      {/* Overlays for readability */}
       <div className="absolute inset-0 bg-black/20" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
@@ -109,7 +79,6 @@ export default async function CoursesPublicPage() {
               </p>
             </div>
 
-            {/* ✅ Use client header so production always shows the correct buttons */}
             <CoursesHeaderClient />
           </div>
 
@@ -120,71 +89,41 @@ export default async function CoursesPublicPage() {
             </div>
           ) : (
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {courses.map((c) => {
-                const isEnrolled = enrolledSet.has(c.id);
-                const courseHref = `/my-courses/${c.id}`;
-
-                return (
-                  <div
-                    key={c.id}
-                    className="rounded-xl border border-white/20 bg-white/85 p-5 shadow-sm transition hover:shadow-md"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h2 className="text-lg font-semibold text-gray-900">
-                            {c.title}
-                          </h2>
-                          <span className="text-gray-400">→</span>
-                        </div>
-
-                        {c.description ? (
-                          <p className="mt-2 text-sm text-gray-700">
-                            {c.description}
-                          </p>
-                        ) : (
-                          <p className="mt-2 text-sm text-gray-600">
-                            No description.
-                          </p>
-                        )}
+              {courses.map((c) => (
+                <div
+                  key={c.id}
+                  className="rounded-xl border border-white/20 bg-white/85 p-5 shadow-sm transition hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-semibold text-gray-900">
+                          {c.title}
+                        </h2>
+                        <span className="text-gray-400">→</span>
                       </div>
 
-                      {/* Action button */}
-                      {user ? (
-                        // treat null role as learner (prevents wrong fallback)
-                        role === "learner" || !role ? (
-                          isEnrolled ? (
-                            <Link
-                              href={courseHref}
-                              className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
-                            >
-                              Continue
-                            </Link>
-                          ) : (
-                            <EnrollButton courseId={c.id} />
-                          )
-                        ) : (
-                          <Link
-                            href={courseHref}
-                            className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
-                          >
-                            Open
-                          </Link>
-                        )
+                      {c.description ? (
+                        <p className="mt-2 text-sm text-gray-700">
+                          {c.description}
+                        </p>
                       ) : (
-                        <Link
-                          href={`/login?next=${encodeURIComponent(
-                            `/courses?open=${c.id}`
-                          )}`}
-                          className="rounded-lg bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-900"
-                        >
-                          Login to enroll
-                        </Link>
+                        <p className="mt-2 text-sm text-gray-600">
+                          No description.
+                        </p>
                       )}
                     </div>
+
+                    {/* ✅ Always Open (NO enroll/login-to-enroll on this page) */}
+                    <Link
+                      href={`/courses/${c.id}`}
+                      className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
+                    >
+                      Open
+                    </Link>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
