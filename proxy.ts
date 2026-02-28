@@ -2,6 +2,23 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { ACCESS } from "@/lib/auth/access";
 
+/* ---------------- PUBLIC ROUTES ---------------- */
+
+function isPublicRoute(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/welcome") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/courses") || // guest learner access
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon")
+  );
+}
+
+/* ---------------- ROLE MATCH ---------------- */
+
 function matchAllowed(pathname: string) {
   const keys = Object.keys(ACCESS).sort((a, b) => b.length - a.length);
 
@@ -12,16 +29,18 @@ function matchAllowed(pathname: string) {
   return undefined;
 }
 
-function isPublicRoute(pathname: string) {
-  // Guest learner access: everything under /courses is public
-  return pathname === "/courses" || pathname.startsWith("/courses/");
-}
+/* ---------------- MAIN PROXY ---------------- */
 
 export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
   const pathname = req.nextUrl.pathname;
 
-  // ✅ Always create supabase and refresh session cookies first
+  // ✅ Allow public routes
+  if (isPublicRoute(pathname)) {
+    return res;
+  }
+
+  /* ---------- SUPABASE ---------- */
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -37,57 +56,40 @@ export async function proxy(req: NextRequest) {
     }
   );
 
-  // ✅ IMPORTANT: refresh session cookie on every request
-  // This prevents "logged out" on server pages after navigation
-  await supabase.auth.getUser();
-
-  // ✅ PUBLIC: allow guest access to /courses/*
-  if (isPublicRoute(pathname)) {
-    return res;
-  }
-
-  // ✅ Get current user
+  // 🔑 refresh session
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If no user and route not public -> send to login
+  // ❌ Not logged in → redirect to login
   if (!user) {
-    const next = req.nextUrl.pathname + (req.nextUrl.search || "");
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", next);
-    return NextResponse.redirect(url);
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // ✅ Determine which access rule applies
-  const matched = matchAllowed(pathname);
+  /* ---------- ROLE CHECK ---------- */
+  const allowedKey = matchAllowed(pathname);
+  if (!allowedKey) return res;
 
-  // If route not in ACCESS map, allow by default
-  if (!matched) {
-    return res;
-  }
-
-  // ✅ Read role from profiles (server-side, uses same cookies)
-  let role: string | null = null;
-  const { data: prof, error: profErr } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (!profErr) role = (prof?.role as string) ?? null;
+  const role = profile?.role ?? "learner";
+  const allowed = ACCESS[allowedKey] ?? [];
 
-  // ✅ Enforce access rule
-  const allowedRoles = ACCESS[matched];
-  if (Array.isArray(allowedRoles) && allowedRoles.length > 0) {
-    if (!role || !allowedRoles.includes(role as any)) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/unauthorized";
-      url.search = "";
-      return NextResponse.redirect(url);
-    }
+  if (!allowed.includes(role)) {
+    return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
 
   return res;
 }
+
+/* ---------------- MATCHER ---------------- */
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
