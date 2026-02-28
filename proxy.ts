@@ -19,14 +19,9 @@ function isPublicRoute(pathname: string) {
 
 export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
-
   const pathname = req.nextUrl.pathname;
 
-  // ✅ PUBLIC: allow guest access to /courses/*
-  if (isPublicRoute(pathname)) {
-    return res;
-  }
-
+  // ✅ Always create supabase and refresh session cookies first
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -42,54 +37,57 @@ export async function proxy(req: NextRequest) {
     }
   );
 
-  // Only gate routes that appear in ACCESS
-  const ruleKey = matchAllowed(pathname);
-  if (!ruleKey) return res;
+  // ✅ IMPORTANT: refresh session cookie on every request
+  // This prevents "logged out" on server pages after navigation
+  await supabase.auth.getUser();
 
-  // 1) Must be logged in
-  const { data: auth, error: authErr } = await supabase.auth.getUser();
-  const user = auth?.user;
-
-  if (authErr || !user) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", pathname);
-
-    const redirectRes = NextResponse.redirect(url);
-    res.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
-    return redirectRes;
+  // ✅ PUBLIC: allow guest access to /courses/*
+  if (isPublicRoute(pathname)) {
+    return res;
   }
 
-  // 2) Fetch role from profiles
-  let role: string | null = null;
+  // ✅ Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: profile, error: profErr } = await supabase
+  // If no user and route not public -> send to login
+  if (!user) {
+    const next = req.nextUrl.pathname + (req.nextUrl.search || "");
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("next", next);
+    return NextResponse.redirect(url);
+  }
+
+  // ✅ Determine which access rule applies
+  const matched = matchAllowed(pathname);
+
+  // If route not in ACCESS map, allow by default
+  if (!matched) {
+    return res;
+  }
+
+  // ✅ Read role from profiles (server-side, uses same cookies)
+  let role: string | null = null;
+  const { data: prof, error: profErr } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  if (!profErr && profile?.role) {
-    role = String(profile.role);
-  } else {
-    role = null;
-  }
+  if (!profErr) role = (prof?.role as string) ?? null;
 
-  // 3) Check allowed roles for this ruleKey
-  const allowed = ACCESS[ruleKey] as readonly string[] | undefined;
-
-    if (!role || !allowed || !allowed.includes(role)) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/unauthorized";
-
-    const redirectRes = NextResponse.redirect(url);
-    res.cookies.getAll().forEach((c) => redirectRes.cookies.set(c));
-    return redirectRes;
+  // ✅ Enforce access rule
+  const allowedRoles = ACCESS[matched];
+  if (Array.isArray(allowedRoles) && allowedRoles.length > 0) {
+    if (!role || !allowedRoles.includes(role as any)) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/unauthorized";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   return res;
 }
-
-export const config = {
-  matcher: ["/courses/:path*", "/admin/:path*", "/author/:path*", "/trainer/:path*"],
-};
