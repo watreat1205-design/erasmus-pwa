@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import bgTemplate3 from "../../Templates/3b.jpg";
+import bgTemplate5 from "../../Templates/8.jpg";
 
 export default function SignupClient() {
   const supabase = createClient();
@@ -83,84 +83,86 @@ router.replace(welcomeHref);
 
   }
 
-  return (
-    <div className="relative min-h-screen overflow-hidden">
-      <Image
-        src={bgTemplate3}
-        alt=""
-        fill
-        priority
-        className="object-cover object-[center_55%]"
-      />
-      <div className="absolute inset-0 bg-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
-
-      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col px-4 sm:px-6">
-        <div className="flex flex-1 items-center justify-center py-10">
-          <div className="w-full max-w-md rounded-2xl bg-white/10 p-6 text-white backdrop-blur">
-            {inviteToken && (
-              <div className="mb-4 rounded-xl bg-white/10 p-3 text-sm text-white/90">
-                You’re signing up via an NGO invite. After signup we’ll take you back.
-              </div>
-            )}
-
-            <h1 className="text-2xl font-semibold">Create account</h1>
-
-            <form onSubmit={onSignup} className="mt-6 space-y-4">
-              <input
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-xl bg-white/15 px-3 py-2"
-                placeholder="Full name"
-              />
-
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full rounded-xl bg-white/15 px-3 py-2"
-                placeholder="Email"
-              />
-
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full rounded-xl bg-white/15 px-3 py-2"
-                placeholder="Password"
-              />
-
-              {msg && (
-                <div className="rounded-xl bg-red-500/20 p-3 text-sm">
-                  {msg}
-                </div>
-              )}
-
-              <button
-                disabled={loading}
-                className="w-full rounded-xl bg-white px-4 py-3 text-black"
-              >
-                {loading ? "Creating..." : "Sign up"}
-              </button>
-            </form>
-
-            <div className="mt-4 text-sm">
-              Already have an account?{" "}
-              <Link href={loginHref} className="underline">
-                Log in
-              </Link>
-            </div>
-
-            <div className="mt-2 text-sm">
-              <Link href={welcomeHref} className="underline">
-                Back to Welcome
-              </Link>
-            </div>
-          </div>
-        </div>
+   return (
+  <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
+    {/* Portrait FULL-COLOR template */}
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
+        <Image
+          src={bgTemplate5}
+          alt=""
+          fill
+          priority
+          className="object-cover"
+        />
       </div>
     </div>
-  );
+
+    {/* Signup form card */}
+    <div className="w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
+      {inviteToken && (
+        <div className="rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800 mb-2">
+          You’re signing up via an NGO invite. After signup we’ll take you back.
+        </div>
+      )}
+
+      <h1 className="text-2xl font-semibold mb-3 text-gray-900">
+        Create account
+      </h1>
+
+      <form onSubmit={onSignup} className="space-y-2">
+        <input
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full rounded-lg border px-4 py-1.5"
+          placeholder="Full name"
+        />
+
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="w-full rounded-lg border px-4 py-1.5"
+          placeholder="Email"
+        />
+
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="w-full rounded-lg border px-4 py-1.5"
+          placeholder="Password"
+        />
+
+        {msg && (
+          <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">
+            {msg}
+          </div>
+        )}
+
+        <button
+          disabled={loading}
+          className="w-full rounded-xl bg-emerald-600 py-2 text-white font-semibold hover:bg-emerald-700"
+        >
+          {loading ? "Creating..." : "Sign up"}
+        </button>
+      </form>
+
+      <p className="mt-3 text-sm text-gray-600">
+        Already have an account?{" "}
+        <Link href={loginHref} className="font-medium text-emerald-700">
+          Log in
+        </Link>
+      </p>
+
+      <p className="text-xs text-gray-500">
+        <Link href={welcomeHref} className="hover:underline">
+          Back to Welcome
+        </Link>
+      </p>
+    </div>
+  </div>
+);
 }
