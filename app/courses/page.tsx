@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getCurrentUserRole } from "@/lib/getRole";
 import EnrollButton from "./EnrollButton";
 
 import bgTemplate5 from "../../Templates/5.jpg";
@@ -48,7 +47,17 @@ export default async function CoursesPublicPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const role = user ? await getCurrentUserRole() : null;
+  let role: string | null = null;
+
+if (user) {
+  const { data: prof, error: rErr } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!rErr) role = prof?.role ?? null;
+}
 
   let enrolledSet = new Set<string>();
   if (user) {
@@ -176,11 +185,11 @@ export default async function CoursesPublicPage() {
                       </div>
 
                       {user ? (
-                        role === "learner" ? (
+                        (role === "learner" || !role) ? (
                           isEnrolled ? (
                             <Link
                               href="/my-courses"
-                              className="rounded-lg bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-900"
+                              className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
                             >
                               Continue
                             </Link>
