@@ -62,11 +62,6 @@ export async function proxy(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   // ❌ Not logged in → redirect to login
-  if (!user) {
-    const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
 
   /* ---------- ROLE CHECK ---------- */
   const allowedKey = matchAllowed(pathname);
