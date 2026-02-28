@@ -4,18 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { ensureI18n } from "../../src/i18n"; // make sure i18n is initialized on the client
 import type { NgoInviteMeta } from "./server";
 
-type Props = {
+export type WelcomeClientProps = {
   loggedIn: boolean;
   displayName: string | null;
   initialLang: string;
 
-  inviteToken?: string | null;
-  inviteMeta?: NgoInviteMeta | null;
 };
 
 const LANGS = [
@@ -27,19 +25,19 @@ const LANGS = [
   { code: "hr", label: "HR", emoji: "🇭🇷" }
 ];
 
-    export default function WelcomeClient({
+export default function WelcomeClient({
   loggedIn,
   displayName,
   initialLang,
-  inviteToken,
-  inviteMeta,
-}: Props) {
+}: WelcomeClientProps) {
+
   // ✅ Initialize i18n once (safe in client)
   ensureI18n();
 
   const { t, i18n } = useTranslation("common");
   const router = useRouter();
-
+const sp = useSearchParams();
+const inviteToken = (sp.get("invite") ?? "").trim() || null;
   // 👉 Add this helper here
 const qs = new URLSearchParams();
 if (inviteToken) qs.set("invite", inviteToken);

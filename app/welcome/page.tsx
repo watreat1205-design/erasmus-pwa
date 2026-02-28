@@ -3,7 +3,6 @@ import Image from "next/image";
 import bgTemplate5 from "../../Templates/8.jpg";
 import { getMyProfile } from "../../src/lib/auth/getProfile";
 import WelcomeClient, { type WelcomeClientProps } from "./WelcomeClient";
-import { getNgoInviteMeta } from "./server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +16,6 @@ export default async function WelcomePage({
   const sp = (await searchParams) ?? {};
   const initialLang = SUPPORTED.has(sp.lang ?? "") ? (sp.lang as string) : "en";
 
-  const inviteToken = (sp.invite ?? "").trim() || null;
 
   const profile = await getMyProfile().catch(() => null);
   const loggedIn = !!profile;
@@ -26,9 +24,6 @@ export default async function WelcomePage({
     (profile?.full_name || profile?.email || "").toString().trim() || null;
 
   // Prefetch invite info (NGO name, role, etc.) to render a nicer welcome screen
-  const inviteMeta = inviteToken
-    ? await getNgoInviteMeta(inviteToken).catch(() => null)
-    : null;
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -47,8 +42,6 @@ export default async function WelcomePage({
           loggedIn={loggedIn}
           displayName={displayName}
           initialLang={initialLang}
-          inviteToken={inviteToken}
-          inviteMeta={inviteMeta}
         />
       </div>
     </div>
