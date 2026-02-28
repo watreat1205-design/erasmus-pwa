@@ -60,11 +60,12 @@ export default function SignupClient() {
       return;
     }
 
-    const { error: pErr } = await supabase.from("profiles").upsert({
-      id: userId,
-      full_name: fullName.trim() || null,
-      email: email.trim().toLowerCase(),
-    });
+    await supabase.from("profiles").upsert({
+  id: userId,
+  full_name: fullName.trim() || null,
+  email: email.trim().toLowerCase(),
+  role: "user", // 👈 required by your DB constraint
+});
 
     if (pErr) {
       setMsg(pErr.message);
