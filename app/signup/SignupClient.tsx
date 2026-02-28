@@ -43,8 +43,13 @@ export default function SignupClient() {
     setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+        email,
+        password,
+        options: {
+        data: {
+        full_name: fullName.trim(),
+      },
+     },
     });
 
     if (error) {
@@ -53,27 +58,29 @@ export default function SignupClient() {
       return;
     }
 
-    const userId = data.user?.id;
-    if (!userId) {
-      setMsg("Signup succeeded but user id is missing.");
-      setLoading(false);
-      return;
-    }
+   const userId = data.user?.id;
+if (!userId) {
+  setMsg("Signup succeeded but user id is missing.");
+  setLoading(false);
+  return;
+}
 
-    await supabase.from("profiles").upsert({
+const { error: pErr } = await supabase.from("profiles").upsert({
   id: userId,
-  full_name: fullName.trim() || null,
+  full_name:
+    fullName.trim() || data.user?.user_metadata?.full_name || null,
   email: email.trim().toLowerCase(),
-  role: "user", // 👈 required by your DB constraint
+  role: "user",
 });
 
-    if (pErr) {
-      setMsg(pErr.message);
-      setLoading(false);
-      return;
-    }
+if (pErr) {
+  setMsg(pErr.message);
+  setLoading(false);
+  return;
+}
 
-    router.replace(welcomeHref);
+router.replace(welcomeHref);
+
   }
 
   return (
