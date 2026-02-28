@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import EnrollButton from "./EnrollButton";
+import CoursesHeaderClient from "./CoursesHeaderClient";
 
 import bgTemplate5 from "../../Templates/5.jpg";
 
@@ -47,18 +48,19 @@ export default async function CoursesPublicPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Read role using the SAME supabase server client
   let role: string | null = null;
+  if (user) {
+    const { data: prof, error: rErr } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
 
-if (user) {
-  const { data: prof, error: rErr } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+    if (!rErr) role = prof?.role ?? null;
+  }
 
-  if (!rErr) role = prof?.role ?? null;
-}
-
+  // Enrollment set
   let enrolledSet = new Set<string>();
   if (user) {
     const { data: enrollments, error: eErr } = await supabase
@@ -73,31 +75,27 @@ if (user) {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      {/* Background (nudged up) */}
+      <div className="absolute inset-0 -translate-y-7">
+        <Image
+          src={bgTemplate5}
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+        />
+      </div>
 
-       {/* Background (nudged up) */}
-<div className="absolute inset-0 -translate-y-7">
-  <Image
-    src={bgTemplate5}
-    alt=""
-    fill
-    priority
-    className="object-cover object-center"
-  />
-</div>
-
-{/* Overlay for readability */}
-<div className="absolute inset-0 bg-black/20" />
-<div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
       {/* Page content */}
       <div className="relative z-10">
         <div className="mx-auto max-w-5xl px-6 py-10">
           {/* Back */}
           <div className="mb-4">
-            <Link
-              href="/welcome"
-              className="text-sm text-white/90 hover:underline"
-            >
+            <Link href="/welcome" className="text-sm text-white/90 hover:underline">
               ← Back to welcome
             </Link>
           </div>
@@ -111,42 +109,8 @@ if (user) {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="rounded-md border border-white/30 bg-white/80 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-white"
-                  >
-                    Dashboard
-                  </Link>
-
-                 <Link
-                    href="/welcome"
-                    className="inline-flex items-center rounded-md bg-black px-4 py-2 text-sm font-medium hover:bg-gray-900 !text-white [&_*]:!text-white"
-                 >
-                  Back to welcome
-                </Link>
-
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="rounded-md border border-white/30 bg-white/80 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-white"
-                  >
-                    Trainer login
-                  </Link>
-
-                  <Link
-                    href="/login"
-                    className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-900"
-                  >
-                    Login to enroll
-                  </Link>
-                </>
-              )}
-            </div>
+            {/* ✅ Use client header so production always shows the correct buttons */}
+            <CoursesHeaderClient />
           </div>
 
           {/* Courses grid */}
@@ -158,6 +122,7 @@ if (user) {
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {courses.map((c) => {
                 const isEnrolled = enrolledSet.has(c.id);
+                const courseHref = `/my-courses/${c.id}`;
 
                 return (
                   <div
@@ -184,11 +149,13 @@ if (user) {
                         )}
                       </div>
 
+                      {/* Action button */}
                       {user ? (
-                        (role === "learner" || !role) ? (
+                        // treat null role as learner (prevents wrong fallback)
+                        role === "learner" || !role ? (
                           isEnrolled ? (
                             <Link
-                              href="/my-courses"
+                              href={courseHref}
                               className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
                             >
                               Continue
@@ -198,7 +165,7 @@ if (user) {
                           )
                         ) : (
                           <Link
-                            href="/my-courses"
+                            href={courseHref}
                             className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
                           >
                             Open
@@ -206,10 +173,12 @@ if (user) {
                         )
                       ) : (
                         <Link
-                          href={`/my-courses/${c.id}`}
+                          href={`/login?next=${encodeURIComponent(
+                            `/courses?open=${c.id}`
+                          )}`}
                           className="rounded-lg bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-900"
                         >
-                          Open
+                          Login to enroll
                         </Link>
                       )}
                     </div>
