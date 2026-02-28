@@ -66,7 +66,9 @@ export async function proxy(req: NextRequest) {
   /* ---------- ROLE CHECK ---------- */
   const allowedKey = matchAllowed(pathname);
   if (!allowedKey) return res;
-
+  if (!user) {
+  return res;
+}
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
