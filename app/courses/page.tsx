@@ -11,11 +11,13 @@ export const dynamic = "force-dynamic";
 export default async function CoursesPublicPage() {
   const supabase = await createSupabaseServerClient();
 
-  const { data: courses = [], error } = await supabase
-    .from("courses")
-    .select("id, title, description")
-    .eq("is_published", true)
-    .order("title", { ascending: true });
+  const { data, error } = await supabase
+  .from("courses")
+  .select("id, title, description")
+  .eq("is_published", true)
+  .order("title", { ascending: true });
+
+const courses = data ?? [];
 
   if (error) {
     return (
@@ -73,7 +75,7 @@ export default async function CoursesPublicPage() {
          </div>
         </div>
 
-          {!courses.length ? (
+          {!courses?.length ? (
             <div className="mt-8 rounded-xl border border-white/20 bg-white/85 p-6">
               <p className="text-gray-800">No published courses yet.</p>
             </div>
