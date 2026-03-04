@@ -2,9 +2,17 @@
 
 import { useState } from "react";
 
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { ensureI18n } from "@/i18n";
+
 export default function CertificateDownloadButton({ courseId }: { courseId: string }) {
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+  ensureI18n();
+}, []);
 
+const { t } = useTranslation();
   const handleDownload = async () => {
     try {
       setLoading(true);
@@ -30,12 +38,16 @@ export default function CertificateDownloadButton({ courseId }: { courseId: stri
   };
 
   return (
-    <button
-      onClick={handleDownload}
-      disabled={loading}
-      className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900 disabled:bg-gray-400"
-    >
-      {loading ? "Preparing Certificate..." : "Download PDF"}
-    </button>
+
+      <button
+  onClick={handleDownload}
+  disabled={loading}
+  className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900 disabled:bg-gray-400"
+>
+  {loading
+    ? t("certificates.preparing")
+    : t("certificates.downloadPdf")}
+</button>
+
   );
 }

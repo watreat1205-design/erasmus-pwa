@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
 import Image from "next/image";
 import bgTemplate5 from "../../Templates/5.jpg";
+import T from "./T";
 
 type ModuleQuizLite = {
   id: string;
@@ -62,9 +63,11 @@ export default async function MyCoursesPage() {
   if (userErr || !user) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>My Courses</h2>
-        <p style={{ color: "crimson" }}>You must be logged in.</p>
-        <Link href="/login">Go to login</Link>
+
+       <h2><T k="myCourses.title" fallback="My Courses" /></h2>
+       <p style={{ color: "crimson" }}><T k="auth.mustBeLoggedIn" fallback="You must be logged in." /></p>
+       <Link href="/login"><T k="auth.goToLogin" fallback="Go to login" /></Link>
+
       </div>
     );
   }
@@ -96,8 +99,12 @@ export default async function MyCoursesPage() {
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900">My Courses</h1>
-              <p className="mt-2 text-sm text-white/90">Courses you are enrolled in.</p>
+             <h1 className="text-3xl font-semibold text-gray-900">
+             <T k="myCourses.title" fallback="My Courses" />
+             </h1>
+             <p className="mt-2 text-sm text-white/90">
+             <T k="myCourses.subtitle" fallback="Courses you are enrolled in." />
+             </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -105,13 +112,13 @@ export default async function MyCoursesPage() {
     href="/dashboard"
     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
   >
-    Dashboard
+    <T k="nav.dashboard" fallback="Dashboard" />
   </Link>
    <Link
   href="/welcome"
   className="inline-flex items-center rounded-md bg-black px-4 py-2 text-sm font-medium hover:bg-gray-900 !text-white [&_*]:!text-white"
 >
-  Back to welcome
+  <T k="nav.welcomePage" fallback="Back to welcome" />
 </Link>
 
 </div>
@@ -119,7 +126,9 @@ export default async function MyCoursesPage() {
           </div>
 
           <div className="mt-8 rounded-xl border border-white/20 bg-white/85 p-6">
-            <p className="text-gray-700">You are not enrolled in any courses yet.</p>
+            <p className="text-gray-700">
+              <T k="myCourses.empty" fallback="You are not enrolled in any courses yet." />
+            </p>
           </div>
         </div>
       </div>
@@ -363,10 +372,12 @@ return (
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-semibold text-white">My Courses</h1>
-            <p className="mt-2 text-sm text-white/90">
-              Courses you are enrolled in.
-            </p>
+           <h1 className="text-3xl font-semibold text-white">
+             <T k="myCourses.title" fallback="My Courses" />
+          </h1>
+          <p className="mt-2 text-sm text-white/90">
+           <T k="myCourses.subtitle" fallback="Courses you are enrolled in." />
+          </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -374,14 +385,14 @@ return (
               href="/dashboard"
               className="rounded-md border border-white/30 bg-white/80 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-white"
             >
-              Dashboard
+              <T k="nav.dashboard" fallback="Dashboard" />
             </Link>
 
            <Link
              href="/welcome"
              className="inline-flex items-center rounded-md bg-black px-4 py-2 text-sm font-medium hover:bg-gray-900 !text-white [&_*]:!text-white"
            >
-             Back to welcome
+             <T k="nav.welcomePage" fallback="Back to welcome" />
            </Link>            
 
           </div>
@@ -390,9 +401,9 @@ return (
         {/* Body */}
         {!ordered.length ? (
           <div className="mt-8 rounded-xl border border-white/20 bg-white/85 p-6">
-            <p className="text-gray-800">
-              You are not enrolled in any courses yet.
-            </p>
+           <p className="text-gray-800">
+             <T k="myCourses.empty" fallback="You are not enrolled in any courses yet." />
+           </p>
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -430,13 +441,15 @@ return (
                   {c.description ? (
                     <p className="mt-2 text-sm text-gray-700">{c.description}</p>
                   ) : (
-                    <p className="mt-2 text-sm text-gray-600">No description.</p>
+                    <p className="mt-2 text-sm text-gray-600">
+                      <T k="myCourses.noDescription" fallback="No description." />
+                    </p>
                   )}
 
                   <div className="mt-3 text-sm text-gray-800">
                     <div className="flex items-center justify-between">
                       <span>
-                        Progress:{" "}
+                         <T k="myCourses.progress" fallback="Progress" />:{" "}
                         <span className="font-medium">
                           {reqDone}/{reqTotal}
                         </span>{" "}
@@ -445,7 +458,7 @@ return (
 
                       {reqTotal > 0 && reqDone === reqTotal ? (
                         <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                          ✓ Completed
+                          ✓ <T k="myCourses.completed" fallback="Completed" />
                         </span>
                       ) : null}
                     </div>
@@ -463,19 +476,19 @@ return (
                         href={courseHref}
                         className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium !text-white hover:bg-gray-900"
                       >
-                        Open course
+                        <T k="myCourses.openCourse" fallback="Open course" />
                       </Link>
                     </div>
 
                     <div className="mt-2 text-sm text-gray-800">
-                      Activities: <b>{lessonDone}/{lessonTotal}</b> • Quizzes
-                      passed: <b>{quizDone}/{quizTotal}</b>
+                     <T k="myCourses.activities" fallback="Activities" />: <b>{lessonDone}/{lessonTotal}</b> •{" "}
+                     <T k="myCourses.quizzesPassed" fallback="Quizzes passed" />: <b>{quizDone}/{quizTotal}</b>
                     </div>
                   </div>
 
                   {!c.is_published && (
                     <div className="mt-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800">
-                      Not published
+                      <T k="myCourses.notPublished" fallback="Not published" />
                     </div>
                   )}
                 </div>

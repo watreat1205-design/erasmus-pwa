@@ -1,4 +1,9 @@
+"use client";
+
 import React from "react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { ensureI18n } from "@/i18n";
 
 export type Resource = { title: string; url: string; mime?: string };
 
@@ -18,11 +23,17 @@ function kindOf(url: string, mime?: string) {
 }
 
 export function ResourcesSidebar({ resources }: { resources: Resource[] }) {
+  useEffect(() => {
+    ensureI18n();
+  }, []);
+
+  const { t } = useTranslation("common");
+
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-gray-900">Resources</div>
+          <div className="text-sm font-semibold text-gray-900">{t("resources.title")}</div>
           <div className="text-xs text-gray-500">{resources.length}</div>
         </div>
 
@@ -49,6 +60,11 @@ export function ResourcesSidebar({ resources }: { resources: Resource[] }) {
 }
 
 export function ResourceCard({ r }: { r: Resource }) {
+  useEffect(() => {
+    ensureI18n();
+  }, []);
+
+  const { t } = useTranslation("common");
   const kind = kindOf(r.url, r.mime);
 
   return (
@@ -66,14 +82,14 @@ export function ResourceCard({ r }: { r: Resource }) {
             rel="noreferrer"
             className="rounded-xl border bg-white px-3 py-2 text-xs hover:bg-gray-50"
           >
-            Open
+            {t("resources.open")}
           </a>
           <a
             href={r.url}
             download
             className="rounded-xl bg-gray-900 px-3 py-2 text-xs text-white hover:bg-black"
           >
-            Download
+            {t("resources.download")}
           </a>
         </div>
       </div>
@@ -94,6 +110,12 @@ export function ResourceEmbed({
   kind: string;
   title: string;
 }) {
+  useEffect(() => {
+    ensureI18n();
+  }, []);
+
+  const { t } = useTranslation("common");
+
   const isYouTube = /youtube\.com|youtu\.be/.test(url);
   const isVimeo = /vimeo\.com/.test(url);
 
@@ -104,14 +126,14 @@ export function ResourceEmbed({
           <iframe title={title} src={url} className="h-full w-full" />
         </div>
         <div className="flex items-center justify-between border-t bg-white px-3 py-2">
-          <div className="text-xs text-gray-600">PDF preview</div>
+          <div className="text-xs text-gray-600">{t("resources.pdfPreview")}</div>
           <a
             href={url}
             target="_blank"
             rel="noreferrer"
             className="text-xs font-medium text-gray-900 underline"
           >
-            Open fullscreen
+            {t("resources.openFullscreen")}
           </a>
         </div>
       </div>
@@ -155,7 +177,7 @@ export function ResourceEmbed({
   if (kind === "doc") {
     return (
       <div className="rounded-2xl border bg-gray-50 p-4">
-        <div className="text-sm text-gray-800">This document is available to open/download.</div>
+        <div className="text-sm text-gray-800">{t("resources.docHint")}</div>
         <div className="mt-3 flex gap-2">
           <a
             href={url}
@@ -163,14 +185,14 @@ export function ResourceEmbed({
             rel="noreferrer"
             className="rounded-xl border bg-white px-3 py-2 text-xs hover:bg-gray-50"
           >
-            Open document
+            {t("resources.openDocument")}
           </a>
           <a
             href={url}
             download
             className="rounded-xl bg-gray-900 px-3 py-2 text-xs text-white hover:bg-black"
           >
-            Download
+            {t("resources.download")}
           </a>
         </div>
       </div>
@@ -180,7 +202,7 @@ export function ResourceEmbed({
   return (
     <div className="rounded-2xl border bg-gray-50 p-4">
       <a className="text-sm underline" href={url} target="_blank" rel="noreferrer">
-        Open resource
+        {t("resources.openResource")}
       </a>
     </div>
   );

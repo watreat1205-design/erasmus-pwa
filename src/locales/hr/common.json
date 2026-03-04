@@ -1,28 +1,173 @@
 {
   "appName": "Erasmus PWA",
-
   "brand": {
     "name": "DROPS",
     "tagline": "E-learning platforma",
-    "logoAlt": "DROPS of Sustainable Development"
+    "logoAlt": "DROPS održivog razvoja"
   },
-
   "nav": {
     "languageLabel": "Jezik {{lang}}",
     "register": "Registracija",
     "login": "Prijava",
-    "logout": "Odjava"
+    "logout": "Odjava",
+    "dashboard": "Nadzorna ploča",
+    "courses": "Tečajevi",
+    "certificates": "Potvrde",
+    "quizzes": "Kvizovi",
+    "welcomePage": "Početna stranica",
+    "admin": "Admin",
+    "users": "Korisnici",
+    "authoring": "Uređivanje",
+    "profile": "Profil"
   },
-
   "welcome": {
-    "title": "DROPS of Sustainable Development",
+    "title": "DROPS održivog razvoja",
     "subtitle": "Digitalna platforma za učenje za trenere i edukatore.",
     "back": "Dobrodošli natrag 👋",
     "backWithName": "Dobrodošli natrag, {{name}} 👋"
   },
-
   "buttons": {
-    "goToCourses": "Idi na Tečajeve",
-    "goToDashboard": "Idi na Dashboard"
+    "goToCourses": "Idi na tečajeve",
+    "goToDashboard": "Idi na nadzornu ploču"
+  },
+  "auth": {
+    "login": "Prijava",
+    "mustBeLoggedIn": "Morate biti prijavljeni.",
+    "goToLogin": "Idi na prijavu"
+  },
+  "courses": {
+    "courseFallback": "Tečaj",
+    "notFound": "Tečaj nije pronađen",
+    "trainerLogin": "Prijava trenera",
+    "title": "Tečajevi",
+    "subtitle": "Pregledajte dostupne tečajeve.",
+    "loadError": "Nije moguće učitati tečajeve.",
+    "empty": "Još nema objavljenih tečajeva.",
+    "noDescription": "Bez opisa.",
+    "open": "Otvori"
+  },
+  "common": {
+    "back": "Natrag",
+    "open": "Otvori",
+    "notFound": "Nije pronađeno",
+    "backToWelcome": "Natrag na početak"
+  },
+  "learn": {
+    "breadcrumbs": "Modul → Lekcija → Aktivnost"
+  },
+  "dashboard": {
+    "welcomeBack": "Dobrodošli natrag, {{name}} 👋",
+    "chooseNext": "Odaberite što želite sljedeće učiniti.",
+    "trainerPanel": "Trenerski panel",
+    "trainerPanelDesc": "Upravljajte tečajevima, modulima i prijenosima.",
+    "cards": {
+      "myCourses": { "title": "Moji tečajevi", "desc": "Nastavi lekcije i prati napredak." },
+      "certificates": { "title": "Potvrde", "desc": "Pogledaj i preuzmi PDF potvrde." },
+      "quizzes": { "title": "Kvizovi", "desc": "Riješi kvizove i pogledaj rezultate." },
+      "profile": { "title": "Profil", "desc": "Ažuriraj svoje podatke i postavke." },
+      "support": { "title": "Podrška", "desc": "Kontaktirajte nas ili pročitajte FAQ." },
+      "settings": { "title": "Postavke", "desc": "Jezik, obavijesti i račun." }
+    }
+  },
+  "certificates": {
+    "title": "Potvrde",
+    "subtitle": "Vaše potvrde o završenim tečajevima.",
+    "loginToView": "Prijavite se kako biste vidjeli svoje potvrde.",
+    "pdfDownload": "Preuzmi PDF",
+    "total": "Ukupno: {{count}}",
+    "emptyTitle": "Još nema potvrda",
+    "emptyBody": "Završite tečaj kako biste dobili potvrdu. Kada tečaj dosegne 100%, potvrda će se pojaviti ovdje.",
+    "goToMyCourses": "Idi na Moje tečajeve",
+    "issued": "Izdano",
+    "completed": "Završeno",
+    "unavailable": "Potvrda nije dostupna",
+    "downloadPdf": "Preuzmi PDF",
+    "preparing": "Priprema potvrde...",
+    "clickToOpen": "Kliknite za otvaranje",
+    "failedToGenerate": "Neuspjelo generiranje potvrde",
+    "couldNotGenerate": "Potvrdu nije bilo moguće generirati."
+  },
+  "quizzes": {
+    "title": "Kvizovi",
+    "subtitle": "Riješite kviz i pogledajte rezultate.",
+    "emptyTitle": "Još nema kvizova",
+    "emptyBody": "Kada se kviz doda tečaju, pojavit će se ovdje.",
+    "passScore": "Prag prolaza:",
+    "lastAttempt": "Zadnji pokušaj",
+    "score": "Rezultat",
+    "noAttempts": "Još nema pokušaja.",
+    "start": "Započni kviz",
+    "retake": "Ponovi kviz",
+    "locked": "Zaključano",
+    "lockedHint": "Završite prethodni kviz modula za otključavanje",
+    "loading": "Učitavanje kviza...",
+    "notFound": "Kviz nije pronađen.",
+    "welcomeTitle": "Dobrodošli u kviz {{title}}!",
+    "submit": "Pošalji",
+    "submitting": "Slanje...",
+    "passed": "Položeno",
+    "notPassed": "Nije položeno",
+    "tryAgain": "Pokušaj ponovno",
+    "submitFailed": "Slanje nije uspjelo",
+    "misconfigured": "Kviz je pogrešno konfiguriran.",
+    "failedToLoadQuiz": "Neuspjelo učitavanje kviza:",
+    "failedToLoadQuestions": "Neuspjelo učitavanje pitanja:",
+    "pleaseAnswerAll": "Odgovorite na sva pitanja prije slanja.",
+    "networkError": "Greška mreže"
+  },
+  "quizPaper": {
+    "intro": "Ovaj kratki kviz provjerava vaše razumijevanje TEAL pristupa. Odgovorite na sljedeća pitanja na temelju onoga što ste naučili u AKTIVNOSTI 1.1: Istraživanje TEAL-a u MODULU 1: Uvod u TEAL metodu poučavanja. Kviz provjerava definiciju TEAL-a, njegove ključne komponente (aktivno učenje, integraciju tehnologije i suradnju), podrijetlo te razlike u odnosu na tradicionalne metode poučavanja.",
+    "quote": "\"Najbolji učitelji su oni koji vam pokažu gdje gledati, ali vam ne kažu što vidjeti.\" – Alexandra K. Trenfor. Nadamo se da će vam ovaj kviz pomoći vidjeti kako TEAL može unaprijediti vaše poučavanje!",
+    "noteLabel": "Napomena:",
+    "noteBody": "Kviz je za učenje. Možete ga ponoviti ako je potrebno.",
+    "requiredHint": "Označava obvezno pitanje"
+  },
+  "lesson": {
+    "activity": "Aktivnost",
+    "lesson": "Lekcija",
+    "module": "Modul",
+    "badRouteTitle": "Pogrešna ruta",
+    "missingParams": "Nedostaje courseId/lessonId u URL-u.",
+    "accessDenied": "Pristup odbijen",
+    "notEnrolled": "Niste upisani u ovaj tečaj.",
+    "backToMyCourses": "Natrag na Moje tečajeve",
+    "backToCourse": "Natrag na tečaj",
+    "notFoundTitle": "Aktivnost nije pronađena",
+    "markComplete": "Označi kao završeno",
+    "completed": "Završeno",
+    "openMaterialsHint": "Otvorite materijale u nastavku kako biste završili ovu aktivnost.",
+    "materials": "Materijali",
+    "openPdf": "Otvori PDF",
+    "videos": "Videozapisi",
+    "openOnYouTube": "Otvori na YouTubeu",
+    "downloads": "Preuzimanja",
+    "download": "Preuzmi",
+    "noMaterials": "Nisu pronađeni materijali.",
+    "previous": "Prethodno",
+    "next": "Sljedeće",
+    "endOfCourse": "Kraj tečaja"
+  },
+  "myCourses": {
+    "title": "Moji tečajevi",
+    "subtitle": "Tečajevi na koje ste upisani.",
+    "empty": "Još niste upisani ni na jedan tečaj.",
+    "noDescription": "Nema opisa.",
+    "progress": "Napredak",
+    "completed": "Završeno",
+    "openCourse": "Otvori tečaj",
+    "activities": "Aktivnosti",
+    "quizzesPassed": "Položeni kvizovi",
+    "notPublished": "Nije objavljeno"
+  },
+  "resources": {
+    "title": "Resursi",
+    "open": "Otvori",
+    "download": "Preuzmi",
+    "pdfPreview": "Pregled PDF-a",
+    "openFullscreen": "Otvori na cijelom zaslonu",
+    "docHint": "Ovaj dokument je dostupan za otvaranje/preuzimanje.",
+    "openDocument": "Otvori dokument",
+    "openResource": "Otvori resurs",
+    "document": "Dokument"
   }
 }

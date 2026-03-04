@@ -1,28 +1,173 @@
 {
   "appName": "Erasmus PWA",
-
   "brand": {
     "name": "DROPS",
     "tagline": "Platformă e-learning",
-    "logoAlt": "DROPS of Sustainable Development"
+    "logoAlt": "DROPS pentru Dezvoltare Durabilă"
   },
-
   "nav": {
-    "languageLabel": "Limbă {{lang}}",
+    "languageLabel": "Limba {{lang}}",
     "register": "Înregistrare",
     "login": "Autentificare",
-    "logout": "Deconectare"
+    "logout": "Deconectare",
+    "dashboard": "Panou",
+    "courses": "Cursuri",
+    "certificates": "Certificate",
+    "quizzes": "Chestionare",
+    "welcomePage": "Pagina de bun venit",
+    "admin": "Admin",
+    "users": "Utilizatori",
+    "authoring": "Editare",
+    "profile": "Profil"
   },
-
   "welcome": {
-    "title": "DROPS of Sustainable Development",
-    "subtitle": "Platformă de învățare digitală pentru formatori și educatori.",
+    "title": "DROPS pentru Dezvoltare Durabilă",
+    "subtitle": "Platformă digitală de învățare pentru formatori și educatori.",
     "back": "Bine ai revenit 👋",
     "backWithName": "Bine ai revenit, {{name}} 👋"
   },
-
   "buttons": {
     "goToCourses": "Mergi la Cursuri",
-    "goToDashboard": "Mergi la Dashboard"
+    "goToDashboard": "Mergi la Panou"
+  },
+  "auth": {
+    "login": "Autentificare",
+    "mustBeLoggedIn": "Trebuie să fii autentificat(ă).",
+    "goToLogin": "Mergi la autentificare"
+  },
+  "courses": {
+    "courseFallback": "Curs",
+    "notFound": "Cursul nu a fost găsit",
+    "trainerLogin": "Autentificare formator",
+    "title": "Cursuri",
+    "subtitle": "Răsfoiește cursurile disponibile.",
+    "loadError": "Nu s-au putut încărca cursurile.",
+    "empty": "Nu există încă cursuri publicate.",
+    "noDescription": "Fără descriere.",
+    "open": "Deschide"
+  },
+  "common": {
+    "back": "Înapoi",
+    "open": "Deschide",
+    "notFound": "Nu a fost găsit",
+    "backToWelcome": "Înapoi la bun venit"
+  },
+  "learn": {
+    "breadcrumbs": "Modul → Lecție → Activitate"
+  },
+  "dashboard": {
+    "welcomeBack": "Bine ai revenit, {{name}} 👋",
+    "chooseNext": "Alege ce vrei să faci în continuare.",
+    "trainerPanel": "Panou Formator",
+    "trainerPanelDesc": "Gestionează cursuri, module și încărcări.",
+    "cards": {
+      "myCourses": { "title": "Cursurile mele", "desc": "Continuă lecțiile și urmărește progresul." },
+      "certificates": { "title": "Certificate", "desc": "Vezi și descarcă certificate PDF." },
+      "quizzes": { "title": "Chestionare", "desc": "Rezolvă chestionare și vezi rezultatele." },
+      "profile": { "title": "Profil", "desc": "Actualizează detaliile și preferințele tale." },
+      "support": { "title": "Suport", "desc": "Contactează-ne sau citește Întrebările frecvente." },
+      "settings": { "title": "Setări", "desc": "Limbă, notificări și cont." }
+    }
+  },
+  "certificates": {
+    "title": "Certificate",
+    "subtitle": "Certificatele tale obținute la cursuri.",
+    "loginToView": "Autentifică-te pentru a vedea certificatele tale.",
+    "pdfDownload": "Descărcare PDF",
+    "total": "{{count}} în total",
+    "emptyTitle": "Încă nu există certificate",
+    "emptyBody": "Finalizează un curs pentru a obține un certificat. Când un curs ajunge la 100%, certificatul va apărea aici.",
+    "goToMyCourses": "Mergi la Cursurile mele",
+    "issued": "Emis",
+    "completed": "Finalizat",
+    "unavailable": "Certificatul nu este disponibil",
+    "downloadPdf": "Descarcă PDF",
+    "preparing": "Se pregătește certificatul...",
+    "clickToOpen": "Click pentru a deschide",
+    "failedToGenerate": "Nu s-a putut genera certificatul",
+    "couldNotGenerate": "Certificatul nu a putut fi generat."
+  },
+  "quizzes": {
+    "title": "Chestionare",
+    "subtitle": "Rezolvă un chestionar și vezi rezultatele.",
+    "emptyTitle": "Încă nu există chestionare",
+    "emptyBody": "Când este adăugat un chestionar la un curs, va apărea aici.",
+    "passScore": "Punctaj de trecere:",
+    "lastAttempt": "Ultima încercare",
+    "score": "Scor",
+    "noAttempts": "Încă nu există încercări.",
+    "start": "Începe chestionarul",
+    "retake": "Reia chestionarul",
+    "locked": "Blocat",
+    "lockedHint": "Finalizează chestionarul anterior al modulului pentru deblocare",
+    "loading": "Se încarcă chestionarul...",
+    "notFound": "Chestionarul nu a fost găsit.",
+    "welcomeTitle": "Bun venit la chestionarul {{title}}!",
+    "submit": "Trimite",
+    "submitting": "Se trimite...",
+    "passed": "Trecut",
+    "notPassed": "Netrecut",
+    "tryAgain": "Încearcă din nou",
+    "submitFailed": "Trimiterea a eșuat",
+    "misconfigured": "Chestionarul este configurat greșit.",
+    "failedToLoadQuiz": "Nu s-a putut încărca chestionarul:",
+    "failedToLoadQuestions": "Nu s-au putut încărca întrebările:",
+    "pleaseAnswerAll": "Răspunde la toate întrebările înainte de trimitere.",
+    "networkError": "Eroare de rețea"
+  },
+  "quizPaper": {
+    "intro": "Acest chestionar scurt evaluează înțelegerea ta asupra abordării TEAL. Răspunde la următoarele întrebări pe baza a ceea ce ai învățat în ACTIVITATEA 1.1: Explorarea TEAL din MODULUL 1: Introducere în metodologia de predare TEAL. Chestionarul verifică definiția TEAL, componentele sale de bază (învățare activă, integrarea tehnologiei și colaborare), originea și diferențele față de metodele tradiționale.",
+    "quote": "\"Cei mai buni profesori sunt cei care îți arată unde să te uiți, dar nu îți spun ce să vezi.\" – Alexandra K. Trenfor. Sperăm că acest chestionar te ajută să vezi cum TEAL îți poate îmbunătăți predarea!",
+    "noteLabel": "Notă:",
+    "noteBody": "Chestionarul este pentru învățare. Îl poți relua dacă este nevoie.",
+    "requiredHint": "Indică o întrebare obligatorie"
+  },
+  "lesson": {
+    "activity": "Activitate",
+    "lesson": "Lecție",
+    "module": "Modul",
+    "badRouteTitle": "Rută greșită",
+    "missingParams": "Lipsește courseId/lessonId din URL.",
+    "accessDenied": "Acces interzis",
+    "notEnrolled": "Nu ești înscris(ă) la acest curs.",
+    "backToMyCourses": "Înapoi la Cursurile mele",
+    "backToCourse": "Înapoi la curs",
+    "notFoundTitle": "Activitatea nu a fost găsită",
+    "markComplete": "Marchează ca finalizat",
+    "completed": "Finalizat",
+    "openMaterialsHint": "Deschide materialele de mai jos pentru a finaliza această activitate.",
+    "materials": "Materiale",
+    "openPdf": "Deschide PDF",
+    "videos": "Videoclipuri",
+    "openOnYouTube": "Deschide pe YouTube",
+    "downloads": "Descărcări",
+    "download": "Descarcă",
+    "noMaterials": "Nu s-au găsit materiale.",
+    "previous": "Anterior",
+    "next": "Următor",
+    "endOfCourse": "Sfârșitul cursului"
+  },
+  "myCourses": {
+    "title": "Cursurile mele",
+    "subtitle": "Cursuri la care ești înscris(ă).",
+    "empty": "Nu ești înscris(ă) la niciun curs încă.",
+    "noDescription": "Fără descriere.",
+    "progress": "Progres",
+    "completed": "Finalizat",
+    "openCourse": "Deschide cursul",
+    "activities": "Activități",
+    "quizzesPassed": "Chestionare trecute",
+    "notPublished": "Nepublicat"
+  },
+  "resources": {
+    "title": "Resurse",
+    "open": "Deschide",
+    "download": "Descarcă",
+    "pdfPreview": "Previzualizare PDF",
+    "openFullscreen": "Deschide pe tot ecranul",
+    "docHint": "Acest document este disponibil pentru deschidere/descărcare.",
+    "openDocument": "Deschide documentul",
+    "openResource": "Deschide resursa",
+    "document": "Document"
   }
 }

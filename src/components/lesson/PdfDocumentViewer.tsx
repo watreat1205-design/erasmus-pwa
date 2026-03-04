@@ -5,6 +5,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { toEmbed } from "@/lib/toEmbed";
+import { useTranslation } from "react-i18next";
 
 
 // ✅ Important for Next.js bundling of the worker
@@ -26,10 +27,12 @@ declare global {
 }
 
 export default function PdfDocumentViewer({
+
   url,
   className,
   initialScale = 1,
 }: Props) {
+  const { t } = useTranslation("common");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -74,7 +77,7 @@ export default function PdfDocumentViewer({
     <div className={className}>
       {/* Zoom controls */}
       <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="text-sm text-gray-600">Document</div>
+        <div className="text-sm text-gray-600">{t("resources.document", { defaultValue: "Document" })}</div>
         <div className="flex items-center gap-2">
           <button
             type="button"

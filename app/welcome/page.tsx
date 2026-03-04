@@ -1,29 +1,41 @@
 // app/welcome/page.tsx
 import Image from "next/image";
+import { cookies } from "next/headers";
 import bgTemplate5 from "../../Templates/8.jpg";
 import { getMyProfile } from "../../src/lib/auth/getProfile";
-import WelcomeClient, { type WelcomeClientProps } from "./WelcomeClient";
+import WelcomeClient from "./WelcomeClient";
 
 export const dynamic = "force-dynamic";
 
 const SUPPORTED = new Set(["en", "el", "it", "es", "ro", "hr"]);
 
+async function getLangFromCookie() {
+  const c = await cookies();
+
+  const raw =
+    c.get("i18nextLng")?.value ||
+    c.get("i18next")?.value ||
+    c.get("lng")?.value ||
+    c.get("NEXT_LOCALE")?.value ||
+    "en";
+
+  const short = raw.split("-")[0];
+  return SUPPORTED.has(short) ? short : "en";
+}
+
 export default async function WelcomePage({
-  searchParams
+  searchParams,
 }: {
-  searchParams?: Promise<{ lang?: string; invite?: string }>;
+  searchParams?: Promise<{ invite?: string }>;
 }) {
   const sp = (await searchParams) ?? {};
-  const initialLang = SUPPORTED.has(sp.lang ?? "") ? (sp.lang as string) : "en";
-
+  const initialLang = await getLangFromCookie();
 
   const profile = await getMyProfile().catch(() => null);
   const loggedIn = !!profile;
 
   const displayName =
     (profile?.full_name || profile?.email || "").toString().trim() || null;
-
-  // Prefetch invite info (NGO name, role, etc.) to render a nicer welcome screen
 
   return (
     <div className="relative min-h-screen overflow-hidden">

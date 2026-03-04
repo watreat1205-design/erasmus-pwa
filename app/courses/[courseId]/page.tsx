@@ -1,39 +1,40 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import EnrollButton from "../EnrollButton";
+import AllCoursesButtonClient from "./AllCoursesButtonClient";
+import { getServerTranslation } from "@/lib/i18n/server";
+import { pickI18n } from "@/lib/i18n/pick";
+import {
+  TNoDescription,
+  TEnrollTitle,
+  TEnrollBody,
+  TLoginHint,
+  TNoSections,
+  TLessons,
+  TNoLessons,
+  TModuleQuiz,
+  TLocked,
+  TPassed,
+} from "./CourseText";
 
-type SectionRow = {
-  id: string;
-  title: string;
-  position: number;
-};
-
-type LessonRow = {
-  id: string;
-  section_id: string;
-  title: string;
-  position: number;
-};
-
-type ModuleQuizRow = {
-  id: string;
-  section_id: string;
-  title: string;
-  pass_score: number;
-};
+type SectionRow = { id: string; title: string; position: number };
+type LessonRow = { id: string; section_id: string; title: string; position: number };
+type ModuleQuizRow = { id: string; section_id: string; title: string; pass_score: number };
 
 export default async function CourseViewPage({
   params,
 }: {
   params: Promise<{ courseId: string }>;
 }) {
-  const { courseId } = await params;
+ const { lang } = await getServerTranslation(); 
+ const { courseId } = await params;
 
   if (!courseId) {
     return (
       <div style={{ padding: 24 }}>
         <h2>Course</h2>
         <p style={{ color: "crimson" }}>Missing courseId in URL.</p>
-        <Link href={`/my-courses/${courseId}`}>← My Courses</Link>
+        <Link href="/courses">← Back to Courses</Link>
       </div>
     );
   }
@@ -44,62 +45,9 @@ export default async function CourseViewPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h2>Course</h2>
-        <p style={{ color: "crimson" }}>You must be logged in.</p>
-        <Link href="/login">Go to login</Link>
-      </div>
-    );
-  }
-
-  // ✅ Enforce enrollment (server-side guard)
-  const { data: enrollment, error: eErr } = await supabase
-    .from("course_enrollments")
-    .select("id")
-    .eq("course_id", courseId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (eErr) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h2>Course</h2>
-        <p style={{ color: "crimson" }}>{eErr.message}</p>
-        <Link href={`/my-courses/${courseId}`}>← My Courses</Link>
-      </div>
-    );
-  }
-
-  if (!enrollment) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="mx-auto max-w-3xl px-6 py-10">
-          <div className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Access denied
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              You are not enrolled in this course.
-            </p>
-            <div className="mt-4">
-              <Link
-                href={`/my-courses/${courseId}`}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
-              >
-                ← Back to My Courses
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const { data: course, error: cErr } = await supabase
     .from("courses")
-    .select("id, title, description")
+    .select("id, title, description, title_i18n, description_i18n")
     .eq("id", courseId)
     .single();
 
@@ -108,25 +56,36 @@ export default async function CourseViewPage({
       <div style={{ padding: 24 }}>
         <h2>Course</h2>
         <p style={{ color: "crimson" }}>{cErr?.message ?? "Not found"}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back</Link>
+        <Link href="/courses">← Back to Courses</Link>
       </div>
     );
   }
 
+  let isEnrolled = false;
+  if (user) {
+    const { data: enrollment } = await supabase
+      .from("course_enrollments")
+      .select("id")
+      .eq("course_id", courseId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    isEnrolled = !!enrollment;
+  }
+
   const { data: sectionsData } = await supabase
     .from("course_sections")
-    .select("id, title, position")
+    .select("id, title, position, title_i18n")
     .eq("course_id", courseId)
     .order("position", { ascending: true });
 
   const sections = (sectionsData ?? []) as SectionRow[];
   const sectionIds = sections.map((s) => s.id);
 
-  // Lessons per section
   const { data: lessonsData } = sectionIds.length
     ? await supabase
         .from("course_lessons")
-        .select("id, section_id, title, position")
+        .select("id, section_id, title, position, title_i18n")
         .in("section_id", sectionIds)
         .order("position", { ascending: true })
     : { data: [] as LessonRow[] };
@@ -140,11 +99,10 @@ export default async function CourseViewPage({
     lessonsBySection.set(l.section_id, arr);
   }
 
-  // ✅ Module quizzes per section (1 quiz per module/section)
   const { data: moduleQuizzesData } = sectionIds.length
     ? await supabase
         .from("module_quizzes")
-        .select("id, section_id, title, pass_score")
+        .select("id, section_id, title, pass_score, title_i18n")
         .eq("course_id", courseId)
         .eq("is_published", true)
         .in("section_id", sectionIds)
@@ -157,131 +115,147 @@ export default async function CourseViewPage({
     if (!quizBySection.has(q.section_id)) quizBySection.set(q.section_id, q);
   }
 
-  // ✅ Passed quiz attempts for this user (any passed attempt counts)
-  const { data: quizAttempts } = await supabase
-    .from("module_quiz_attempts")
-    .select("quiz_id, passed")
-    .eq("user_id", user.id)
-    .eq("passed", true);
+  const passedQuizSet = new Set<string>();
+  if (user) {
+    const { data: quizAttempts } = await supabase
+      .from("module_quiz_attempts")
+      .select("quiz_id")
+      .eq("user_id", user.id)
+      .eq("passed", true);
 
-  const passedQuizSet = new Set(
-    (quizAttempts ?? []).map((a) => (a as { quiz_id: string }).quiz_id)
+    for (const a of quizAttempts ?? []) passedQuizSet.add((a as any).quiz_id);
+  }
+
+  const LockedRow = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-base text-gray-800">
+      <div className="truncate">{children}</div>
+      <span className="ml-3 shrink-0 text-sm font-medium text-gray-600">
+        🔒 <TLocked />
+      </span>
+    </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-900">
-              {course.title}
-            </h1>
-            {course.description ? (
-              <p className="mt-2 text-sm text-gray-600">{course.description}</p>
-            ) : (
-              <p className="mt-2 text-sm text-gray-500">No description.</p>
-            )}
-          </div>
+    <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="flex items-start justify-between gap-6">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl font-semibold !text-white">{pickI18n((course as any).title_i18n, lang, course.title)}</h1>
 
-          <Link
-            href={`/my-courses/${courseId}`}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
-          >
-            ← My Courses
-          </Link>
+          {course.description ? (
+            <p className="mt-3 text-base !text-white">{pickI18n((course as any).description_i18n, lang, course.description)}</p>
+          ) : (
+            <p className="mt-3 text-base text-gray-600">
+              <TNoDescription />
+            </p>
+          )}
         </div>
 
-        <div className="mt-8 space-y-4">
-          {!sections.length ? (
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
-              <p className="text-gray-700">No sections yet.</p>
-            </div>
-          ) : (
-            sections.map((s) => {
+        <AllCoursesButtonClient />
+      </div>
+
+      {!isEnrolled && (
+        <div className="mt-8 rounded-xl border border-gray-200 bg-white p-8">
+          <h2 className="text-xl font-semibold text-gray-900">
+            <TEnrollTitle />
+          </h2>
+          <p className="mt-2 text-base text-gray-700">
+            <TEnrollBody />
+          </p>
+
+          <div className="mt-5">
+            <EnrollButton courseId={courseId} />
+            {!user && (
+              <p className="mt-3 text-sm text-gray-600">
+                <TLoginHint />
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-10 space-y-6">
+        {!sections.length ? (
+          <div className="rounded-xl border border-gray-200 bg-white p-8">
+            <p className="text-gray-800">
+              <TNoSections />
+            </p>
+          </div>
+        ) : (
+          sections
+            .filter((s) => (lessonsBySection.get(s.id) ?? []).length > 0)
+            .map((s) => {
               const sectionLessons = lessonsBySection.get(s.id) ?? [];
               const moduleQuiz = quizBySection.get(s.id) ?? null;
-              const quizPassed = moduleQuiz?.id
-                ? passedQuizSet.has(moduleQuiz.id)
-                : false;
 
               return (
                 <div
                   key={s.id}
-                  className="rounded-xl border border-gray-200 bg-white p-6"
+                  className="rounded-xl border border-gray-200 bg-white p-8"
                 >
-                  <div className="font-semibold text-gray-900">
-                    {s.position}. {s.title}
+                  <div className="text-lg font-semibold text-gray-900">
+                    {s.position}. {pickI18n((s as any).title_i18n, lang, s.title)}
                   </div>
 
-                  <div className="mt-3">
-                    <div className="text-sm font-medium text-gray-700">
-                      Lessons
+                  <div className="mt-5 space-y-3">
+                    <div className="text-base font-medium text-gray-800">
+                      <TLessons />
                     </div>
 
-                    <ul className="mt-2 list-disc pl-6 text-gray-800">
-                      {sectionLessons.map((l) => (
-                        <li key={l.id}>
+                    {sectionLessons.length ? (
+                      <div className="space-y-3">
+                        {sectionLessons.map((l) => {
+                          const href = `/courses/${courseId}/lessons/${l.id}`;
+                          return isEnrolled ? (
+                            <Link
+                              key={l.id}
+                              href={href}
+                              className="block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
+                            >
+                              {l.position}. {pickI18n((l as any).title_i18n, lang, l.title)}
+                            </Link>
+                          ) : (
+                            <LockedRow key={l.id}>
+                              {l.position}. {pickI18n((l as any).title_i18n, lang, l.title)}
+                            </LockedRow>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-base text-gray-600">
+                        <TNoLessons />
+                      </p>
+                    )}
+
+                    {moduleQuiz && (
+                      <div className="mt-6">
+                        <div className="text-base font-medium text-gray-800">
+                          <TModuleQuiz />
+                        </div>
+
+                        {isEnrolled ? (
                           <Link
-                            href={`/my-courses/${courseId}/lessons/${l.id}`}
-                            className="text-gray-900 hover:underline"
+                            href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
+                            className="mt-3 block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
                           >
-                            {l.position}. {l.title}
+                            {pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}
+                            {user && passedQuizSet.has(moduleQuiz.id) ? (
+                              <span className="ml-2 text-sm text-green-700">
+                                ✓ <TPassed />
+                              </span>
+                            ) : null}
                           </Link>
-                        </li>
-                      ))}
-
-                      {sectionLessons.length === 0 && (
-                        <li className="list-none text-gray-500">
-                          No lessons yet.
-                        </li>
-                      )}
-                    </ul>
+                        ) : (
+                          <div className="mt-3">
+                            <LockedRow>{pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}</LockedRow>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-
-                  {/* ✅ Module quiz row */}
-                  {moduleQuiz?.id ? (
-                    <div className="mt-5 flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <div>
-                        <div className="text-sm font-semibold text-gray-900">
-                          {moduleQuiz.title}
-                        </div>
-                        <div className="mt-1 text-xs text-gray-600">
-                          Pass score: {moduleQuiz.pass_score}%
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={
-                            "rounded-full px-2 py-1 text-xs font-semibold " +
-                            (quizPassed
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-800")
-                          }
-                        >
-                          {quizPassed
-                            ? "Module quiz passed"
-                            : "Module quiz pending"}
-                        </span>
-
-                        <Link
-                          href={`/quizzes/${moduleQuiz.id}`}
-                          className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900"
-                        >
-                          {quizPassed ? "View" : "Start"}
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-5 text-sm text-gray-500">
-                      No module quiz yet.
-                    </div>
-                  )}
                 </div>
               );
             })
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

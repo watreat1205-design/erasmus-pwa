@@ -1,28 +1,191 @@
 {
   "appName": "Erasmus PWA",
-
   "brand": {
     "name": "DROPS",
     "tagline": "E-learning platform",
     "logoAlt": "DROPS of Sustainable Development"
   },
-
   "nav": {
     "languageLabel": "Language {{lang}}",
     "register": "Register",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "certificates": "Certificates",
+    "quizzes": "Quizzes",
+    "welcomePage": "Welcome page",
+    "admin": "Admin",
+    "users": "Users",
+    "authoring": "Authoring",
+    "profile": "Profile"
   },
-
   "welcome": {
     "title": "DROPS of Sustainable Development",
     "subtitle": "Digital learning platform for trainers and educators.",
     "back": "Welcome back 👋",
     "backWithName": "Welcome back, {{name}} 👋"
   },
-
   "buttons": {
     "goToCourses": "Go to Courses",
     "goToDashboard": "Go to Dashboard"
+  },
+  "auth": {
+    "login": "Login",
+    "mustBeLoggedIn": "You must be logged in.",
+    "goToLogin": "Go to login"
+  },
+  "courses": {
+    "courseFallback": "Course",
+    "notFound": "Course not found",
+    "trainerLogin": "Trainer login",
+    "title": "Courses",
+    "subtitle": "Browse available courses.",
+    "loadError": "Could not load courses.",
+    "empty": "No published courses yet.",
+    "noDescription": "No description.",
+    "open": "Open" 
+ },
+  "common": {
+    "back": "Back",
+    "open": "Open",
+    "notFound": "Not found",
+    "backToWelcome": "Back to welcome"
+  },
+  "learn": {
+    "breadcrumbs": "Module → Lesson → Activity"
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back, {{name}} 👋",
+    "chooseNext": "Choose what you want to do next.",
+    "trainerPanel": "Trainer Panel",
+    "trainerPanelDesc": "Manage courses, modules, and uploads.",
+    "cards": {
+      "myCourses": {
+        "title": "My Courses",
+        "desc": "Continue lessons and track progress."
+      },
+      "certificates": {
+        "title": "Certificates",
+        "desc": "View and download PDF certificates."
+      },
+      "quizzes": {
+        "title": "Quizzes",
+        "desc": "Take quizzes and view results."
+      },
+      "profile": {
+        "title": "Profile",
+        "desc": "Update your details and preferences."
+      },
+      "support": {
+        "title": "Support",
+        "desc": "Contact us or read FAQs."
+      },
+      "settings": {
+        "title": "Settings",
+        "desc": "Language, notifications, and account."
+      }
+    }
+  },
+  "certificates": {
+    "title": "Certificates",
+    "subtitle": "Your earned course certificates.",
+    "loginToView": "Please log in to view your certificates.",
+    "pdfDownload": "PDF download",
+    "total": "{{count}} total",
+    "emptyTitle": "No certificates yet",
+    "emptyBody": "Complete a course to earn one. When a course reaches 100%, your certificate will appear here.",
+    "goToMyCourses": "Go to My Courses",
+    "issued": "Issued",
+    "completed": "Completed",
+    "unavailable": "Certificate unavailable",
+    "downloadPdf": "Download PDF",
+    "preparing": "Preparing certificate...",
+    "clickToOpen": "Click to open",
+    "failedToGenerate": "Failed to generate certificate",
+    "couldNotGenerate": "Certificate could not be generated."
+  },
+  "quizzes": {
+    "title": "Quizzes",
+    "subtitle": "Take a quiz and view your results.",
+    "emptyTitle": "No quizzes yet",
+    "emptyBody": "When a quiz is added to a course, it will appear here.",
+    "passScore": "Pass score:",
+    "lastAttempt": "Last attempt",
+    "score": "Score",
+    "noAttempts": "No attempts yet.",
+    "start": "Start quiz",
+    "retake": "Retake quiz",
+    "locked": "Locked",
+    "lockedHint": "Complete the previous module quiz to unlock",
+    "loading": "Loading quiz...",
+    "notFound": "Quiz not found.",
+    "welcomeTitle": "Welcome to the {{title}} Quiz!",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "passed": "Passed",
+    "notPassed": "Not passed",
+    "tryAgain": "Try again",
+    "submitFailed": "Submit failed",
+    "misconfigured": "Quiz is misconfigured.",
+    "failedToLoadQuiz": "Failed to load quiz:",
+    "failedToLoadQuestions": "Failed to load questions:",
+    "pleaseAnswerAll": "Please answer all questions before submitting.",
+    "networkError": "Network error"
+  },
+  "quizPaper": {
+    "intro": "This short quiz assesses your understanding of the TEAL approach. Please answer the following questions based on what you have learned in ACTIVITY 1.1: Exploring TEAL of MODULE 1: Introduction to TEAL teaching methodology. The quiz will examine your knowledge of the definition of TEAL, its core components (active learning, technology integration, and collaboration), its origins, and how it compares to traditional teaching methods.",
+    "quote": "\"The best teachers are those who show you where to look, but don't tell you what to see.\" – Alexandra K. Trenfor. We hope this quiz helps you see how TEAL can enhance your teaching!",
+    "noteLabel": "Note:",
+    "noteBody": "The quiz is for learning. You can retake it if needed.",
+    "requiredHint": "Indicates required question"
+  },
+  "lesson": {
+    "activity": "Activity",
+    "lesson": "Lesson",
+    "module": "Module",
+    "badRouteTitle": "Bad route",
+    "missingParams": "Missing courseId/lessonId in URL.",
+    "accessDenied": "Access denied",
+    "notEnrolled": "You are not enrolled in this course.",
+    "backToMyCourses": "Back to My Courses",
+    "backToCourse": "Back to course",
+    "notFoundTitle": "Activity not found",
+    "markComplete": "Mark complete",
+    "completed": "Completed",
+    "openMaterialsHint": "Open the materials below to complete this activity.",
+    "materials": "Materials",
+    "openPdf": "Open PDF",
+    "videos": "Videos",
+    "openOnYouTube": "Open on YouTube",
+    "downloads": "Downloads",
+    "download": "Download",
+    "noMaterials": "No materials found.",
+    "previous": "Previous",
+    "next": "Next",
+    "endOfCourse": "End of course"
+  },
+  "myCourses": {
+    "title": "My Courses",
+    "subtitle": "Courses you are enrolled in.",
+    "empty": "You are not enrolled in any courses yet.",
+    "noDescription": "No description.",
+    "progress": "Progress",
+    "completed": "Completed",
+    "openCourse": "Open course",
+    "activities": "Activities",
+    "quizzesPassed": "Quizzes passed",
+    "notPublished": "Not published"
+  },
+  "resources": {
+    "title": "Resources",
+    "open": "Open",
+    "download": "Download",
+    "pdfPreview": "PDF preview",
+    "openFullscreen": "Open fullscreen",
+    "docHint": "This document is available to open/download.",
+    "openDocument": "Open document",
+    "openResource": "Open resource",
+    "document": "Document"
   }
 }

@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LessonMaterialsClient from "@/components/lesson/LessonMaterialsClient";
 import LockBodyScroll from "@/components/lesson/LockBodyScroll";
-
+import T from "./T";
 
 // -------------------------
 // Helpers
@@ -78,9 +78,11 @@ export default async function LessonPage({
   if (!courseId || !lessonId) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Bad route</h2>
-        <p style={{ color: "crimson" }}>Missing courseId/lessonId in URL.</p>
-        <Link href="/courses">← Back</Link>
+        <h2><T k="lesson.badRouteTitle" fallback="Bad route" /></h2>
+        <p style={{ color: "crimson" }}>
+          <T k="lesson.missingParams" fallback="Missing courseId/lessonId in URL." />
+        </p>
+        <Link href="/courses">← <T k="common.back" fallback="Back" /></Link>
       </div>
     );
   }
@@ -95,9 +97,11 @@ export default async function LessonPage({
   if (userErr || !user) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity</h2>
-        <p style={{ color: "crimson" }}>You must be logged in.</p>
-        <Link href="/login">Go to login</Link>
+        <h2><T k="lesson.activity" fallback="Activity" /></h2>
+        <p style={{ color: "crimson" }}>
+          <T k="auth.mustBeLoggedIn" fallback="You must be logged in." />
+        </p>
+        <Link href="/login"><T k="auth.goToLogin" fallback="Go to login" /></Link>
       </div>
     );
   }
@@ -113,9 +117,9 @@ export default async function LessonPage({
   if (eErr) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity</h2>
+        <h2><T k="lesson.activity" fallback="Activity" /></h2>
         <p style={{ color: "crimson" }}>{eErr.message}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back to course</Link>
+        <Link href={`/my-courses/${courseId}`}>← <T k="lesson.backToCourse" fallback="Back to course" /></Link>
       </div>
     );
   }
@@ -124,29 +128,25 @@ export default async function LessonPage({
     return (
       <div className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 -translate-y-7">
-          <Image
-            src={bgTemplate5}
-            alt=""
-            fill
-            priority
-            className="object-cover object-center"
-          />
+          <Image src={bgTemplate5} alt="" fill priority className="object-cover object-center" />
         </div>
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
         <div className="relative z-10 mx-auto max-w-3xl px-6 py-6">
           <div className="rounded-xl border border-white/20 bg-white/85 p-3">
-            <h2 className="text-xl font-semibold text-gray-900">Access denied</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              <T k="lesson.accessDenied" fallback="Access denied" />
+            </h2>
             <p className="mt-2 text-sm text-gray-700">
-              You are not enrolled in this course.
+              <T k="lesson.notEnrolled" fallback="You are not enrolled in this course." />
             </p>
             <div className="mt-4">
               <Link
                 href="/my-courses"
                 className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
               >
-                ← Back to My Courses
+                ← <T k="lesson.backToMyCourses" fallback="Back to My Courses" />
               </Link>
             </div>
           </div>
@@ -165,9 +165,11 @@ export default async function LessonPage({
   if (cErr || !course) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity</h2>
-        <p style={{ color: "crimson" }}>{cErr?.message ?? "Course not found"}</p>
-        <Link href="/my-courses">← Back</Link>
+        <h2><T k="lesson.activity" fallback="Activity" /></h2>
+        <p style={{ color: "crimson" }}>
+          {cErr?.message ?? <T k="courses.notFound" fallback="Course not found" />}
+        </p>
+        <Link href="/my-courses">← <T k="common.back" fallback="Back" /></Link>
       </div>
     );
   }
@@ -183,9 +185,9 @@ export default async function LessonPage({
   if (sErr) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity</h2>
+        <h2><T k="lesson.activity" fallback="Activity" /></h2>
         <p style={{ color: "crimson" }}>{sErr.message}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back to course</Link>
+        <Link href={`/my-courses/${courseId}`}>← <T k="lesson.backToCourse" fallback="Back to course" /></Link>
       </div>
     );
   }
@@ -204,9 +206,9 @@ export default async function LessonPage({
   if (lErr) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity</h2>
+        <h2><T k="lesson.activity" fallback="Activity" /></h2>
         <p style={{ color: "crimson" }}>{lErr.message}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back to course</Link>
+        <Link href={`/my-courses/${courseId}`}>← <T k="lesson.backToCourse" fallback="Back to course" /></Link>
       </div>
     );
   }
@@ -214,18 +216,16 @@ export default async function LessonPage({
   // ✅ Current lesson
   const { data: current, error: curErr } = await supabase
     .from("course_lessons")
-    .select(
-      "id, section_id, title, position, content_md, video_url, is_published, kind, assets_path"
-    )
+    .select("id, section_id, title, position, content_md, video_url, is_published, kind, assets_path")
     .eq("id", lessonId)
     .single();
 
   if (curErr || !current) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Activity not found</h2>
-        <p style={{ color: "crimson" }}>{curErr?.message ?? "Not found"}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back to course</Link>
+        <h2><T k="lesson.notFoundTitle" fallback="Activity not found" /></h2>
+        <p style={{ color: "crimson" }}>{curErr?.message ?? <T k="common.notFound" fallback="Not found" />}</p>
+        <Link href={`/my-courses/${courseId}`}>← <T k="lesson.backToCourse" fallback="Back to course" /></Link>
       </div>
     );
   }
@@ -259,9 +259,9 @@ export default async function LessonPage({
   if (resErr) {
     return (
       <div style={{ padding: 24 }}>
-        <h2>Lesson</h2>
+        <h2><T k="lesson.lesson" fallback="Lesson" /></h2>
         <p style={{ color: "crimson" }}>{resErr.message}</p>
-        <Link href={`/my-courses/${courseId}`}>← Back to course</Link>
+        <Link href={`/my-courses/${courseId}`}>← <T k="lesson.backToCourse" fallback="Back to course" /></Link>
       </div>
     );
   }
@@ -368,13 +368,7 @@ export default async function LessonPage({
       <LockBodyScroll />
       {/* Fixed background */}
       <div className="fixed inset-0 -z-10 -translate-y-7">
-        <Image
-          src={bgTemplate5}
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-        />
+        <Image src={bgTemplate5} alt="" fill priority className="object-cover object-center" />
       </div>
       <div className="fixed inset-0 -z-10 bg-black/20" />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
@@ -391,11 +385,13 @@ export default async function LessonPage({
               <span className="mx-2 text-white/60">•</span>
               {section ? (
                 <span className="text-white/80">
-                  Module {section.position}: {section.title} • Activity{" "}
-                  {current.position}
+                  <T k="lesson.module" fallback="Module" /> {section.position}: {section.title} •{" "}
+                  <T k="lesson.activity" fallback="Activity" /> {current.position}
                 </span>
               ) : (
-                <span className="text-white/80">Activity {current.position}</span>
+                <span className="text-white/80">
+                  <T k="lesson.activity" fallback="Activity" /> {current.position}
+                </span>
               )}
             </div>
           </div>
@@ -405,7 +401,7 @@ export default async function LessonPage({
               href={`/my-courses/${courseId}`}
               className="rounded-md border border-white/30 bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-900 hover:bg-white"
             >
-              ← Back
+              ← <T k="common.back" fallback="Back" />
             </Link>
 
             {isCompleted ? (
@@ -416,7 +412,7 @@ export default async function LessonPage({
                   type="submit"
                   className="rounded-md border border-white/30 bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-900 hover:bg-white"
                 >
-                  ✅ Completed
+                  ✅ <T k="lesson.completed" fallback="Completed" />
                 </button>
               </form>
             ) : (
@@ -427,32 +423,31 @@ export default async function LessonPage({
                   type="submit"
                   className="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-black"
                 >
-                  Mark complete
+                  <T k="lesson.markComplete" fallback="Mark complete" />
                 </button>
               </form>
             )}
           </div>
         </div>
 
-        {/* Scroll area (fills to bottom). pb-24 leaves room for floating Next button */}
+        {/* Scroll area */}
         <div className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
           <div className="rounded-xl border border-white/20 bg-white/85 p-3">
             <div className="text-xs text-gray-700">
-              Open the materials below to complete this activity.
+              <T
+                k="lesson.openMaterialsHint"
+                fallback="Open the materials below to complete this activity."
+              />
             </div>
 
-            <LessonMaterialsClient
-              pdfUrl={pdfUrl}
-              slidesUrl={slidesUrl}
-              coverUrl={coverUrl}
-            />
+            <LessonMaterialsClient pdfUrl={pdfUrl} slidesUrl={slidesUrl} coverUrl={coverUrl} />
 
-            {/* Materials from DB + downloads */}
             {(resourcesWithUrls.length > 0 || files.length > 0) && (
               <div className="mt-6 space-y-6 rounded-xl border border-gray-200 bg-white p-6">
-                <h3 className="text-lg font-semibold">Materials</h3>
+                <h3 className="text-lg font-semibold">
+                  <T k="lesson.materials" fallback="Materials" />
+                </h3>
 
-                {/* DB PDF (no inline preview here to avoid SSR/react-pdf issues) */}
                 {(() => {
                   const pdf = resourcesWithUrls.find(
                     (r) =>
@@ -467,9 +462,7 @@ export default async function LessonPage({
 
                   return (
                     <div className="rounded-xl border border-gray-200 bg-white p-4">
-                      <div className="text-sm font-semibold text-gray-900">
-                        {pdf.title}
-                      </div>
+                      <div className="text-sm font-semibold text-gray-900">{pdf.title}</div>
                       <div className="mt-2 flex justify-end">
                         <a
                           href={pdf.resolved_url}
@@ -477,27 +470,22 @@ export default async function LessonPage({
                           rel="noreferrer"
                           className="rounded-md border px-3 py-2 text-sm hover:bg-gray-50"
                         >
-                          Open PDF
+                          <T k="lesson.openPdf" fallback="Open PDF" />
                         </a>
                       </div>
                     </div>
                   );
                 })()}
 
-                {/* Videos from DB resources */}
-                {resourcesWithUrls.some(
-                  (r) => r.kind === "youtube" && (r as any).resolved_url
-                ) ? (
+                {resourcesWithUrls.some((r) => r.kind === "youtube" && (r as any).resolved_url) ? (
                   <div className="rounded-xl border border-gray-200 bg-white p-4">
                     <div className="mb-3 text-sm font-semibold text-gray-900">
-                      Videos
+                      <T k="lesson.videos" fallback="Videos" />
                     </div>
 
                     <div className="space-y-5">
                       {resourcesWithUrls
-                        .filter(
-                          (r) => r.kind === "youtube" && (r as any).resolved_url
-                        )
+                        .filter((r) => r.kind === "youtube" && (r as any).resolved_url)
                         .map((v) => {
                           const resolved = (v as any).resolved_url as string;
                           const embedUrl = toYouTubeEmbed(resolved);
@@ -528,7 +516,7 @@ export default async function LessonPage({
                                   rel="noreferrer"
                                   className="text-xs text-gray-600 underline"
                                 >
-                                  Open on YouTube
+                                  <T k="lesson.openOnYouTube" fallback="Open on YouTube" />
                                 </a>
                               </div>
                             </div>
@@ -538,11 +526,10 @@ export default async function LessonPage({
                   </div>
                 ) : null}
 
-                {/* Downloads (storage list) */}
                 {files.length > 0 ? (
                   <div className="rounded-xl border border-gray-200 bg-white p-4">
                     <div className="mb-3 text-sm font-semibold text-gray-900">
-                      Downloads
+                      <T k="lesson.downloads" fallback="Downloads" />
                     </div>
 
                     <ul className="space-y-3">
@@ -550,8 +537,7 @@ export default async function LessonPage({
                         .filter((file) => {
                           const n = String(file.name).toLowerCase();
                           if (n === "presentation.pdf") return false;
-                          if (n.startsWith("activity-") && n.endsWith(".pdf"))
-                            return false;
+                          if (n.startsWith("activity-") && n.endsWith(".pdf")) return false;
                           return true;
                         })
                         .map((file) => {
@@ -561,10 +547,7 @@ export default async function LessonPage({
                             .getPublicUrl(fullPath).data.publicUrl;
 
                           return (
-                            <li
-                              key={fullPath}
-                              className="flex items-center justify-between rounded-lg border p-3"
-                            >
+                            <li key={fullPath} className="flex items-center justify-between rounded-lg border p-3">
                               <div className="truncate">
                                 <span className="mr-2">{fileIcon(file.name)}</span>
                                 {displayName(file.name)}
@@ -576,7 +559,7 @@ export default async function LessonPage({
                                 rel="noreferrer"
                                 className="rounded-md border px-3 py-2 text-sm hover:bg-gray-50"
                               >
-                                Download
+                                <T k="lesson.download" fallback="Download" />
                               </a>
                             </li>
                           );
@@ -588,20 +571,22 @@ export default async function LessonPage({
             )}
 
             {files.length === 0 && resourcesWithUrls.length === 0 && (
-              <p className="mt-4 text-sm text-gray-600">No materials found.</p>
+              <p className="mt-4 text-sm text-gray-600">
+                <T k="lesson.noMaterials" fallback="No materials found." />
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Floating Prev / Next (does not reduce reading height) */}
+      {/* Floating Prev / Next */}
       <div className="fixed bottom-6 left-6 right-6 z-20 flex items-center justify-between">
         {prev ? (
           <Link
             href={`/my-courses/${courseId}/lessons/${(prev as any).id}`}
             className="rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white"
           >
-            ← Previous
+            ← <T k="lesson.previous" fallback="Previous" />
           </Link>
         ) : (
           <div />
@@ -612,10 +597,12 @@ export default async function LessonPage({
             href={`/my-courses/${courseId}/lessons/${(next as any).id}`}
             className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium !text-white hover:bg-black"
           >
-            Next →
+            <T k="lesson.next" fallback="Next" /> →
           </Link>
         ) : (
-          <div className="text-sm text-white/90">End of course ✅</div>
+          <div className="text-sm text-white/90">
+            <T k="lesson.endOfCourse" fallback="End of course" /> ✅
+          </div>
         )}
       </div>
     </div>

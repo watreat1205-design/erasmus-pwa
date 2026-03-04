@@ -1,8 +1,12 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { ensureI18n } from "@/i18n";
 
 export default function ActivityLayout({
   title,
-  breadcrumbs = "Module → Lesson → Activity",
+  breadcrumbs,
   backHref = "/my-courses",
   progressPill,
   children,
@@ -15,12 +19,20 @@ export default function ActivityLayout({
   children: React.ReactNode;
   sidebar?: React.ReactNode;
 }) {
+  useEffect(() => {
+    ensureI18n();
+  }, []);
+
+  const { t } = useTranslation("common");
+
+  const crumbs = breadcrumbs ?? t("learn.breadcrumbs");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <div className="min-w-0">
-            <div className="text-xs text-gray-500">{breadcrumbs}</div>
+            <div className="text-xs text-gray-500">{crumbs}</div>
             <h1 className="truncate text-lg font-semibold text-gray-900">{title}</h1>
           </div>
 
@@ -30,7 +42,7 @@ export default function ActivityLayout({
               href={backHref}
               className="rounded-xl border bg-white px-3 py-2 text-sm hover:bg-gray-50"
             >
-              Back
+              {t("common.back")}
             </a>
           </div>
         </div>

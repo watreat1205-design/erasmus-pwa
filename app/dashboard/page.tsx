@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
+import bgTemplate5 from "../../Templates/5.jpg";
+import DashboardClient from "./DashboardClient";
 
 export const dynamic = "force-dynamic";
 
@@ -21,114 +23,64 @@ export default async function DashboardPage() {
       .eq("id", user.id)
       .single();
 
-    // ✅ use full_name (NOT profile.name)
     const full = profile?.full_name?.trim();
-    if (full) displayName = full.split(/\s+/)[0]; // first name for greeting
+    if (full) displayName = full.split(/\s+/)[0];
   }
 
   const role = await getCurrentUserRole();
 
   const cards = [
     {
-      title: "My Courses",
-      desc: "Continue lessons and track progress.",
-      href: "/courses",
+      titleKey: "dashboard.cards.myCourses.title",
+      descKey: "dashboard.cards.myCourses.desc",
+      href: "/courses", // change to "/my-courses" if that is the intended page
     },
     {
-      title: "Certificates",
-      desc: "View and download PDF certificates.",
+      titleKey: "dashboard.cards.certificates.title",
+      descKey: "dashboard.cards.certificates.desc",
       href: "/certificates",
     },
     {
-      title: "Quizzes",
-      desc: "Take quizzes and view results.",
+      titleKey: "dashboard.cards.quizzes.title",
+      descKey: "dashboard.cards.quizzes.desc",
       href: "/quizzes",
     },
     {
-      title: "Profile",
-      desc: "Update your details and preferences.",
+      titleKey: "dashboard.cards.profile.title",
+      descKey: "dashboard.cards.profile.desc",
       href: "/profile",
     },
     {
-      title: "Support",
-      desc: "Contact us or read FAQs.",
+      titleKey: "dashboard.cards.support.title",
+      descKey: "dashboard.cards.support.desc",
       href: "/support",
     },
     {
-      title: "Settings",
-      desc: "Language, notifications, and account.",
+      titleKey: "dashboard.cards.settings.title",
+      descKey: "dashboard.cards.settings.desc",
       href: "/settings",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-900">
-              Welcome back, {displayName} 👋
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Choose what you want to do next.
-            </p>
-          </div>
+    <div className="relative min-h-screen overflow-y-auto">
+      {/* Background */}
+      <div
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundImage: `url(${bgTemplate5.src})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center -410px",
+        }}
+      />
 
-          <Link
-            href="/logout"
-            className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-900"
-          >
-            <span className="text-white">Logout</span>
-          </Link>
-        </div>
+      {/* Overlay */}
+      <div className="fixed inset-0 -z-10 bg-black/20" />
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
-          {cards.map((c) => (
-            <Link
-              key={c.title}
-              href={c.href}
-              className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">{c.title}</h2>
-                <span className="text-gray-400 transition group-hover:translate-x-0.5">
-                  →
-                </span>
-              </div>
-
-              <p className="mt-2 text-sm text-gray-600">{c.desc}</p>
-
-              <div className="mt-4 text-sm font-medium text-gray-900 underline-offset-4 group-hover:underline">
-                Open
-              </div>
-            </Link>
-          ))}
-
-          {role === "dev" && (
-            <Link
-              href="/trainer/courses"
-              className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Trainer Panel
-                </h2>
-                <span className="text-gray-400 transition group-hover:translate-x-0.5">
-                  →
-                </span>
-              </div>
-
-              <p className="mt-2 text-sm text-gray-600">
-                Manage courses, modules, and uploads.
-              </p>
-
-              <div className="mt-4 text-sm font-medium text-gray-900 underline-offset-4 group-hover:underline">
-                Open
-              </div>
-            </Link>
-          )}
-        </div>
+      {/* Page content */}
+      <div className="relative">
+        <DashboardClient displayName={displayName} cards={cards} isDev={role === "dev"} />
       </div>
     </div>
   );

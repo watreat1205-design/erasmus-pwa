@@ -1,28 +1,173 @@
 {
   "appName": "Erasmus PWA",
-
   "brand": {
     "name": "DROPS",
     "tagline": "Plataforma e-learning",
-    "logoAlt": "DROPS of Sustainable Development"
+    "logoAlt": "DROPS del Desarrollo Sostenible"
   },
-
   "nav": {
     "languageLabel": "Idioma {{lang}}",
     "register": "Registrarse",
     "login": "Iniciar sesión",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "dashboard": "Panel",
+    "courses": "Cursos",
+    "certificates": "Certificados",
+    "quizzes": "Cuestionarios",
+    "welcomePage": "Página de bienvenida",
+    "admin": "Admin",
+    "users": "Usuarios",
+    "authoring": "Autoría",
+    "profile": "Perfil"
   },
-
   "welcome": {
-    "title": "DROPS of Sustainable Development",
+    "title": "DROPS del Desarrollo Sostenible",
     "subtitle": "Plataforma de aprendizaje digital para formadores y educadores.",
-    "back": "¡Bienvenido de nuevo! 👋",
-    "backWithName": "¡Bienvenido de nuevo, {{name}}! 👋"
+    "back": "¡Bienvenido/a de nuevo! 👋",
+    "backWithName": "¡Bienvenido/a de nuevo, {{name}}! 👋"
   },
-
   "buttons": {
     "goToCourses": "Ir a Cursos",
-    "goToDashboard": "Ir al Dashboard"
+    "goToDashboard": "Ir al Panel"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "mustBeLoggedIn": "Debes iniciar sesión.",
+    "goToLogin": "Ir a iniciar sesión"
+  },
+  "courses": {
+    "courseFallback": "Curso",
+    "notFound": "Curso no encontrado",
+    "trainerLogin": "Acceso formador",
+    "title": "Cursos",
+    "subtitle": "Explora los cursos disponibles.",
+    "loadError": "No se pudieron cargar los cursos.",
+    "empty": "Aún no hay cursos publicados.",
+    "noDescription": "Sin descripción.",
+    "open": "Abrir"
+  },
+  "common": {
+    "back": "Atrás",
+    "open": "Abrir",
+    "notFound": "No encontrado",
+    "backToWelcome": "Volver al inicio"
+  },
+  "learn": {
+    "breadcrumbs": "Módulo → Lección → Actividad"
+  },
+  "dashboard": {
+    "welcomeBack": "¡Bienvenido/a de nuevo, {{name}}! 👋",
+    "chooseNext": "Elige lo que quieres hacer a continuación.",
+    "trainerPanel": "Panel del Formador",
+    "trainerPanelDesc": "Gestiona cursos, módulos y cargas.",
+    "cards": {
+      "myCourses": { "title": "Mis cursos", "desc": "Continúa las lecciones y sigue tu progreso." },
+      "certificates": { "title": "Certificados", "desc": "Ver y descargar certificados PDF." },
+      "quizzes": { "title": "Cuestionarios", "desc": "Realiza cuestionarios y consulta resultados." },
+      "profile": { "title": "Perfil", "desc": "Actualiza tus datos y preferencias." },
+      "support": { "title": "Soporte", "desc": "Contáctanos o lee las FAQ." },
+      "settings": { "title": "Ajustes", "desc": "Idioma, notificaciones y cuenta." }
+    }
+  },
+  "certificates": {
+    "title": "Certificados",
+    "subtitle": "Tus certificados de cursos obtenidos.",
+    "loginToView": "Inicia sesión para ver tus certificados.",
+    "pdfDownload": "Descarga PDF",
+    "total": "{{count}} en total",
+    "emptyTitle": "Aún no hay certificados",
+    "emptyBody": "Completa un curso para obtener uno. Cuando un curso llegue al 100%, tu certificado aparecerá aquí.",
+    "goToMyCourses": "Ir a Mis cursos",
+    "issued": "Emitido",
+    "completed": "Completado",
+    "unavailable": "Certificado no disponible",
+    "downloadPdf": "Descargar PDF",
+    "preparing": "Preparando certificado...",
+    "clickToOpen": "Clic para abrir",
+    "failedToGenerate": "No se pudo generar el certificado",
+    "couldNotGenerate": "No se pudo generar el certificado."
+  },
+  "quizzes": {
+    "title": "Cuestionarios",
+    "subtitle": "Haz un cuestionario y consulta tus resultados.",
+    "emptyTitle": "Aún no hay cuestionarios",
+    "emptyBody": "Cuando se añada un cuestionario a un curso, aparecerá aquí.",
+    "passScore": "Puntuación mínima:",
+    "lastAttempt": "Último intento",
+    "score": "Puntuación",
+    "noAttempts": "Aún no hay intentos.",
+    "start": "Empezar cuestionario",
+    "retake": "Repetir cuestionario",
+    "locked": "Bloqueado",
+    "lockedHint": "Completa el cuestionario anterior del módulo para desbloquear",
+    "loading": "Cargando cuestionario...",
+    "notFound": "Cuestionario no encontrado.",
+    "welcomeTitle": "¡Bienvenido/a al cuestionario {{title}}!",
+    "submit": "Enviar",
+    "submitting": "Enviando...",
+    "passed": "Aprobado",
+    "notPassed": "No aprobado",
+    "tryAgain": "Intentar de nuevo",
+    "submitFailed": "Error al enviar",
+    "misconfigured": "El cuestionario está mal configurado.",
+    "failedToLoadQuiz": "No se pudo cargar el cuestionario:",
+    "failedToLoadQuestions": "No se pudieron cargar las preguntas:",
+    "pleaseAnswerAll": "Responde todas las preguntas antes de enviar.",
+    "networkError": "Error de red"
+  },
+  "quizPaper": {
+    "intro": "Este breve cuestionario evalúa tu comprensión del enfoque TEAL. Responde las siguientes preguntas basándote en lo aprendido en la ACTIVIDAD 1.1: Explorando TEAL del MÓDULO 1: Introducción a la metodología de enseñanza TEAL. El cuestionario examina tu conocimiento de la definición de TEAL, sus componentes principales (aprendizaje activo, integración tecnológica y colaboración), su origen y cómo se compara con los métodos tradicionales.",
+    "quote": "\"Los mejores profesores son aquellos que te muestran dónde mirar, pero no te dicen qué ver.\" – Alexandra K. Trenfor. ¡Esperamos que este cuestionario te ayude a ver cómo TEAL puede mejorar tu enseñanza!",
+    "noteLabel": "Nota:",
+    "noteBody": "El cuestionario es para aprender. Puedes repetirlo si lo necesitas.",
+    "requiredHint": "Indica una pregunta obligatoria"
+  },
+  "lesson": {
+    "activity": "Actividad",
+    "lesson": "Lección",
+    "module": "Módulo",
+    "badRouteTitle": "Ruta incorrecta",
+    "missingParams": "Falta courseId/lessonId en la URL.",
+    "accessDenied": "Acceso denegado",
+    "notEnrolled": "No estás inscrito/a en este curso.",
+    "backToMyCourses": "Volver a Mis cursos",
+    "backToCourse": "Volver al curso",
+    "notFoundTitle": "Actividad no encontrada",
+    "markComplete": "Marcar como completado",
+    "completed": "Completado",
+    "openMaterialsHint": "Abre los materiales a continuación para completar esta actividad.",
+    "materials": "Materiales",
+    "openPdf": "Abrir PDF",
+    "videos": "Vídeos",
+    "openOnYouTube": "Abrir en YouTube",
+    "downloads": "Descargas",
+    "download": "Descargar",
+    "noMaterials": "No se encontraron materiales.",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "endOfCourse": "Fin del curso"
+  },
+  "myCourses": {
+    "title": "Mis cursos",
+    "subtitle": "Cursos en los que estás inscrito/a.",
+    "empty": "Aún no estás inscrito/a en ningún curso.",
+    "noDescription": "Sin descripción.",
+    "progress": "Progreso",
+    "completed": "Completado",
+    "openCourse": "Abrir curso",
+    "activities": "Actividades",
+    "quizzesPassed": "Cuestionarios aprobados",
+    "notPublished": "No publicado"
+  },
+  "resources": {
+    "title": "Recursos",
+    "open": "Abrir",
+    "download": "Descargar",
+    "pdfPreview": "Vista previa PDF",
+    "openFullscreen": "Abrir en pantalla completa",
+    "docHint": "Este documento está disponible para abrir/descargar.",
+    "openDocument": "Abrir documento",
+    "openResource": "Abrir recurso",
+    "document": "Documento"
   }
 }

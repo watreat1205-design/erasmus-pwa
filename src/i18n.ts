@@ -14,7 +14,6 @@ let initialized = false;
 
 export function ensureI18n() {
   if (initialized) return i18n;
-
   initialized = true;
 
   i18n
@@ -27,10 +26,8 @@ export function ensureI18n() {
         it: { common: itCommon },
         es: { common: esCommon },
         ro: { common: roCommon },
-        hr: { common: hrCommon }
+        hr: { common: hrCommon },
       },
-
-       lng: "en", 
 
       fallbackLng: "en",
       defaultNS: "common",
@@ -40,18 +37,23 @@ export function ensureI18n() {
       load: "languageOnly",
       react: { useSuspense: false },
 
+      // ✅ COOKIE ONLY
       detection: {
-        // URL wins first (prevents surprises), then localStorage, then navigator
-        order: ["querystring", "localStorage", "navigator"],
-        lookupQuerystring: "lang",
-        caches: ["localStorage"]
+        order: ["cookie"],
+        lookupCookie: "i18nextLng",
+        cookieName: "i18nextLng",
+        caches: ["cookie"],
       },
 
       returnNull: false,
       returnEmptyString: false,
-
-      interpolation: { escapeValue: false }
+      interpolation: { escapeValue: false },
     });
+
+  // Keep cookie in sync (safe even if detector already caches to cookie)
+  i18n.on("languageChanged", (lng) => {
+    document.cookie = `i18nextLng=${lng}; path=/; max-age=31536000; samesite=lax`;
+  });
 
   return i18n;
 }

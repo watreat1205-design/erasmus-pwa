@@ -1,13 +1,20 @@
 import Image from "next/image";
 
-type Props = {
+  type Props = {
   className?: string;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 };
 
 export default function BrandHeader({ className = "", size = "md" }: Props) {
-  const height = size === "sm" ? 36 : 44; // px
-  const hClass = size === "sm" ? "h-9" : "h-11";
+  const height =
+    size === "sm" ? 36 :
+    size === "lg" ? 80 :
+    44;
+
+  const hClass =
+    size === "sm" ? "h-9" :
+    size === "lg" ? "h-20" :
+    "h-11";
 
   return (
     <div
@@ -19,7 +26,7 @@ export default function BrandHeader({ className = "", size = "md" }: Props) {
         {/* LEFT: DROPS */}
         <div className="flex items-center justify-start">
           <Image
-            src="/quiz-brand/drops.jpg"
+            src="/brand/drops-logo.png"
             alt="DROPS of Sustainable Development"
             width={260}
             height={height}
