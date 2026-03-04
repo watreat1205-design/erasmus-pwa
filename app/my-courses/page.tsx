@@ -3,7 +3,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
 import Image from "next/image";
 import bgTemplate5 from "../../Templates/5.jpg";
-import T from "./T";
 
 type ModuleQuizLite = {
   id: string;
@@ -112,13 +111,13 @@ export default async function MyCoursesPage() {
     href="/dashboard"
     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
   >
-    <T k="nav.dashboard" fallback="Dashboard" />
+    Dashboard
   </Link>
    <Link
   href="/welcome"
   className="inline-flex items-center rounded-md bg-black px-4 py-2 text-sm font-medium hover:bg-gray-900 !text-white [&_*]:!text-white"
 >
-  <T k="nav.welcomePage" fallback="Back to welcome" />
+  Back to welcome
 </Link>
 
 </div>
