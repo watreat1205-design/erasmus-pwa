@@ -1,3 +1,4 @@
+// lib/supabase/server.ts
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
@@ -20,4 +21,9 @@ export async function createClient() {
       },
     }
   );
+}
+
+// ✅ Backwards-compatible name (so the rest of the app builds)
+export async function createSupabaseServerClient() {
+  return createClient();
 }
