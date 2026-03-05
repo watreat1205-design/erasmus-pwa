@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { login } from "./actions";
 
-
 export default async function LoginPage({
   searchParams,
 }: {
@@ -34,39 +33,29 @@ export default async function LoginPage({
   if (inviteToken) params.set("invite", inviteToken);
   if (lang) params.set("lang", lang);
 
+  const qs = params.toString();
+
   const nextUrl =
-    params.toString().length > 0
-      ? `${safeBase}${safeBase.includes("?") ? "&" : "?"}${params}`
-      : safeBase;
+    qs.length > 0 ? `${safeBase}${safeBase.includes("?") ? "&" : "?"}${qs}` : safeBase;
 
-  const signupHref =
-    inviteToken || lang
-      ? `/signup?${params.toString()}`
-      : "/signup";
+  const signupHref = qs.length > 0 ? `/signup?${qs}` : "/signup";
+  const welcomeHref = qs.length > 0 ? `/welcome?${qs}` : "/welcome";
 
-  const welcomeHref =
-    inviteToken || lang
-      ? `/welcome?${params.toString()}`
-      : "/welcome";
+  // Keep invite/lang in reset flow too (optional but nice)
+  const resetHref = qs.length > 0 ? `/reset-password?${qs}` : "/reset-password";
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
-      {/* Portrait FULL-COLOR template */}
+      {/* Background template */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
-          <Image
-            src="/templates/3.jpg"
-            alt=""
-            fill
-            priority
-            className="object-cover"
-          />
+          <Image src="/templates/3b.jpg" alt="" fill priority className="object-cover" />
         </div>
       </div>
 
       {/* Login form card */}
-      <div className="w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
-        <form action={login} className="space-y-2">
+      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
+        <form action={login} className="space-y-2" autoComplete="on">
           <h1 className="text-2xl font-semibold mb-3 text-gray-900">Login</h1>
 
           {/* Hidden redirect */}
@@ -83,6 +72,7 @@ export default async function LoginPage({
             type="email"
             placeholder="Email"
             required
+            autoComplete="email"
             className="w-full rounded-lg border px-4 py-1.5"
           />
 
@@ -91,8 +81,15 @@ export default async function LoginPage({
             type="password"
             placeholder="Password"
             required
+            autoComplete="current-password"
             className="w-full rounded-lg border px-4 py-1.5"
           />
+
+          <div className="flex items-center justify-end">
+            <Link href={resetHref} className="text-sm text-gray-600 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
 
           <button
             type="submit"
@@ -103,7 +100,7 @@ export default async function LoginPage({
 
           <p className="mt-3 text-sm text-gray-600">
             Don&apos;t have an account?{" "}
-            <Link href={signupHref} className="font-medium text-emerald-700">
+            <Link href={signupHref} className="font-medium text-emerald-700 hover:underline">
               Register
             </Link>
           </p>

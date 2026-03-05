@@ -41,14 +41,18 @@ export default function SignupClient() {
     setMsg(null);
     setLoading(true);
 
+    const cleanEmail = email.trim().toLowerCase();
+
     const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
+      email: cleanEmail,
+      password,
+      options: {
+        // IMPORTANT: no stray quotes here
+        emailRedirectTo: `${window.location.origin}${welcomeHref}`,
         data: {
-        full_name: fullName.trim(),
+          full_name: fullName.trim(),
+        },
       },
-     },
     });
 
     if (error) {
@@ -57,111 +61,112 @@ export default function SignupClient() {
       return;
     }
 
-   const userId = data.user?.id;
-if (!userId) {
-  setMsg("Signup succeeded but user id is missing.");
-  setLoading(false);
-  return;
-}
+    const userId = data.user?.id;
+    if (!userId) {
+      setMsg("Signup succeeded but user ID is missing.");
+      setLoading(false);
+      return;
+    }
 
-const { error: pErr } = await supabase.from("profiles").upsert({
-  id: userId,
-  full_name:
-    fullName.trim() || data.user?.user_metadata?.full_name || null,
-  email: email.trim().toLowerCase(),
-  role: "user",
-});
+    // If email confirmation is enabled, session may be null
+    if (!data.session) {
+      setMsg("Account created. Please check your email to confirm your account, then log in.");
+      setLoading(false);
+      return;
+    }
 
-if (pErr) {
-  setMsg(pErr.message);
-  setLoading(false);
-  return;
-}
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: userId,
+      full_name: fullName.trim() || data.user?.user_metadata?.full_name || null,
+      email: cleanEmail,
+      role: "user",
+    });
 
-router.replace(welcomeHref);
+    if (profileError) {
+      setMsg(profileError.message);
+      setLoading(false);
+      return;
+    }
 
+    router.replace(welcomeHref);
   }
 
-   return (
-  <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
-    {/* Portrait FULL-COLOR template */}
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
-        <Image
-          src="/templates/3.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-        />
-      </div>
-    </div>
-
-    {/* Signup form card */}
-    <div className="w-full max-w-sm rounded-2xl bg-white/75 p-2.5 sm:p-3.5 shadow-lg backdrop-blur-md -mt-6">
-      {inviteToken && (
-        <div className="rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800 mb-2">
-          You’re signing up via an NGO invite. After signup we’ll take you back.
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12">
+      {/* Background template */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
+          <Image src="/templates/3b.jpg" alt="" fill priority className="object-cover" />
         </div>
-      )}
+      </div>
 
-      <h1 className="text-2xl font-semibold mb-3 text-gray-900">
-        Create account
-      </h1>
-
-      <form onSubmit={onSignup} className="space-y-2">
-        <input
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="w-full rounded-lg border px-4 py-1.5"
-          placeholder="Full name"
-        />
-
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full rounded-lg border px-4 py-1.5"
-          placeholder="Email"
-        />
-
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full rounded-lg border px-4 py-1.5"
-          placeholder="Password"
-        />
-
-        {msg && (
-          <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">
-            {msg}
+      {/* Signup card */}
+      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white/75 p-3 sm:p-4 shadow-lg backdrop-blur-md -mt-6">
+        {inviteToken && (
+          <div className="rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800 mb-2">
+            You’re signing up via an NGO invite. After signup we’ll take you back.
           </div>
         )}
 
-        <button
-          disabled={loading}
-          className="w-full rounded-xl bg-emerald-600 py-2 text-white font-semibold hover:bg-emerald-700"
-        >
-          {loading ? "Creating..." : "Sign up"}
-        </button>
-      </form>
+        <h1 className="text-2xl font-semibold mb-3 text-gray-900">Create account</h1>
 
-      <p className="mt-3 text-sm text-gray-600">
-        Already have an account?{" "}
-        <Link href={loginHref} className="font-medium text-emerald-700">
-          Log in
-        </Link>
-      </p>
+        <form onSubmit={onSignup} autoComplete="on" className="space-y-2">
+          <input
+            name="full_name"
+            autoComplete="name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full rounded-lg border px-4 py-1.5"
+            placeholder="Full name"
+          />
 
-      <p className="text-xs text-gray-500">
-        <Link href={welcomeHref} className="hover:underline">
-          Back to Welcome
-        </Link>
-      </p>
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full rounded-lg border px-4 py-1.5"
+            placeholder="Email"
+          />
+
+          <input
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full rounded-lg border px-4 py-1.5"
+            placeholder="Password"
+          />
+
+          {msg && (
+            <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">{msg}</div>
+          )}
+
+          <button
+            disabled={loading}
+            className="w-full rounded-xl bg-emerald-600 py-2 text-white font-semibold hover:bg-emerald-700 disabled:opacity-50"
+          >
+            {loading ? "Creating..." : "Sign up"}
+          </button>
+        </form>
+
+        <p className="mt-3 text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link href={loginHref} className="font-medium text-emerald-700 hover:underline">
+            Log in
+          </Link>
+        </p>
+
+        <p className="text-xs text-gray-500 mt-1">
+          <Link href={welcomeHref} className="hover:underline">
+            Back to Welcome
+          </Link>
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
 }
