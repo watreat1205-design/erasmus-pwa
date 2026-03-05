@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import bgTemplate5 from "../../../../../Templates/5.jpg";
 
 import { redirect } from "next/navigation";
 import { markLessonComplete, markLessonIncomplete } from "../../../../courses/actions";
@@ -8,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import LessonMaterialsClient from "@/components/lesson/LessonMaterialsClient";
 import LockBodyScroll from "@/components/lesson/LockBodyScroll";
-import T from "./T";
+import T from "@/components/T";
 
 // -------------------------
 // Helpers
@@ -128,7 +127,7 @@ export default async function LessonPage({
     return (
       <div className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 -translate-y-7">
-          <Image src={bgTemplate5} alt="" fill priority className="object-cover object-center" />
+          <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-center" />
         </div>
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
@@ -368,7 +367,7 @@ export default async function LessonPage({
       <LockBodyScroll />
       {/* Fixed background */}
       <div className="fixed inset-0 -z-10 -translate-y-7">
-        <Image src={bgTemplate5} alt="" fill priority className="object-cover object-center" />
+        <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-center" />
       </div>
       <div className="fixed inset-0 -z-10 bg-black/20" />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/10 via-transparent to-black/25" />

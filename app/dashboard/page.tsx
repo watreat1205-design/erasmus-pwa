@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
-import bgTemplate5 from "../../Templates/5.jpg";
 import DashboardClient from "./DashboardClient";
 
 export const dynamic = "force-dynamic";
@@ -68,7 +67,7 @@ export default async function DashboardPage() {
       <div
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url(${bgTemplate5.src})`,
+          backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center -410px",

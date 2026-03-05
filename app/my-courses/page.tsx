@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
 import Image from "next/image";
-import bgTemplate5 from "../../Templates/5.jpg";
+import T from "@/components/T";
 
 type ModuleQuizLite = {
   id: string;
@@ -353,7 +353,7 @@ return (
     {/* Background */}
     <div className="absolute inset-0 -translate-y-7">
       <Image
-        src={bgTemplate5}
+        src="/templates/5.jpg"
         alt=""
         fill
         priority

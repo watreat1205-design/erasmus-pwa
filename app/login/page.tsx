@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { login } from "./actions";
 
-import bgTemplate3 from "../../Templates/3b.jpg";
 
 export default async function LoginPage({
   searchParams,
@@ -56,7 +55,7 @@ export default async function LoginPage({
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
           <Image
-            src={bgTemplate3}
+            src="/templates/3.jpg"
             alt=""
             fill
             priority

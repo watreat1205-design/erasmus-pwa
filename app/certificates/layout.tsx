@@ -1,4 +1,3 @@
-import bgTemplate5 from "../../Templates/5.jpg";
 
 export default function CertificatesLayout({
   children,
@@ -11,7 +10,7 @@ export default function CertificatesLayout({
       <div
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url(${bgTemplate5.src})`,
+          backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center -410px",

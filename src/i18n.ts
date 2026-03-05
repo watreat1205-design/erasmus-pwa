@@ -16,40 +16,34 @@ export function ensureI18n() {
   if (initialized) return i18n;
   initialized = true;
 
-  i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-      resources: {
-        en: { common: enCommon },
-        el: { common: elCommon },
-        it: { common: itCommon },
-        es: { common: esCommon },
-        ro: { common: roCommon },
-        hr: { common: hrCommon },
-      },
+i18n
+  .use(LanguageDetector as any)
+  .use(initReactI18next as any)
+  .init({
+    resources: {
+      en: { common: enCommon },
+      el: { common: elCommon },
+      it: { common: itCommon },
+      es: { common: esCommon },
+      ro: { common: roCommon },
+      hr: { common: hrCommon },
+    },
 
-      fallbackLng: "en",
-      defaultNS: "common",
+    fallbackLng: "en",
+    defaultNS: "common",
 
-      supportedLngs: ["en", "el", "it", "es", "ro", "hr"],
-      nonExplicitSupportedLngs: true,
-      load: "languageOnly",
-      react: { useSuspense: false },
+    supportedLngs: ["en", "el", "it", "es", "ro", "hr"],
+    nonExplicitSupportedLngs: true,
+    load: "languageOnly",
+    react: { useSuspense: false },
 
-      // ✅ COOKIE ONLY
-      detection: {
-        order: ["cookie"],
-        lookupCookie: "i18nextLng",
-        cookieName: "i18nextLng",
-        caches: ["cookie"],
-      },
-
-      returnNull: false,
-      returnEmptyString: false,
-      interpolation: { escapeValue: false },
-    });
-
+    detection: {
+      order: ["cookie"],
+      lookupCookie: "i18nextLng",
+      cookieName: "i18nextLng",
+      caches: ["cookie"],
+    },
+  } as any);
   // Keep cookie in sync (safe even if detector already caches to cookie)
   i18n.on("languageChanged", (lng) => {
     document.cookie = `i18nextLng=${lng}; path=/; max-age=31536000; samesite=lax`;

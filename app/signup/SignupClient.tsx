@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import bgTemplate3 from "../../Templates/3b.jpg";
 
 export default function SignupClient() {
   const supabase = createClient();
@@ -89,7 +88,7 @@ router.replace(welcomeHref);
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="relative w-full max-w-xl min-h-screen overflow-hidden rounded-2xl shadow-2xl border border-white/30">
         <Image
-          src={bgTemplate3}
+          src="/templates/3.jpg"
           alt=""
           fill
           priority

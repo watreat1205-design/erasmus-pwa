@@ -1,5 +1,4 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import bgTemplate5 from "../../Templates/5.jpg";
 import QuizzesClient from "./QuizzesClient";
 
 export default async function QuizzesPage() {
@@ -54,7 +53,7 @@ export default async function QuizzesPage() {
       <div
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url(${bgTemplate5.src})`,
+          backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center -410px",

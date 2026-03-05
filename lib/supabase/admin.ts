@@ -1,8 +1,2 @@
-import "server-only";
-import { createClient } from "@supabase/supabase-js";
-
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false, autoRefreshToken: false } }
-);
+// Bridge: "@/lib/supabase/admin" -> "src/lib/supabase/admin"
+export * from "../../src/lib/supabase/admin";

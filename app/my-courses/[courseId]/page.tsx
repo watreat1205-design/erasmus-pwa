@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import bgTemplate5 from "../../../Templates/5.jpg";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -119,7 +118,7 @@ export default async function CourseViewPage({
           {/* Background */}
           <div className="absolute inset-0 -translate-y-3">
             <Image
-              src={bgTemplate5}
+              src="/templates/5.jpg"
               alt=""
               fill
               priority
@@ -264,7 +263,7 @@ export default async function CourseViewPage({
       {/* Fixed background */}
       <div className="fixed inset-0 -z-10 -translate-y-7">
         <Image
-          src={bgTemplate5}
+          src="/templates/5.jpg"
           alt=""
           fill
           priority

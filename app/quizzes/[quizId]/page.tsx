@@ -3,7 +3,6 @@
 import { createClient } from "@/lib/supabase/client";
 import QuizPaper from "@/components/quiz/QuizPaper";
 import QuestionCard from "@/components/quiz/QuestionCard";
-import bgTemplate5 from "../../../Templates/5.jpg";
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -28,7 +27,7 @@ function BackgroundShell({ children }: { children: React.ReactNode }) {
       <div
         className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `url(${bgTemplate5.src})`,
+          backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center -410px",

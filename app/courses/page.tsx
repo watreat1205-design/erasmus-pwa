@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import CoursesHeaderClient from "./CoursesHeaderClient";
-import bgTemplate5 from "../../Templates/5.jpg";
 import CoursesPublicHeader from "./CoursesPublicHeader";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +22,7 @@ const courses = data ?? [];
     return (
       <div className="mx-auto max-w-5xl px-6 py-10">
         <Image
-          src={bgTemplate5}
+          src="/templates/5.jpg"
           alt=""
           fill
           priority
@@ -55,7 +54,7 @@ const courses = data ?? [];
     <div className="relative min-h-screen overflow-hidden">
       <div className="absolute inset-0 -translate-y-7">
         <Image
-          src={bgTemplate5}
+          src="/templates/5.jpg"
           alt=""
           fill
           priority

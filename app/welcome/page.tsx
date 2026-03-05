@@ -1,7 +1,6 @@
 // app/welcome/page.tsx
 import Image from "next/image";
 import { cookies } from "next/headers";
-import bgTemplate5 from "../../Templates/8.jpg";
 import { getMyProfile } from "../../src/lib/auth/getProfile";
 import WelcomeClient from "./WelcomeClient";
 
@@ -40,7 +39,7 @@ export default async function WelcomePage({
   return (
     <div className="relative min-h-screen overflow-hidden">
       <Image
-        src={bgTemplate5}
+        src="/templates/8.jpg"
         alt=""
         fill
         priority
