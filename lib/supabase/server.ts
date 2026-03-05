@@ -2,7 +2,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export async function createClient() {
+export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -14,16 +14,19 @@ export async function createClient() {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // If called from a Server Component where setting cookies is not allowed,
+            // ignore. Middleware/Route Handlers will handle refresh + setting.
+          }
         },
       },
     }
   );
 }
 
-// ✅ Backwards-compatible name (so the rest of the app builds)
-export async function createSupabaseServerClient() {
-  return createClient();
-}
+// Optional alias so older/newer imports don't break:
+export const createClient = createSupabaseServerClient;
