@@ -1,15 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/courses");
 
-  // Next.js 16: cookies() can be async depending on your setup/types
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -21,9 +20,9 @@ export async function login(formData: FormData) {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          );
         },
       },
     }
@@ -37,6 +36,9 @@ export async function login(formData: FormData) {
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
+
+  // Important: get user after login so cookies get committed
+  await supabase.auth.getUser();
 
   redirect(next);
 }
