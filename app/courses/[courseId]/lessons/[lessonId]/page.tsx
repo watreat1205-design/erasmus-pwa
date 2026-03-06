@@ -285,16 +285,12 @@ export default async function LessonPage({
                 return (
                   <div key={file.name} className="space-y-2">
                     <div className="text-sm font-medium text-gray-900">{file.name}</div>
-
-                    {isPdf ? (
-                      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-                        <iframe
-                          title={file.name}
-                          src={`${publicUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                          className="h-[720px] w-full"
-                        />
-                      </div>
-                    ) : (
+                      {isPdf ? (
+                       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-2">
+                        <PdfDocumentViewerNoSSR url={publicUrl} />
+                       </div>
+                      ) : (
+                  
                       <Link
                         href={publicUrl}
                         target="_blank"
