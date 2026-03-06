@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
-
 import { ensureI18n } from "../../src/i18n";
 
 export type WelcomeClientProps = {
@@ -36,11 +35,21 @@ export default function WelcomeClient({
     ensureI18n();
   }, []);
 
-  useEffect(() => {
-    if (initialLang && i18n.resolvedLanguage !== initialLang) {
-      i18n.changeLanguage(initialLang);
+  function changeLang(lang: string) {
+    try {
+      document.cookie = `i18nextLng=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+
+      if (i18n && typeof i18n.changeLanguage === "function") {
+        void i18n.changeLanguage(lang);
+        router.refresh();
+        return;
+      }
+
+      window.location.reload();
+    } catch {
+      window.location.reload();
     }
-  }, [initialLang, i18n]);
+  }
 
   return (
     <>
@@ -48,20 +57,22 @@ export default function WelcomeClient({
         <Link
           href="/welcome"
           prefetch={false}
-          className="flex items-center gap-3 rounded-xl px-2 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 focus-visible:ring-offset-white/60"
+          className="flex items-center gap-3 rounded-xl px-2 py-2"
         >
           <Image
             src="/brand/drops-logo.png"
             alt="DROPS logo"
             width={96}
             height={96}
-            className="h-20 w-20 sm:h-24 sm:w-24 object-contain"
+            className="h-20 w-20 object-contain sm:h-24 sm:w-24"
           />
           <div className="leading-tight">
             <div className="text-base font-semibold text-white sm:text-lg">
-              {t("brand.name")}
+              {t("brand.name", { defaultValue: "DROPS" })}
             </div>
-            <div className="text-sm text-white">{t("brand.tagline")}</div>
+            <div className="text-sm text-white">
+              {t("brand.tagline", { defaultValue: "e-learning platform" })}
+            </div>
           </div>
         </Link>
 
@@ -71,12 +82,9 @@ export default function WelcomeClient({
               <button
                 key={lang.code}
                 type="button"
-                onClick={() => {
-                  i18n.changeLanguage(lang.code);
-                  router.refresh();
-                }}
-                className="rounded-lg px-2.5 py-1.5 text-sm font-medium !text-white hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                aria-label={t("nav.languageLabel", { lang: lang.label })}
+                onClick={() => changeLang(lang.code)}
+                className="rounded-lg px-2.5 py-1.5 text-sm font-medium !text-white hover:bg-white/10"
+                aria-label={lang.label}
                 title={lang.label}
               >
                 <span className="mr-1">{lang.emoji}</span>
@@ -90,26 +98,26 @@ export default function WelcomeClient({
               <Link
                 href="/signup"
                 prefetch={false}
-                className="hidden rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-white focus:outline-none focus-visible:ring-2 sm:inline-flex"
+                className="hidden rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-white sm:inline-flex"
               >
-                {t("nav.register")}
+                {t("nav.register", { defaultValue: "Register" })}
               </Link>
 
               <Link
                 href="/login"
                 prefetch={false}
-                className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring sm:text-base"
+                className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:text-base"
               >
-                {t("nav.login")}
+                {t("nav.login", { defaultValue: "Login" })}
               </Link>
             </>
           ) : (
             <Link
               href="/logout"
               prefetch={false}
-              className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white/10 sm:text-base"
+              className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:text-base"
             >
-              {t("nav.logout")}
+              {t("nav.logout", { defaultValue: "Logout" })}
             </Link>
           )}
         </nav>
@@ -119,18 +127,23 @@ export default function WelcomeClient({
         <section className="w-full">
           <div className="max-w-2xl animate-[fadeUp_.35s_ease-out]">
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-white/80 drop-shadow-sm sm:text-5xl">
-              {t("welcome.title")}
+              {t("welcome.title", { defaultValue: "Welcome" })}
             </h1>
 
             <p className="mt-4 text-base font-medium leading-7 text-white/90 sm:text-lg">
-              {t("welcome.subtitle")}
+              {t("welcome.subtitle", {
+                defaultValue: "Digital learning platform for trainers and educators.",
+              })}
             </p>
 
             {loggedIn ? (
               <p className="mt-4 text-sm font-medium text-white/90">
                 {displayName
-                  ? t("welcome.backWithName", { name: displayName })
-                  : t("welcome.back")}
+                  ? t("welcome.backWithName", {
+                      name: displayName,
+                      defaultValue: `Welcome back, ${displayName}`,
+                    })
+                  : t("welcome.back", { defaultValue: "Welcome back" })}
               </p>
             ) : null}
 
@@ -138,17 +151,17 @@ export default function WelcomeClient({
               <Link
                 href={loggedIn ? "/courses" : "/login?next=/courses"}
                 prefetch={false}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-black/10 active:translate-y-[1px] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
               >
-                {t("buttons.goToCourses")}
+                {t("buttons.goToCourses", { defaultValue: "Go to Courses" })}
               </Link>
 
               <Link
                 href={loggedIn ? "/dashboard" : "/login?next=/dashboard"}
                 prefetch={false}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-black/10 active:translate-y-[1px] sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
               >
-                {t("buttons.goToDashboard")}
+                {t("buttons.goToDashboard", { defaultValue: "Go to Dashboard" })}
               </Link>
             </div>
           </div>
