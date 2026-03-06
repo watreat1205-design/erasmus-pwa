@@ -26,7 +26,7 @@ export default function QuizzesClient({
     ensureI18n();
   }, []);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
 
   return (
     <div className="relative">
@@ -40,9 +40,11 @@ export default function QuizzesClient({
               {t("quizzes.subtitle")}
             </p>
           </div>
+
           <Link
             href="/dashboard"
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
+            prefetch={false}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
           >
             {t("common.back")}
           </Link>
@@ -72,9 +74,7 @@ export default function QuizzesClient({
 
                 <div className="mt-2 text-sm text-gray-600">
                   {t("quizzes.passScore")}{" "}
-                  <span className="font-medium">
-                    {q.pass_score ?? "-"}%
-                  </span>
+                  <span className="font-medium">{q.pass_score ?? "-"}%</span>
                 </div>
 
                 {q.lastAttempt ? (
@@ -96,6 +96,7 @@ export default function QuizzesClient({
                           : t("quizzes.notPassed")}
                       </span>
                     </div>
+
                     <div className="mt-1 text-gray-700">
                       {t("quizzes.score")}{" "}
                       <span className="font-medium">
@@ -112,17 +113,16 @@ export default function QuizzesClient({
                 {q.isUnlocked ? (
                   <Link
                     href={`/quizzes/${q.id}`}
+                    prefetch={false}
                     className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold !text-white hover:bg-gray-900"
                   >
-                    {q.lastAttempt
-                      ? t("quizzes.retake")
-                      : t("quizzes.start")}
+                    {q.lastAttempt ? t("quizzes.retake") : t("quizzes.start")}
                   </Link>
                 ) : (
                   <button
                     type="button"
                     disabled
-                    className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 cursor-not-allowed"
+                    className="mt-4 inline-flex w-full cursor-not-allowed items-center justify-center rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600"
                     title={t("quizzes.lockedHint")}
                   >
                     🔒 {t("quizzes.locked")}

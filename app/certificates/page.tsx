@@ -1,6 +1,10 @@
-// src/app/certificates/page.tsx
+// app/certificates/page.tsx
+import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import CertificatesClient from "./CertificatesClient";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type CourseMini = { id: string; title: string };
 
@@ -11,6 +15,8 @@ type CertificateRow = {
 };
 
 export default async function CertificatesPage() {
+  noStore();
+
   const supabase = await createSupabaseServerClient();
 
   const {

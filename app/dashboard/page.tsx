@@ -1,18 +1,21 @@
-import Link from "next/link";
+// app/dashboard/page.tsx
+import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUserRole } from "@/lib/getRole";
 import DashboardClient from "./DashboardClient";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function DashboardPage() {
+  noStore();
+
   const supabase = await createSupabaseServerClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Default fallback
   let displayName = user?.email ?? "User";
 
   if (user) {
@@ -20,7 +23,7 @@ export default async function DashboardPage() {
       .from("profiles")
       .select("full_name")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     const full = profile?.full_name?.trim();
     if (full) displayName = full.split(/\s+/)[0];
@@ -32,7 +35,7 @@ export default async function DashboardPage() {
     {
       titleKey: "dashboard.cards.myCourses.title",
       descKey: "dashboard.cards.myCourses.desc",
-      href: "/courses", // change to "/my-courses" if that is the intended page
+      href: "/courses",
     },
     {
       titleKey: "dashboard.cards.certificates.title",
@@ -63,23 +66,24 @@ export default async function DashboardPage() {
 
   return (
     <div className="relative min-h-screen overflow-y-auto">
-      {/* Background */}
       <div
         className="fixed inset-0 -z-10"
         style={{
           backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center -410px",
+          backgroundPosition: "center top",
         }}
       />
 
-      {/* Overlay */}
       <div className="fixed inset-0 -z-10 bg-black/20" />
 
-      {/* Page content */}
       <div className="relative">
-        <DashboardClient displayName={displayName} cards={cards} isDev={role === "dev"} />
+        <DashboardClient
+          displayName={displayName}
+          cards={cards}
+          isDev={role === "dev"}
+        />
       </div>
     </div>
   );
