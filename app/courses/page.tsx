@@ -7,20 +7,26 @@ import CoursesPublicHeader from "./CoursesPublicHeader";
 
 export const dynamic = "force-dynamic";
 
+type CourseRow = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
 export default async function CoursesPublicPage() {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
-  .from("courses")
-  .select("id, title, description")
-  .eq("is_published", true)
-  .order("title", { ascending: true });
+    .from("courses")
+    .select("id, title, description")
+    .eq("is_published", true)
+    .order("title", { ascending: true });
 
-const courses = data ?? [];
+  const courses: CourseRow[] = data ?? [];
 
   if (error) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="relative min-h-screen overflow-hidden">
         <Image
           src="/templates/5.jpg"
           alt=""
@@ -29,7 +35,8 @@ const courses = data ?? [];
           className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/30" />
-        <div className="relative z-10 mx-auto max-w-2xl px-6 py-10 text-white">
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 py-10 text-white">
           <div className="mb-4">
             <Link
               href="/welcome"
@@ -67,50 +74,48 @@ const courses = data ?? [];
 
       <div className="relative z-10">
         <div className="mx-auto max-w-5xl px-6 py-10">
-         <div className="flex items-start justify-between gap-4">
-         <CoursesPublicHeader />
-         <div className="shrink-0">
-         <CoursesHeaderClient />
-         </div>
-        </div>
+          <div className="flex items-start justify-between gap-4">
+            <CoursesPublicHeader />
+            <div className="shrink-0">
+              <CoursesHeaderClient />
+            </div>
+          </div>
 
-          {!courses?.length ? (
+          {!courses.length ? (
             <div className="mt-8 rounded-xl border border-white/20 bg-white/85 p-6">
               <p className="text-gray-800">No published courses yet.</p>
             </div>
           ) : (
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {courses.map((c) => (
+              {courses.map((course) => (
                 <div
-                  key={c.id}
+                  key={course.id}
                   className="rounded-xl border border-white/20 bg-white/85 p-5 shadow-sm transition hover:shadow-md"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-semibold text-gray-900">
-                          {c.title}
-                        </h2>
-                        <span className="text-gray-400">→</span>
-                      </div>
-
-                      {c.description ? (
-                        <p className="mt-2 text-sm text-gray-700">
-                          {c.description}
-                        </p>
-                      ) : (
-                        <p className="mt-2 text-sm text-gray-600">
-                          No description.
-                        </p>
-                      )}
-
-                      <Link
-                        href={`/courses/${c.id}`}
-                        className="mt-4 inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium !text-white hover:bg-gray-900"
-                      >
-                        Open
-                      </Link>
+                  <div className="min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        {course.title}
+                      </h2>
+                      <span className="text-gray-400">→</span>
                     </div>
+
+                    {course.description ? (
+                      <p className="mt-2 text-sm text-gray-700">
+                        {course.description}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-sm text-gray-600">
+                        No description.
+                      </p>
+                    )}
+
+                    <Link
+                      href={`/courses/${course.id}`}
+                      className="mt-4 inline-flex items-center rounded-lg bg-black px-4 py-2 text-sm font-medium !text-white hover:bg-gray-900"
+                    >
+                      Open
+                    </Link>
                   </div>
                 </div>
               ))}
