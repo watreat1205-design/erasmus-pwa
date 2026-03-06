@@ -1,3 +1,4 @@
+// proxy.ts
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { ACCESS } from "@/lib/auth/access";
@@ -12,7 +13,7 @@ function isPublicRoute(pathname: string) {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/update-password") ||
-    pathname.startsWith("/courses") || // guest learner access (if you want)
+    pathname.startsWith("/courses") || // public browsing
     pathname.startsWith("/auth") ||
     pathname.startsWith("/unauthorized") ||
     pathname.startsWith("/_next") ||
@@ -29,6 +30,7 @@ function matchAllowed(pathname: string) {
     if (pathname === k) return k;
     if (pathname.startsWith(k.endsWith("/") ? k : `${k}/`)) return k;
   }
+
   return undefined;
 }
 
@@ -37,12 +39,12 @@ function matchAllowed(pathname: string) {
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  // Create response FIRST so we can attach cookies to it
-  const res = NextResponse.next({
-    request: { headers: req.headers },
+  let res = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
   });
 
-  /* ---------- SUPABASE (ALWAYS RUN) ---------- */
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -53,6 +55,7 @@ export async function proxy(req: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
+            req.cookies.set(name, value);
             res.cookies.set(name, value, options);
           });
         },
@@ -60,43 +63,56 @@ export async function proxy(req: NextRequest) {
     }
   );
 
-  // 🔑 ALWAYS refresh session so sb-* cookies are set/extended in prod
+  // Always refresh/read auth session first
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // ✅ Public routes still need cookie refresh — but no auth/role enforcement
+  // Public routes still need auth refresh, but no redirect/role checks
   if (isPublicRoute(pathname)) {
     return res;
   }
 
-  /* ---------- ROLE CHECK / PROTECTED ROUTES ---------- */
-
   const allowedKey = matchAllowed(pathname);
 
-  // If route isn't in ACCESS map, let it through
-  if (!allowedKey) return res;
+  // Route not protected by ACCESS map
+  if (!allowedKey) {
+    return res;
+  }
 
-  // If route is protected but user isn't logged in -> redirect to login
+  // Protected route + no user -> redirect to login
   if (!user) {
     const loginUrl = req.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("next", req.nextUrl.pathname + req.nextUrl.search);
-    return NextResponse.redirect(loginUrl);
+
+    const redirectRes = NextResponse.redirect(loginUrl);
+
+    // preserve any cookies that were refreshed during this request
+    res.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie);
+    });
+
+    return redirectRes;
   }
 
-  const { data: profile, error: pErr } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  // If profile missing (or RLS blocks), default to learner
-  const role = !pErr && profile?.role ? profile.role : "learner";
-
+  const role = !profileError && profile?.role ? profile.role : "learner";
   const allowed = ACCESS[allowedKey] ?? [];
+
   if (!allowed.includes(role)) {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
+    const redirectRes = NextResponse.redirect(new URL("/unauthorized", req.url));
+
+    res.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie);
+    });
+
+    return redirectRes;
   }
 
   return res;
