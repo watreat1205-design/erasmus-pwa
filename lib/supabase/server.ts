@@ -5,7 +5,7 @@ import { createServerClient } from "@supabase/ssr";
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -19,14 +19,16 @@ export async function createSupabaseServerClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // If called from a Server Component where setting cookies is not allowed,
-            // ignore. Middleware/Route Handlers will handle refresh + setting.
+            // In some Server Component contexts, cookies are read-only.
+            // Route handlers / proxy handle writable cookie updates.
           }
         },
       },
     }
   );
+
+  return supabase;
 }
 
-// Optional alias so older/newer imports don't break:
+// Backward-compatible alias
 export const createClient = createSupabaseServerClient;
