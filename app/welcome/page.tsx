@@ -1,10 +1,12 @@
 // app/welcome/page.tsx
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { getMyProfile } from "../../src/lib/auth/getProfile";
+import { unstable_noStore as noStore } from "next/cache";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import WelcomeClient from "./WelcomeClient";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const SUPPORTED = new Set(["en", "el", "it", "es", "ro", "hr"]);
 
@@ -27,14 +29,37 @@ export default async function WelcomePage({
 }: {
   searchParams?: Promise<{ invite?: string }>;
 }) {
+  noStore();
+
   const sp = (await searchParams) ?? {};
   const initialLang = await getLangFromCookie();
 
-  const profile = await getMyProfile().catch(() => null);
-  const loggedIn = !!profile;
+  const supabase = await createSupabaseServerClient();
 
-  const displayName =
-    (profile?.full_name || profile?.email || "").toString().trim() || null;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let displayName: string | null = null;
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    displayName =
+      (profile?.full_name ||
+        profile?.email ||
+        user.user_metadata?.full_name ||
+        user.email ||
+        "")
+        .toString()
+        .trim() || null;
+  }
+
+  const loggedIn = !!user;
 
   return (
     <div className="relative min-h-screen overflow-hidden">

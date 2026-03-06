@@ -1,4 +1,7 @@
+// app/courses/[courseId]/page.tsx
 import Link from "next/link";
+import Image from "next/image";
+import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import EnrollButton from "../EnrollButton";
 import AllCoursesButtonClient from "./AllCoursesButtonClient";
@@ -17,24 +20,60 @@ import {
   TPassed,
 } from "./CourseText";
 
-type SectionRow = { id: string; title: string; position: number };
-type LessonRow = { id: string; section_id: string; title: string; position: number };
-type ModuleQuizRow = { id: string; section_id: string; title: string; pass_score: number };
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type CourseRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  title_i18n?: Record<string, string> | null;
+  description_i18n?: Record<string, string> | null;
+};
+
+type SectionRow = {
+  id: string;
+  title: string;
+  position: number;
+  title_i18n?: Record<string, string> | null;
+};
+
+type LessonRow = {
+  id: string;
+  section_id: string;
+  title: string;
+  position: number;
+  title_i18n?: Record<string, string> | null;
+};
+
+type ModuleQuizRow = {
+  id: string;
+  section_id: string;
+  title: string;
+  pass_score: number;
+  title_i18n?: Record<string, string> | null;
+};
 
 export default async function CourseViewPage({
   params,
 }: {
   params: Promise<{ courseId: string }>;
 }) {
- const { lang } = await getServerTranslation(); 
- const { courseId } = await params;
+  noStore();
+
+  const { lang } = await getServerTranslation();
+  const { courseId } = await params;
 
   if (!courseId) {
     return (
-      <div style={{ padding: 24 }}>
-        <h2>Course</h2>
-        <p style={{ color: "crimson" }}>Missing courseId in URL.</p>
-        <Link href="/courses">← Back to Courses</Link>
+      <div className="min-h-screen bg-gray-100 px-6 py-10">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="text-2xl font-semibold text-gray-900">Course</h2>
+          <p className="mt-3 text-red-600">Missing courseId in URL.</p>
+          <Link href="/courses" className="mt-4 inline-block text-sm underline">
+            ← Back to Courses
+          </Link>
+        </div>
       </div>
     );
   }
@@ -49,19 +88,36 @@ export default async function CourseViewPage({
     .from("courses")
     .select("id, title, description, title_i18n, description_i18n")
     .eq("id", courseId)
-    .single();
+    .single<CourseRow>();
 
   if (cErr || !course) {
     return (
-      <div style={{ padding: 24 }}>
-        <h2>Course</h2>
-        <p style={{ color: "crimson" }}>{cErr?.message ?? "Not found"}</p>
-        <Link href="/courses">← Back to Courses</Link>
+      <div className="relative min-h-screen overflow-hidden">
+        <Image
+          src="/templates/5.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-6 py-10 text-white">
+          <h2 className="text-2xl font-semibold">Course</h2>
+          <p className="mt-3 text-red-200">{cErr?.message ?? "Not found"}</p>
+          <Link
+            href="/courses"
+            className="mt-4 inline-flex rounded-md bg-black/40 px-3 py-2 text-sm font-medium !text-white hover:bg-black/60"
+          >
+            ← Back to Courses
+          </Link>
+        </div>
       </div>
     );
   }
 
   let isEnrolled = false;
+
   if (user) {
     const { data: enrollment } = await supabase
       .from("course_enrollments")
@@ -93,10 +149,10 @@ export default async function CourseViewPage({
   const lessons = (lessonsData ?? []) as LessonRow[];
 
   const lessonsBySection = new Map<string, LessonRow[]>();
-  for (const l of lessons) {
-    const arr = lessonsBySection.get(l.section_id) ?? [];
-    arr.push(l);
-    lessonsBySection.set(l.section_id, arr);
+  for (const lesson of lessons) {
+    const arr = lessonsBySection.get(lesson.section_id) ?? [];
+    arr.push(lesson);
+    lessonsBySection.set(lesson.section_id, arr);
   }
 
   const { data: moduleQuizzesData } = sectionIds.length
@@ -111,8 +167,10 @@ export default async function CourseViewPage({
   const moduleQuizzes = (moduleQuizzesData ?? []) as ModuleQuizRow[];
 
   const quizBySection = new Map<string, ModuleQuizRow>();
-  for (const q of moduleQuizzes) {
-    if (!quizBySection.has(q.section_id)) quizBySection.set(q.section_id, q);
+  for (const quiz of moduleQuizzes) {
+    if (!quizBySection.has(quiz.section_id)) {
+      quizBySection.set(quiz.section_id, quiz);
+    }
   }
 
   const passedQuizSet = new Set<string>();
@@ -123,7 +181,9 @@ export default async function CourseViewPage({
       .eq("user_id", user.id)
       .eq("passed", true);
 
-    for (const a of quizAttempts ?? []) passedQuizSet.add((a as any).quiz_id);
+    for (const attempt of quizAttempts ?? []) {
+      passedQuizSet.add((attempt as { quiz_id: string }).quiz_id);
+    }
   }
 
   const LockedRow = ({ children }: { children: React.ReactNode }) => (
@@ -136,126 +196,170 @@ export default async function CourseViewPage({
   );
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <div className="flex items-start justify-between gap-6">
-        <div className="max-w-3xl">
-          <h1 className="text-4xl font-semibold !text-white">{pickI18n((course as any).title_i18n, lang, course.title)}</h1>
-
-          {course.description ? (
-            <p className="mt-3 text-base !text-white">{pickI18n((course as any).description_i18n, lang, course.description)}</p>
-          ) : (
-            <p className="mt-3 text-base text-gray-600">
-              <TNoDescription />
-            </p>
-          )}
-        </div>
-
-        <AllCoursesButtonClient />
+    <div className="relative min-h-screen overflow-hidden">
+      <div className="absolute inset-0 -translate-y-7">
+        <Image
+          src="/templates/5.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+        />
       </div>
 
-      {!isEnrolled && (
-        <div className="mt-8 rounded-xl border border-gray-200 bg-white p-8">
-          <h2 className="text-xl font-semibold text-gray-900">
-            <TEnrollTitle />
-          </h2>
-          <p className="mt-2 text-base text-gray-700">
-            <TEnrollBody />
-          </p>
+      <div className="absolute inset-0 bg-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
-          <div className="mt-5">
-            <EnrollButton courseId={courseId} />
-            {!user && (
-              <p className="mt-3 text-sm text-gray-600">
-                <TLoginHint />
+      <div className="relative z-10">
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <div className="flex items-start justify-between gap-6">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl font-semibold !text-white">
+                {pickI18n(course.title_i18n, lang, course.title)}
+              </h1>
+
+              {course.description ? (
+                <p className="mt-3 text-base !text-white">
+                  {pickI18n(course.description_i18n, lang, course.description)}
+                </p>
+              ) : (
+                <p className="mt-3 text-base text-white/80">
+                  <TNoDescription />
+                </p>
+              )}
+            </div>
+
+            <AllCoursesButtonClient />
+          </div>
+
+          {!isEnrolled && (
+            <div className="mt-8 rounded-xl border border-gray-200 bg-white p-8">
+              <h2 className="text-xl font-semibold text-gray-900">
+                <TEnrollTitle />
+              </h2>
+
+              <p className="mt-2 text-base text-gray-700">
+                <TEnrollBody />
               </p>
-            )}
-          </div>
-        </div>
-      )}
 
-      <div className="mt-10 space-y-6">
-        {!sections.length ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-8">
-            <p className="text-gray-800">
-              <TNoSections />
-            </p>
-          </div>
-        ) : (
-          sections
-            .filter((s) => (lessonsBySection.get(s.id) ?? []).length > 0)
-            .map((s) => {
-              const sectionLessons = lessonsBySection.get(s.id) ?? [];
-              const moduleQuiz = quizBySection.get(s.id) ?? null;
+              <div className="mt-5">
+                <EnrollButton courseId={courseId} />
+                {!user && (
+                  <p className="mt-3 text-sm text-gray-600">
+                    <TLoginHint />
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
-              return (
-                <div
-                  key={s.id}
-                  className="rounded-xl border border-gray-200 bg-white p-8"
-                >
-                  <div className="text-lg font-semibold text-gray-900">
-                    {s.position}. {pickI18n((s as any).title_i18n, lang, s.title)}
-                  </div>
+          <div className="mt-10 space-y-6">
+            {!sections.length ? (
+              <div className="rounded-xl border border-gray-200 bg-white p-8">
+                <p className="text-gray-800">
+                  <TNoSections />
+                </p>
+              </div>
+            ) : (
+              sections
+                .filter((section) => (lessonsBySection.get(section.id) ?? []).length > 0)
+                .map((section) => {
+                  const sectionLessons = lessonsBySection.get(section.id) ?? [];
+                  const moduleQuiz = quizBySection.get(section.id) ?? null;
 
-                  <div className="mt-5 space-y-3">
-                    <div className="text-base font-medium text-gray-800">
-                      <TLessons />
-                    </div>
-
-                    {sectionLessons.length ? (
-                      <div className="space-y-3">
-                        {sectionLessons.map((l) => {
-                          const href = `/courses/${courseId}/lessons/${l.id}`;
-                          return isEnrolled ? (
-                            <Link
-                              key={l.id}
-                              href={href}
-                              className="block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
-                            >
-                              {l.position}. {pickI18n((l as any).title_i18n, lang, l.title)}
-                            </Link>
-                          ) : (
-                            <LockedRow key={l.id}>
-                              {l.position}. {pickI18n((l as any).title_i18n, lang, l.title)}
-                            </LockedRow>
-                          );
-                        })}
+                  return (
+                    <div
+                      key={section.id}
+                      className="rounded-xl border border-gray-200 bg-white p-8"
+                    >
+                      <div className="text-lg font-semibold text-gray-900">
+                        {section.position}.{" "}
+                        {pickI18n(section.title_i18n, lang, section.title)}
                       </div>
-                    ) : (
-                      <p className="text-base text-gray-600">
-                        <TNoLessons />
-                      </p>
-                    )}
 
-                    {moduleQuiz && (
-                      <div className="mt-6">
+                      <div className="mt-5 space-y-3">
                         <div className="text-base font-medium text-gray-800">
-                          <TModuleQuiz />
+                          <TLessons />
                         </div>
 
-                        {isEnrolled ? (
-                          <Link
-                            href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
-                            className="mt-3 block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
-                          >
-                            {pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}
-                            {user && passedQuizSet.has(moduleQuiz.id) ? (
-                              <span className="ml-2 text-sm text-green-700">
-                                ✓ <TPassed />
-                              </span>
-                            ) : null}
-                          </Link>
+                        {sectionLessons.length ? (
+                          <div className="space-y-3">
+                            {sectionLessons.map((lesson) => {
+                              const href = `/courses/${courseId}/lessons/${lesson.id}`;
+
+                              return isEnrolled ? (
+                                <Link
+                                  key={lesson.id}
+                                  href={href}
+                                  className="block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
+                                >
+                                  {lesson.position}.{" "}
+                                  {pickI18n(
+                                    lesson.title_i18n,
+                                    lang,
+                                    lesson.title
+                                  )}
+                                </Link>
+                              ) : (
+                                <LockedRow key={lesson.id}>
+                                  {lesson.position}.{" "}
+                                  {pickI18n(
+                                    lesson.title_i18n,
+                                    lang,
+                                    lesson.title
+                                  )}
+                                </LockedRow>
+                              );
+                            })}
+                          </div>
                         ) : (
-                          <div className="mt-3">
-                            <LockedRow>{pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}</LockedRow>
+                          <p className="text-base text-gray-600">
+                            <TNoLessons />
+                          </p>
+                        )}
+
+                        {moduleQuiz && (
+                          <div className="mt-6">
+                            <div className="text-base font-medium text-gray-800">
+                              <TModuleQuiz />
+                            </div>
+
+                            {isEnrolled ? (
+                              <Link
+                                href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
+                                className="mt-3 block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
+                              >
+                                {pickI18n(
+                                  moduleQuiz.title_i18n,
+                                  lang,
+                                  moduleQuiz.title
+                                )}
+                                {user && passedQuizSet.has(moduleQuiz.id) ? (
+                                  <span className="ml-2 text-sm text-green-700">
+                                    ✓ <TPassed />
+                                  </span>
+                                ) : null}
+                              </Link>
+                            ) : (
+                              <div className="mt-3">
+                                <LockedRow>
+                                  {pickI18n(
+                                    moduleQuiz.title_i18n,
+                                    lang,
+                                    moduleQuiz.title
+                                  )}
+                                </LockedRow>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })
-        )}
+                    </div>
+                  );
+                })
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
