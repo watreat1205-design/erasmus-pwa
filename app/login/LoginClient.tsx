@@ -1,12 +1,12 @@
+// app/login/LoginClient.tsx
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginClient() {
-  const router = useRouter();
   const sp = useSearchParams();
 
   const inviteToken = (sp.get("invite") ?? "").trim() || null;
@@ -54,8 +54,9 @@ export default function LoginClient() {
         return;
       }
 
-      router.replace(nextUrl);
-      router.refresh();
+      // IMPORTANT:
+      // Use a full navigation so the next page loads with fresh auth cookies
+      window.location.href = nextUrl;
     } catch {
       setError("Network error");
       setPending(false);
@@ -65,15 +66,21 @@ export default function LoginClient() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-6 py-10">
       <div className="relative w-full max-w-xl min-h-[85vh] overflow-hidden rounded-2xl shadow-2xl border border-black/10">
-        <Image src="/templates/3b.jpg" alt="" fill priority className="object-cover" />
+        <Image
+          src="/templates/3b.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+        />
         <div className="absolute inset-0 bg-black/10" />
 
         <div className="relative z-10 min-h-[85vh] flex items-center justify-center px-5 py-10">
           <div className="w-full max-w-sm rounded-2xl bg-white/80 p-3 sm:p-4 shadow-lg backdrop-blur-md">
-            <h1 className="text-2xl font-semibold mb-3 text-gray-900">Login</h1>
+            <h1 className="mb-3 text-2xl font-semibold text-gray-900">Login</h1>
 
             {inviteToken && (
-              <div className="rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800 mb-2">
+              <div className="mb-2 rounded-lg bg-emerald-50 p-2 text-xs text-emerald-800">
                 You’re logging in via an NGO invite. We’ll continue after login.
               </div>
             )}
@@ -102,13 +109,19 @@ export default function LoginClient() {
               />
 
               <div className="flex items-center justify-end">
-                <Link href={resetHref} className="text-sm text-gray-700 hover:underline">
+                <Link
+                  href={resetHref}
+                  prefetch={false}
+                  className="text-sm text-gray-700 hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
 
               {error && (
-                <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">{error}</div>
+                <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">
+                  {error}
+                </div>
               )}
 
               <button
@@ -122,13 +135,21 @@ export default function LoginClient() {
 
             <p className="mt-3 text-sm text-gray-700">
               Don&apos;t have an account?{" "}
-              <Link href={signupHref} className="font-medium text-emerald-700 hover:underline">
+              <Link
+                href={signupHref}
+                prefetch={false}
+                className="font-medium text-emerald-700 hover:underline"
+              >
                 Register
               </Link>
             </p>
 
             <p className="text-xs text-gray-600">
-              <Link href={welcomeHref} className="hover:underline">
+              <Link
+                href={welcomeHref}
+                prefetch={false}
+                className="hover:underline"
+              >
                 Back to Welcome
               </Link>
             </p>
