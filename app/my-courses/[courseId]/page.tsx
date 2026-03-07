@@ -122,7 +122,7 @@ export default async function CourseViewPage({
               alt=""
               fill
               priority
-              className="object-cover object-center"
+              className="object-cover object-[center_-140px]"
             />
           </div>
           <div className="absolute inset-0 bg-black/20" />
@@ -267,7 +267,7 @@ export default async function CourseViewPage({
           alt=""
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-[center_-140px]"
         />
       </div>
       <div className="fixed inset-0 -z-10 bg-black/20" />
