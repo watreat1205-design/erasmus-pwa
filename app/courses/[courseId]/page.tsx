@@ -212,7 +212,7 @@ export default async function CourseViewPage({
 
       <div className="relative z-10">
         <div className="mx-auto max-w-4xl px-6 py-12">
-          <div className="flex items-start justify-between gap-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="max-w-3xl">
               <h1 className="text-4xl font-semibold !text-white">
                 {pickI18n(course.title_i18n, lang, course.title)}
@@ -228,8 +228,11 @@ export default async function CourseViewPage({
                 </p>
               )}
             </div>
-
-            <AllCoursesButtonClient />
+           
+             <div className="w-full sm:w-auto">
+              <AllCoursesButtonClient />
+             </div>
+            
           </div>
 
           {!isEnrolled && (
