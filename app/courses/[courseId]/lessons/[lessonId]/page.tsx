@@ -217,41 +217,42 @@ export default async function LessonPage({
     supabase.storage
       .from("course-assets")
       .getPublicUrl(`${current.assets_path}/${name}`).data.publicUrl;
-
-  return (
-    <div className="mx-auto max-w-5xl px-6 py-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <div className="text-sm !text-white">
-            {pickI18n((course as any).title_i18n, lang, course.title)}
-          </div>
-
-          <h1 className="text-2xl font-semibold !text-white">
-            {pickI18n((current as any).title_i18n, lang, current.title)}
-          </h1>
-
-          <div className="mt-1 text-sm !text-white">
-            {section ? (
-              <>
-                Module {section.position}:{" "}
-                {pickI18n((section as any).title_i18n, lang, section.title)} • Lesson{" "}
-                {current.position}
-              </>
-            ) : (
-              <>Lesson {current.position}</>
-            )}
-          </div>
+       return (
+  <div className="mx-auto max-w-5xl px-6 py-6">
+    {/* Header */}
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="min-w-0">
+        <div className="text-sm !text-white">
+          {pickI18n((course as any).title_i18n, lang, course.title)}
         </div>
 
+        <h1 className="text-3xl font-semibold leading-tight !text-white sm:text-4xl">
+          {pickI18n((current as any).title_i18n, lang, current.title)}
+        </h1>
+
+        <div className="mt-1 text-sm !text-white">
+          {section ? (
+            <>
+              Module {section.position}:{" "}
+              {pickI18n((section as any).title_i18n, lang, section.title)} • Lesson{" "}
+              {current.position}
+            </>
+          ) : (
+            <>Lesson {current.position}</>
+          )}
+        </div>
+      </div>
+
+      <div className="w-full sm:w-auto">
         <LessonActionsClient
           courseId={courseId}
           lessonId={lessonId}
           isCompleted={isCompleted}
         />
       </div>
+    </div>
 
-      {/* Optional lesson text */}
+    {/* Optional lesson text */}
       {current.content && (
         <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
           <div className="prose max-w-none whitespace-pre-wrap text-gray-800">
