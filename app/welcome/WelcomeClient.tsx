@@ -53,7 +53,7 @@ export default function WelcomeClient({
 
   return (
     <>
-      <header className="flex items-center justify-between py-7 sm:py-8">
+      <header className="flex flex-wrap items-center justify-between gap-3 py-7 sm:py-8">
         <Link
           href="/welcome"
           prefetch={false}
@@ -73,7 +73,7 @@ export default function WelcomeClient({
          </div> 
         </Link>
 
-        <nav className="flex items-center gap-3 sm:gap-5">
+        <nav className="flex flex-wrap items-center gap-2 sm:gap-5">
           <div className="hidden items-center gap-1 sm:flex">
             {LANGS.map((lang) => (
               <button
