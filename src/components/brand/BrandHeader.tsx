@@ -30,7 +30,7 @@ export default function BrandHeader({ className = "", size = "md" }: Props) {
         {/* DROPS */}
         <div className="flex items-center justify-center md:justify-start">
           <Image
-            src="/brand/drops-logo.png"
+            src="/brand/drops-logo1.png"
             alt="DROPS of Sustainable Development"
             width={320}
             height={height}
