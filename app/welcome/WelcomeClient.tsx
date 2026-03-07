@@ -74,7 +74,7 @@ export default function WelcomeClient({
         </Link>
 
         <nav className="flex flex-wrap items-center gap-2 sm:gap-5">
-          <div className="hidden items-center gap-1 sm:flex">
+          <div className="flex flex-wrap items-center gap-1">
             {LANGS.map((lang) => (
               <button
                 key={lang.code}
