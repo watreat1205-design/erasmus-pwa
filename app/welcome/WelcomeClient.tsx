@@ -60,20 +60,17 @@ export default function WelcomeClient({
           className="flex items-center gap-3 rounded-xl px-2 py-2"
         >
           <Image
-            src="/brand/drops-logo.png"
-            alt="DROPS logo"
-            width={96}
-            height={96}
-            className="h-20 w-20 object-contain sm:h-24 sm:w-24"
-          />
+           src="/brand/drops-logo1.png"
+           alt="DROPS logo"
+           width={160}
+           height={160}
+           className="h-32 w-32 object-contain sm:h-40 sm:w-40"
+         /> 
           <div className="leading-tight">
-            <div className="text-base font-semibold text-white sm:text-lg">
-              {t("brand.name", { defaultValue: "DROPS" })}
-            </div>
-            <div className="text-sm text-white">
-              {t("brand.tagline", { defaultValue: "e-learning platform" })}
-            </div>
-          </div>
+          <div className="text-sm text-white sm:text-base">
+             {t("brand.tagline", { defaultValue: "e-learning platform" })}
+          </div> 
+         </div> 
         </Link>
 
         <nav className="flex items-center gap-3 sm:gap-5">
