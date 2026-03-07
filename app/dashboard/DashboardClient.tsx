@@ -29,21 +29,21 @@ export default function DashboardClient({
   return (
     <div className="relative">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold !text-white">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-3xl font-semibold !text-white sm:text-4xl">
               {t("dashboard.welcomeBack", { name: displayName })}
             </h1>
-            <p className="mt-2 text-sm !text-white">
+            <p className="mt-2 text-sm !text-white sm:text-base">
               {t("dashboard.chooseNext")}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex w-full gap-3 sm:w-auto">
             <Link
               href="/welcome"
               prefetch={false}
-              className="inline-flex items-center justify-center rounded-md border border-white/40 bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20"
+              className="inline-flex flex-1 items-center justify-center rounded-md border border-white/40 bg-white/10 px-4 py-3 text-sm font-semibold text-white hover:bg-white/20 sm:flex-none sm:w-auto"
             >
               {t("nav.welcomePage")}
             </Link>
@@ -51,7 +51,7 @@ export default function DashboardClient({
             <Link
               href="/logout"
               prefetch={false}
-              className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-semibold !text-white shadow-sm hover:bg-gray-900"
+              className="inline-flex flex-1 items-center justify-center rounded-md bg-black px-4 py-3 text-sm font-semibold !text-white shadow-sm hover:bg-gray-900 sm:flex-none sm:w-auto"
             >
               {t("nav.logout")}
             </Link>
