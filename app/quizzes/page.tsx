@@ -24,7 +24,7 @@ export default async function QuizzesPage() {
             backgroundImage: "url(/templates/5.jpg)",
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
-            backgroundPosition: "center -120px"",
+            backgroundPosition: "center -120px",
           }}
         />
         <div className="fixed inset-0 -z-10 bg-black/20" />
@@ -94,7 +94,7 @@ export default async function QuizzesPage() {
           backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center top",
+          backgroundPosition: "center -120px",
         }}
       />
       <div className="fixed inset-0 -z-10 bg-black/20" />
