@@ -1,4 +1,4 @@
-
+// app/courses/layout.tsx
 export default function CoursesLayout({
   children,
 }: {
@@ -13,7 +13,7 @@ export default function CoursesLayout({
           backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center -260px",
+          backgroundPosition: "center center",
         }}
       />
 

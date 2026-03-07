@@ -197,7 +197,7 @@ export default async function CourseViewPage({
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0 -translate-y-7">
+      <div className="absolute inset-0 ">
         <Image
           src="/templates/5.jpg"
           alt=""

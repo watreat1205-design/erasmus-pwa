@@ -1,4 +1,4 @@
-
+// app/certificates/layout.tsx
 export default function CertificatesLayout({
   children,
 }: {
@@ -13,7 +13,7 @@ export default function CertificatesLayout({
           backgroundImage: "url(/templates/5.jpg)",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "center -220px"
+          backgroundPosition: "center center",
         }}
       />
 

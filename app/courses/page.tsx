@@ -32,7 +32,7 @@ export default async function CoursesPublicPage() {
           alt=""
           fill
           priority
-          className="object-cover object-[center_-220px]"
+          className="absolute inset-0"
         />
         <div className="absolute inset-0 bg-black/30" />
 
@@ -59,13 +59,13 @@ export default async function CoursesPublicPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0 -translate-y-7">
+      <div className="absolute inset-0 ">
         <Image
           src="/templates/5.jpg"
           alt=""
           fill
           priority
-          className="object-cover object-[center_-220px]"
+          className="object-cover object-center"
         />
       </div>
 
