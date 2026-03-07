@@ -361,13 +361,20 @@ export default async function LessonPage({
     if (!error) pdfUrl = data?.signedUrl ?? null;
   }
 
-  // ✅ UI: fixed background + one scrollbar
+    // ✅ UI: fixed background + one scrollbar
   return (
     <div className="relative h-screen overflow-hidden">
       <LockBodyScroll />
+
       {/* Fixed background */}
       <div className="fixed inset-0 -z-10 -translate-y-7">
-        <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-260px]" />
+        <Image
+          src="/templates/5.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-[center_-260px]"
+        />
       </div>
       <div className="fixed inset-0 -z-10 bg-black/20" />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
@@ -375,7 +382,7 @@ export default async function LessonPage({
       {/* Page layout */}
       <div className="mx-auto flex h-screen min-h-0 max-w-4xl flex-col px-6 pt-3 pb-0">
         {/* Compact top bar */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 text-sm text-white/90">
             <div className="truncate">
               <span className="text-white/80">{course.title}</span>
@@ -395,61 +402,42 @@ export default async function LessonPage({
             </div>
           </div>
 
-         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-  <div className="min-w-0">
-    <div className="truncate">
-      <span className="text-white/80">{course.title}</span>
-      <span className="mx-2 text-white/60">•</span>
-      <span className="font-semibold text-white">{current.title}</span>
-      <span className="mx-2 text-white/60">•</span>
-      {section ? (
-        <span className="text-white/80">
-          <T k="lesson.module" fallback="Module" /> {section.position}: {section.title} •{" "}
-          <T k="lesson.activity" fallback="Activity" /> {current.position}
-        </span>
-      ) : (
-        <span className="text-white/80">
-          <T k="lesson.activity" fallback="Activity" /> {current.position}
-        </span>
-      )}
-    </div>
-  </div>
+          <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
+            <Link
+              href={`/my-courses/${courseId}`}
+              className="inline-flex flex-1 items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white sm:flex-none"
+            >
+              ← <T k="common.back" fallback="Back" />
+            </Link>
 
-  <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
-    <Link
-      href={`/my-courses/${courseId}`}
-      className="inline-flex flex-1 items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white sm:flex-none"
-    >
-      ← <T k="common.back" fallback="Back" />
-    </Link>
+            {isCompleted ? (
+              <form action={markLessonIncomplete} className="flex-1 sm:flex-none">
+                <input type="hidden" name="courseId" value={courseId} />
+                <input type="hidden" name="lessonId" value={lessonId} />
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white"
+                >
+                  ✅ <T k="lesson.completed" fallback="Completed" />
+                </button>
+              </form>
+            ) : (
+              <form action={markLessonComplete} className="flex-1 sm:flex-none">
+                <input type="hidden" name="courseId" value={courseId} />
+                <input type="hidden" name="lessonId" value={lessonId} />
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
+                >
+                  <T k="lesson.markComplete" fallback="Mark complete" />
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
 
-    {isCompleted ? (
-      <form action={markLessonIncomplete} className="flex-1 sm:flex-none">
-        <input type="hidden" name="courseId" value={courseId} />
-        <input type="hidden" name="lessonId" value={lessonId} />
-        <button
-          type="submit"
-          className="inline-flex w-full items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white"
-        >
-          ✅ <T k="lesson.completed" fallback="Completed" />
-        </button>
-      </form>
-    ) : (
-      <form action={markLessonComplete} className="flex-1 sm:flex-none">
-        <input type="hidden" name="courseId" value={courseId} />
-        <input type="hidden" name="lessonId" value={lessonId} />
-        <button
-          type="submit"
-          className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
-        >
-          <T k="lesson.markComplete" fallback="Mark complete" />
-        </button>
-      </form>
-    )}
-  </div>
-</div>
         {/* Scroll area */}
-        <div className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
+        <div className="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-24">
           <div className="rounded-xl border border-white/20 bg-white/85 p-3">
             <div className="text-xs text-gray-700">
               <T
@@ -458,7 +446,11 @@ export default async function LessonPage({
               />
             </div>
 
-            <LessonMaterialsClient pdfUrl={pdfUrl} slidesUrl={slidesUrl} coverUrl={coverUrl} />
+            <LessonMaterialsClient
+              pdfUrl={pdfUrl}
+              slidesUrl={slidesUrl}
+              coverUrl={coverUrl}
+            />
 
             {(resourcesWithUrls.length > 0 || files.length > 0) && (
               <div className="mt-6 space-y-6 rounded-xl border border-gray-200 bg-white p-6">
@@ -495,7 +487,9 @@ export default async function LessonPage({
                   );
                 })()}
 
-                {resourcesWithUrls.some((r) => r.kind === "youtube" && (r as any).resolved_url) ? (
+                {resourcesWithUrls.some(
+                  (r) => r.kind === "youtube" && (r as any).resolved_url
+                ) ? (
                   <div className="rounded-xl border border-gray-200 bg-white p-4">
                     <div className="mb-3 text-sm font-semibold text-gray-900">
                       <T k="lesson.videos" fallback="Videos" />
@@ -565,7 +559,10 @@ export default async function LessonPage({
                             .getPublicUrl(fullPath).data.publicUrl;
 
                           return (
-                            <li key={fullPath} className="flex items-center justify-between rounded-lg border p-3">
+                            <li
+                              key={fullPath}
+                              className="flex items-center justify-between rounded-lg border p-3"
+                            >
                               <div className="truncate">
                                 <span className="mr-2">{fileIcon(file.name)}</span>
                                 {displayName(file.name)}
