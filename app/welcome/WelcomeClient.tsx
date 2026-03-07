@@ -33,15 +33,21 @@ export default function WelcomeClient({
 
   useEffect(() => {
     ensureI18n();
-  }, []);
+
+    if (initialLang && i18n.language !== initialLang) {
+      void i18n.changeLanguage(initialLang);
+    }
+  }, [i18n, initialLang]);
 
   function changeLang(lang: string) {
     try {
       document.cookie = `i18nextLng=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+      localStorage.setItem("i18nextLng", lang);
 
       if (i18n && typeof i18n.changeLanguage === "function") {
-        void i18n.changeLanguage(lang);
-        router.refresh();
+        void i18n.changeLanguage(lang).then(() => {
+          router.refresh();
+        });
         return;
       }
 
@@ -60,17 +66,17 @@ export default function WelcomeClient({
           className="flex items-center gap-3 rounded-xl px-2 py-2"
         >
           <Image
-           src="/brand/drops-logo1.png"
-           alt="DROPS logo"
-           width={160}
-           height={160}
-           className="h-32 w-32 object-contain sm:h-40 sm:w-40"
-         /> 
+            src="/brand/drops-logo1.png"
+            alt="DROPS logo"
+            width={160}
+            height={160}
+            className="h-32 w-32 object-contain sm:h-40 sm:w-40"
+          />
           <div className="leading-tight">
-          <div className="text-sm text-white sm:text-base">
-             {t("brand.tagline", { defaultValue: "e-learning platform" })}
-          </div> 
-         </div> 
+            <div className="text-sm text-white sm:text-base">
+              {t("brand.tagline", { defaultValue: "e-learning platform" })}
+            </div>
+          </div>
         </Link>
 
         <nav className="flex flex-wrap items-center gap-2 sm:gap-5">
