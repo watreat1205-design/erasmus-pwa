@@ -381,42 +381,17 @@ export default async function LessonPage({
 
       {/* Page layout */}
       <div className="mx-auto flex h-screen min-h-0 max-w-4xl flex-col px-6 pt-3 pb-0">
-        {/* Compact top bar */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 text-sm text-white/90">
-            <div className="truncate">
-              <span className="text-white/80">{course.title}</span>
-              <span className="mx-2 text-white/60">•</span>
-              <span className="font-semibold text-white">{current.title}</span>
-              <span className="mx-2 text-white/60">•</span>
-              {section ? (
-                <span className="text-white/80">
-                  <T k="lesson.module" fallback="Module" /> {section.position}: {section.title} •{" "}
-                  <T k="lesson.activity" fallback="Activity" /> {current.position}
-                </span>
-              ) : (
-                <span className="text-white/80">
-                  <T k="lesson.activity" fallback="Activity" /> {current.position}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
-            <Link
-              href={`/my-courses/${courseId}`}
-              className="inline-flex flex-1 items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white sm:flex-none"
-            >
-              ← <T k="common.back" fallback="Back" />
-            </Link>
-
+                {/* Header */}
+        <div className="flex flex-col gap-4">
+          {/* Buttons row */}
+          <div className="flex w-full justify-end gap-2">
             {isCompleted ? (
               <form action={markLessonIncomplete} className="flex-1 sm:flex-none">
                 <input type="hidden" name="courseId" value={courseId} />
                 <input type="hidden" name="lessonId" value={lessonId} />
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white"
+                  className="inline-flex w-full items-center justify-center rounded-md border border-white/30 bg-white/80 px-4 py-3 text-sm font-medium text-gray-900 hover:bg-white sm:w-auto"
                 >
                   ✅ <T k="lesson.completed" fallback="Completed" />
                 </button>
@@ -427,15 +402,45 @@ export default async function LessonPage({
                 <input type="hidden" name="lessonId" value={lessonId} />
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
+                  className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white hover:bg-black sm:w-auto"
                 >
                   <T k="lesson.markComplete" fallback="Mark complete" />
                 </button>
               </form>
             )}
+
+            <Link
+              href={`/my-courses/${courseId}`}
+              className="inline-flex flex-1 items-center justify-center rounded-md border border-white/30 bg-white/80 px-4 py-3 text-sm font-medium text-gray-900 hover:bg-white sm:flex-none sm:w-auto"
+            >
+              ← <T k="common.back" fallback="Back" />
+            </Link>
+          </div>
+
+          {/* Title block */}
+          <div className="min-w-0">
+            <div className="text-sm text-white/90">
+              <span className="text-white/80">{course.title}</span>
+            </div>
+
+            <h1 className="mt-1 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+              <T k="lesson.activity" fallback="Activity" /> {current.position}: {current.title}
+            </h1>
+
+            <div className="mt-2 text-base text-white/90">
+              {section ? (
+                <>
+                  <T k="lesson.module" fallback="Module" /> {section.position}: {section.title} •{" "}
+                  <T k="lesson.lesson" fallback="Lesson" /> {current.position}
+                </>
+              ) : (
+                <>
+                  <T k="lesson.activity" fallback="Activity" /> {current.position}
+                </>
+              )}
+            </div>
           </div>
         </div>
-
         {/* Scroll area */}
         <div className="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-contain pb-24">
           <div className="rounded-xl border border-white/20 bg-white/85 p-3">
