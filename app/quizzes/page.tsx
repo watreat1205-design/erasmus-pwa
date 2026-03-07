@@ -86,18 +86,17 @@ export default async function QuizzesPage() {
     }) ?? [];
 
   return (
-    <div className="relative min-h-screen overflow-y-auto">
-      <div
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: "url(/templates/5.jpg)",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center -220px",
-        }}
-      />
-      <div className="fixed inset-0 -z-10 bg-black/20" />
-
+         <div className="relative min-h-screen overflow-x-hidden">
+  <div
+    className="fixed inset-0 -z-10"
+    style={{
+      backgroundImage: "url(/templates/5.jpg)",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center top",
+    }}
+  />
+  <div className="fixed inset-0 -z-10 bg-black/20" />
       <div className="relative">
         <QuizzesClient quizzes={quizList} />
       </div>
