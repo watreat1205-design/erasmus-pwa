@@ -395,40 +395,59 @@ export default async function LessonPage({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
-            <Link
-              href={`/my-courses/${courseId}`}
-              className="rounded-md border border-white/30 bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-900 hover:bg-white"
-            >
-              ← <T k="common.back" fallback="Back" />
-            </Link>
+         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+  <div className="min-w-0">
+    <div className="truncate">
+      <span className="text-white/80">{course.title}</span>
+      <span className="mx-2 text-white/60">•</span>
+      <span className="font-semibold text-white">{current.title}</span>
+      <span className="mx-2 text-white/60">•</span>
+      {section ? (
+        <span className="text-white/80">
+          <T k="lesson.module" fallback="Module" /> {section.position}: {section.title} •{" "}
+          <T k="lesson.activity" fallback="Activity" /> {current.position}
+        </span>
+      ) : (
+        <span className="text-white/80">
+          <T k="lesson.activity" fallback="Activity" /> {current.position}
+        </span>
+      )}
+    </div>
+  </div>
 
-            {isCompleted ? (
-              <form action={markLessonIncomplete}>
-                <input type="hidden" name="courseId" value={courseId} />
-                <input type="hidden" name="lessonId" value={lessonId} />
-                <button
-                  type="submit"
-                  className="rounded-md border border-white/30 bg-white/80 px-3 py-1.5 text-xs font-medium text-gray-900 hover:bg-white"
-                >
-                  ✅ <T k="lesson.completed" fallback="Completed" />
-                </button>
-              </form>
-            ) : (
-              <form action={markLessonComplete}>
-                <input type="hidden" name="courseId" value={courseId} />
-                <input type="hidden" name="lessonId" value={lessonId} />
-                <button
-                  type="submit"
-                  className="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-black"
-                >
-                  <T k="lesson.markComplete" fallback="Mark complete" />
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+  <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
+    <Link
+      href={`/my-courses/${courseId}`}
+      className="inline-flex flex-1 items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white sm:flex-none"
+    >
+      ← <T k="common.back" fallback="Back" />
+    </Link>
 
+    {isCompleted ? (
+      <form action={markLessonIncomplete} className="flex-1 sm:flex-none">
+        <input type="hidden" name="courseId" value={courseId} />
+        <input type="hidden" name="lessonId" value={lessonId} />
+        <button
+          type="submit"
+          className="inline-flex w-full items-center justify-center rounded-md border border-white/30 bg-white/80 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-white"
+        >
+          ✅ <T k="lesson.completed" fallback="Completed" />
+        </button>
+      </form>
+    ) : (
+      <form action={markLessonComplete} className="flex-1 sm:flex-none">
+        <input type="hidden" name="courseId" value={courseId} />
+        <input type="hidden" name="lessonId" value={lessonId} />
+        <button
+          type="submit"
+          className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
+        >
+          <T k="lesson.markComplete" fallback="Mark complete" />
+        </button>
+      </form>
+    )}
+  </div>
+</div>
         {/* Scroll area */}
         <div className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain pb-24">
           <div className="rounded-xl border border-white/20 bg-white/85 p-3">
