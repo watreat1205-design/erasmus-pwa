@@ -29,29 +29,28 @@ export default function WelcomeClient({
   initialLang,
 }: WelcomeClientProps) {
   const router = useRouter();
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   useEffect(() => {
-    ensureI18n();
-
-    if (initialLang && i18n.language !== initialLang) {
-      void i18n.changeLanguage(initialLang);
+    async function init() {
+      const instance = await ensureI18n();
+      if (initialLang && instance.language !== initialLang) {
+        await instance.changeLanguage(initialLang);
+      }
     }
-  }, [i18n, initialLang]);
 
-  function changeLang(lang: string) {
+    void init();
+  }, [initialLang]);
+
+  async function changeLang(lang: string) {
     try {
       document.cookie = `i18nextLng=${lang}; path=/; max-age=31536000; SameSite=Lax`;
       localStorage.setItem("i18nextLng", lang);
 
-      if (i18n && typeof i18n.changeLanguage === "function") {
-        void i18n.changeLanguage(lang).then(() => {
-          router.refresh();
-        });
-        return;
-      }
+      const instance = await ensureI18n();
+      await instance.changeLanguage(lang);
 
-      window.location.reload();
+      router.refresh();
     } catch {
       window.location.reload();
     }
@@ -85,7 +84,7 @@ export default function WelcomeClient({
               <button
                 key={lang.code}
                 type="button"
-                onClick={() => changeLang(lang.code)}
+                onClick={() => void changeLang(lang.code)}
                 className="rounded-lg px-2.5 py-1.5 text-sm font-medium !text-white hover:bg-white/10"
                 aria-label={lang.label}
                 title={lang.label}
