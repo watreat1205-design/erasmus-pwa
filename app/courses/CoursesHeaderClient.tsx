@@ -48,8 +48,8 @@ export default function CoursesHeaderClient() {
 
   if (loggedIn === null) {
     return (
-      <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black">
+      <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+        <div className="inline-flex w-full items-center justify-center rounded-lg bg-white px-3 py-2 text-sm font-medium text-black sm:w-auto">
           ...
         </div>
       </div>
@@ -57,13 +57,13 @@ export default function CoursesHeaderClient() {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
       {loggedIn ? (
         <>
           <Link
             href="/dashboard"
             prefetch={false}
-            className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black hover:bg-gray-100"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 text-sm font-medium text-black hover:bg-gray-100 sm:w-auto"
           >
             {t("nav.dashboard")}
           </Link>
@@ -71,7 +71,7 @@ export default function CoursesHeaderClient() {
           <Link
             href="/welcome"
             prefetch={false}
-            className="rounded-lg bg-black px-3 py-2 text-sm font-medium !text-white hover:bg-gray-900"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-medium !text-white hover:bg-gray-900 sm:w-auto"
           >
             {t("common.backToWelcome")}
           </Link>
@@ -81,12 +81,12 @@ export default function CoursesHeaderClient() {
           <Link
             href="/login"
             prefetch={false}
-            className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-black hover:bg-gray-100"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 text-sm font-medium text-black hover:bg-gray-100 sm:w-auto"
           >
             {t("courses.trainerLogin")}
           </Link>
 
-          <span className="rounded-lg bg-black px-3 py-2 text-sm font-medium text-black">
+          <span className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-medium text-black sm:w-auto">
             &nbsp;
           </span>
         </>
