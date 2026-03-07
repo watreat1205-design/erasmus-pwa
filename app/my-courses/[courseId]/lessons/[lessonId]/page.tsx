@@ -127,7 +127,7 @@ export default async function LessonPage({
     return (
       <div className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0 -translate-y-7">
-          <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-140px]" />
+          <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-120px]" />
         </div>
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
@@ -367,7 +367,7 @@ export default async function LessonPage({
       <LockBodyScroll />
       {/* Fixed background */}
       <div className="fixed inset-0 -z-10 -translate-y-7">
-        <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-140px]" />
+        <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-120px]" />
       </div>
       <div className="fixed inset-0 -z-10 bg-black/20" />
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
