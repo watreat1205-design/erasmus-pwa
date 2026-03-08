@@ -60,8 +60,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: prevErr.message }, { status: 500 });
   }
 
-  const nextAttemptNo =
-    (prevAttempts?.[0]?.attempt_no ?? 0) + 1;
+  const nextAttemptNo = (prevAttempts?.[0]?.attempt_no ?? 0) + 1;
 
   // 3) Create attempt
   const { data: attempt, error: attemptErr } = await supabase
@@ -125,6 +124,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: certErr.message }, { status: 500 });
   }
 
+  // 7) Fetch submitted answers with correctness
+  const { data: reviewRows, error: reviewErr } = await supabase
+    .from("module_quiz_answers")
+    .select("question_id, chosen_index, is_correct")
+    .eq("attempt_id", attempt_id);
+
+  if (reviewErr) {
+    return NextResponse.json({ error: reviewErr.message }, { status: 500 });
+  }
+
+  const questionIds = (reviewRows ?? []).map((r) => r.question_id);
+
+  const { data: questionRows, error: questionErr } = questionIds.length
+    ? await supabase
+        .from("quiz_questions")
+        .select("id, correct_index")
+        .in("id", questionIds)
+    : { data: [], error: null };
+
+  if (questionErr) {
+    return NextResponse.json({ error: questionErr.message }, { status: 500 });
+  }
+
+  const correctIndexByQuestionId = new Map(
+    (questionRows ?? []).map((q) => [q.id, q.correct_index])
+  );
+
+  const review = (reviewRows ?? []).map((r) => ({
+    question_id: r.question_id,
+    chosen_index: r.chosen_index,
+    is_correct: r.is_correct,
+    correct_index: correctIndexByQuestionId.get(r.question_id) ?? null,
+  }));
+
   return NextResponse.json({
     attempt_id,
     score_percent: grade?.score_percent ?? null,
@@ -133,5 +166,6 @@ export async function POST(req: Request) {
     correct_answers: grade?.correct_answers ?? null,
     certificate_unlocked: !!cert,
     certificate: cert ?? null,
+    review,
   });
 }

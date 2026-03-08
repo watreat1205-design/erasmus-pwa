@@ -21,6 +21,13 @@ type QuizQuestion = {
   options: string[];
 };
 
+type ReviewItem = {
+  question_id: string;
+  chosen_index: number;
+  is_correct: boolean;
+  correct_index: number | null;
+};
+
 function BackgroundShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen overflow-y-auto">
@@ -52,6 +59,7 @@ export default function QuizDetailPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
+  const [review, setReview] = useState<ReviewItem[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -152,6 +160,7 @@ export default function QuizDetailPage() {
       passed: data.passed ?? false,
     });
 
+    setReview(Array.isArray(data.review) ? data.review : []);
     setSubmitting(false);
   }
 
@@ -194,24 +203,68 @@ export default function QuizDetailPage() {
         activityTitle={quiz.title}
         quizTitle={t("quizzes.welcomeTitle", { title: quiz.title })}
       >
-        {questions.map((q, qi) => (
-          <QuestionCard key={q.id} index={qi + 1} prompt={q.prompt} required points={1}>
-            {q.options.map((opt, oi) => (
-              <label key={oi} className="flex gap-2 text-sm">
-                <input
-                  type="radio"
-                  checked={answers[qi] === oi}
-                  onChange={() => {
-                    const copy = [...answers];
-                    copy[qi] = oi;
-                    setAnswers(copy);
-                  }}
-                />
-                {opt}
-              </label>
-            ))}
-          </QuestionCard>
-        ))}
+        {questions.map((q, qi) => {
+          const reviewItem = review.find(
+            (r) => String(r.question_id) === String(q.id)
+          );
+
+          return (
+            <QuestionCard key={q.id} index={qi + 1} prompt={q.prompt} required points={1}>
+              {q.options.map((opt, oi) => {
+                const chosen = answers[qi] === oi;
+                const isSelectedCorrect = !!reviewItem?.is_correct && chosen;
+                const isSelectedWrong = !!reviewItem && chosen && !reviewItem.is_correct;
+
+                return (
+                  <div key={oi} className="mb-2">
+                    <label className="flex gap-2 text-sm">
+                      <input
+                        type="radio"
+                        disabled={!!result}
+                        checked={answers[qi] === oi}
+                        onChange={() => {
+                          const copy = [...answers];
+                          copy[qi] = oi;
+                          setAnswers(copy);
+                        }}
+                      />
+                      <span>{opt}</span>
+                    </label>
+
+                    {result && chosen && isSelectedCorrect && (
+                      <div className="ml-6 mt-1 text-sm text-green-600">
+                        ✓ Correct
+                      </div>
+                    )}
+
+                    {result && chosen && isSelectedWrong && (
+                      <div className="ml-6 mt-1 text-sm text-red-600">
+                        ✗ Incorrect
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {result && reviewItem && !reviewItem.is_correct && (
+                <div className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+                  <div>
+                    Your answer:{" "}
+                    <span className="font-medium">
+                      {q.options[reviewItem.chosen_index] ?? "Not available"}
+                    </span>
+                  </div>
+                  <div className="mt-1">
+                    Correct answer:{" "}
+                    <span className="font-medium">
+                      {q.options[reviewItem.correct_index ?? -1] ?? "Not available"}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </QuestionCard>
+          );
+        })}
 
         {!result ? (
           <div className="mt-6 text-right">
@@ -242,6 +295,7 @@ export default function QuizDetailPage() {
                 <button
                   onClick={() => {
                     setResult(null);
+                    setReview([]);
                     setAnswers(Array(questions.length).fill(null));
                   }}
                   className="rounded-md bg-black px-4 py-2 text-white"

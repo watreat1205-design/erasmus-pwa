@@ -15,11 +15,18 @@ type ModuleQuiz = {
 type QuizQuestion = {
   id: string;
   prompt: string;
-  options: string[]; // stored as json/text[]; we normalize to string[]
+  options: string[];
+};
+
+type ReviewItem = {
+  question_id: string;
+  chosen_index: number;
+  is_correct: boolean;
 };
 
 function normalizeQuestions(value: unknown): QuizQuestion[] {
   if (!Array.isArray(value)) return [];
+
   return value
     .map((q) => {
       if (!q || typeof q !== "object") return null;
@@ -53,6 +60,7 @@ export default function ModuleQuizPage() {
 
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState<number | null>(null);
+  const [review, setReview] = useState<ReviewItem[]>([]);
   const [certificateUnlocked, setCertificateUnlocked] = useState(false);
 
   useEffect(() => {
@@ -65,7 +73,7 @@ export default function ModuleQuizPage() {
 
       const { data: quizData, error: quizErr } = await supabase
         .from("module_quizzes")
-        .select("id,title,pass_score,course_quiz_id")
+        .select("id, title, pass_score, course_quiz_id")
         .eq("id", quizId)
         .single();
 
@@ -82,17 +90,17 @@ export default function ModuleQuizPage() {
 
       const qz = quizData as ModuleQuiz;
 
-const { data: qData, error: qErr } = await supabase
-  .from("quiz_questions")
-  .select("id, question, options, created_at")
-  .eq("quiz_id", qz.course_quiz_id)
-  .order("created_at", { ascending: true });  
+      const { data: qData, error: qErr } = await supabase
+        .from("quiz_questions")
+        .select("id, question, options, created_at")
+        .eq("quiz_id", qz.course_quiz_id)
+        .order("created_at", { ascending: true });
 
       if (cancelled) return;
 
       if (qErr) {
         console.error("Failed to load questions:", qErr);
-        setQuiz(quizData as ModuleQuiz);
+        setQuiz(qz);
         setQuestions([]);
         setAnswers([]);
         setLoading(false);
@@ -101,7 +109,7 @@ const { data: qData, error: qErr } = await supabase
 
       const normalized = normalizeQuestions(qData);
 
-      setQuiz(quizData as ModuleQuiz);
+      setQuiz(qz);
       setQuestions(normalized);
       setAnswers(new Array(normalized.length).fill(null));
       setLoading(false);
@@ -160,6 +168,7 @@ const { data: qData, error: qErr } = await supabase
 
     setSubmitted(true);
     setScore(typeof d.score_percent === "number" ? d.score_percent : null);
+    setReview(Array.isArray(d.review) ? (d.review as ReviewItem[]) : []);
 
     const unlocked = !!d.certificate_unlocked;
     setCertificateUnlocked(unlocked);
@@ -173,36 +182,54 @@ const { data: qData, error: qErr } = await supabase
   const passed = score !== null && score >= quiz.pass_score;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">{quiz.title}</h1>
+    <div className="mx-auto max-w-3xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">{quiz.title}</h1>
 
       {questions.map((q, qi) => (
-        <div key={q.id} className="mb-6 border p-4 rounded-lg">
-          <p className="font-medium mb-3">
+        <div key={q.id} className="mb-6 rounded-lg border p-4">
+          <p className="mb-3 font-medium">
             {qi + 1}. {q.prompt}
           </p>
 
-          {q.options.map((opt, oi) => (
-            <label key={oi} className="block">
-              <input
-                type="radio"
-                checked={answers[qi] === oi}
-                onChange={() => {
-                  const copy = [...answers];
-                  copy[qi] = oi;
-                  setAnswers(copy);
-                }}
-              />{" "}
-              {opt}
-            </label>
-          ))}
+          {q.options.map((opt, oi) => {
+            const reviewItem = review.find(
+              (r) => String(r.question_id) === String(q.id)
+            );
+            const chosen = answers[qi] === oi;
+            const isCorrect = !!reviewItem?.is_correct && chosen;
+            const isWrong = !!reviewItem && chosen && !reviewItem.is_correct;
+
+            return (
+              <label key={oi} className="block">
+                <input
+                  type="radio"
+                  disabled={submitted}
+                  checked={answers[qi] === oi}
+                  onChange={() => {
+                    const copy = [...answers];
+                    copy[qi] = oi;
+                    setAnswers(copy);
+                  }}
+                />{" "}
+                {opt}
+
+                {submitted && chosen && isCorrect && (
+                  <span className="ml-2 text-green-600">✓ Correct</span>
+                )}
+
+                {submitted && chosen && isWrong && (
+                  <span className="ml-2 text-red-600">✗ Incorrect</span>
+                )}
+              </label>
+            );
+          })}
         </div>
       ))}
 
       {!submitted ? (
         <button
           onClick={submitQuiz}
-          className="px-5 py-2 bg-black text-white rounded-lg"
+          className="rounded-lg bg-black px-5 py-2 text-white"
         >
           Submit Quiz
         </button>
