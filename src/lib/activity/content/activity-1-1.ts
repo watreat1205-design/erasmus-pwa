@@ -1,5 +1,5 @@
 // src/lib/activity/content/activity-1-1.ts
-import type { ActivityContent } from "@/lib/activity/content-types";
+import type { ActivityContent } from "@/src/lib/activity/content-types";
 
 export const activity11Content: ActivityContent = {
   slug: "activity-1-1",
