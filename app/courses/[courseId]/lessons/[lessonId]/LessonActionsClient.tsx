@@ -2,9 +2,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ensureI18n } from "@/i18n";
 import { markLessonComplete, markLessonIncomplete } from "@/app/courses/actions";
 
 export default function LessonActionsClient({
@@ -16,11 +15,24 @@ export default function LessonActionsClient({
   lessonId: string;
   isCompleted: boolean;
 }) {
+  const { t } = useTranslation("common");
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    ensureI18n();
+    setMounted(true);
   }, []);
 
-  const { t } = useTranslation("common");
+  const markCompleteText = mounted
+    ? t("lesson.markComplete", { defaultValue: "Mark complete" })
+    : "Mark complete";
+
+  const completedText = mounted
+    ? t("lesson.completed", { defaultValue: "Completed" })
+    : "Completed";
+
+  const backText = mounted
+    ? t("common.back", { defaultValue: "Back" })
+    : "Back";
 
   return (
     <div className="flex w-full gap-3 sm:w-auto">
@@ -32,7 +44,7 @@ export default function LessonActionsClient({
             type="submit"
             className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100 sm:w-auto"
           >
-            ✅ {t("lesson.completed")}
+            ✅ {completedText}
           </button>
         </form>
       ) : (
@@ -43,7 +55,7 @@ export default function LessonActionsClient({
             type="submit"
             className="inline-flex w-full items-center justify-center rounded-md bg-gray-900 px-4 py-3 text-sm font-medium text-white hover:bg-gray-800 sm:w-auto"
           >
-            {t("lesson.markComplete")}
+            {markCompleteText}
           </button>
         </form>
       )}
@@ -52,7 +64,7 @@ export default function LessonActionsClient({
         href={`/courses/${courseId}`}
         className="inline-flex flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100 sm:flex-none sm:w-auto"
       >
-        ← {t("common.back")}
+        ← {backText}
       </Link>
     </div>
   );

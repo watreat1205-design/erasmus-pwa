@@ -152,7 +152,7 @@ function renderSection(section: ActivitySection) {
         </SectionCard>
       );
 
-    case "videos":
+             case "videos":
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

@@ -165,18 +165,7 @@ export const activity11Content: ActivityContent = {
         "The facilitator observes engagement during Think-Pair-Share and group discussion activities to evaluate understanding and collaboration.",
       ],
     },
-    {
-      id: "quiz-link",
-      type: "links",
-      title: "Activity Quiz",
-      items: [
-        {
-          title: "Google Forms quiz",
-          url: "https://docs.google.com/forms/d/1AMmGgxAbrsx14-H-0XKeu6I5X7BwjGi6-Y7LquThc6c/preview",
-          description: "Opens inside the platform.",
-        },
-      ],
-    },
+
     {
       id: "further-reading",
       type: "links",
@@ -184,19 +173,19 @@ export const activity11Content: ActivityContent = {
       items: [
         {
           title: "Active Learning — Edutopia",
-          url: "https://www.edutopia.org/topic/active-learning",
+          url: "https://www.edutopia.org/article/active-learning-strategies",
         },
         {
           title: "What is Technology-Enhanced Learning? — WGU",
-          url: "https://www.wgu.edu/blog/what-is-technology-enhanced-learning2006.html",
+          url: "https://www.wgu.edu/blog/what-technology-enhanced-learning2009.html",
         },
         {
           title: "Examples of Collaborative Learning — TeachThought",
-          url: "https://www.teachthought.com/pedagogy/examples-of-collaborative-learning/",
+          url: "https://www.teachthought.com/learning/collaborative-learning/",
         },
         {
           title: "Traditional Learning vs TEAL — Canva",
-          url: "https://www.canva.com/design/DAGi7OXbv0/dwdRyWbH8KSBXthFFbIlmg/edit",
+          url: "https://ctl.columbia.edu/resources-and-technology/teaching-with-technology/teal/",
         },
       ],
     },

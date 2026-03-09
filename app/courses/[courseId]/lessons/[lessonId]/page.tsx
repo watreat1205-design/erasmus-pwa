@@ -328,7 +328,10 @@ return (
 
       {/* Module Quiz */}
       {moduleQuiz?.id && (
-        <div className="mt-10 rounded-[30px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+        <div
+          id="module-quiz"
+          className="mt-10 rounded-[30px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md"
+        >
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
