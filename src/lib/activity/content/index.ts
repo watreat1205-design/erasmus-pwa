@@ -1,5 +1,5 @@
 //  src/lib/activity/content/index.ts 
-import type { ActivityContent } from "@/lib/activity/content-types";
+import type { ActivityContent } from "@/src/lib/activity/content-types";
 import { activity11Content } from "./activity-1-1";
 
 export function getActivityContentByLesson(

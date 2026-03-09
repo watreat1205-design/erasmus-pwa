@@ -1,6 +1,6 @@
 "use client";
 
-import type { ActivityContent, ActivitySection } from "@/lib/activity/content-types";
+import type { ActivityContent, ActivitySection } from "@/src/lib/activity/content-types";
 import { openInPlatform } from "@/components/lesson/openInPlatform";
 
 function getSectionIcon(section: ActivitySection) {
