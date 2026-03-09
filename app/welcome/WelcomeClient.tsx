@@ -136,7 +136,9 @@ export default function WelcomeClient({
         <section className="w-full">
           <div className="max-w-2xl animate-[fadeUp_.35s_ease-out]">
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-white/80 drop-shadow-sm sm:text-5xl">
-              {mounted ? t("welcome.title", { defaultValue: "Welcome" }) : "Welcome"}
+              {mounted
+                ? t("welcome.title", { defaultValue: "Welcome" })
+                : "Welcome"}
             </h1>
 
             <p className="mt-4 text-base font-medium leading-7 text-white/90 sm:text-lg">
@@ -158,8 +160,8 @@ export default function WelcomeClient({
                       })
                     : t("welcome.back", { defaultValue: "Welcome back" })
                   : displayName
-                  ? `Welcome back, ${displayName}`
-                  : "Welcome back"}
+                    ? `Welcome back, ${displayName}`
+                    : "Welcome back"}
               </p>
             ) : null}
 
@@ -189,20 +191,7 @@ export default function WelcomeClient({
           </div>
         </section>
       </main>
-       {/* Partners */}
-   <div className="mt-24 border-t border-white/20 pt-12 pb-16">
-  <p className="mb-6 text-center text-sm text-white/80">
-    Project partners
-  </p>
-     <div className="flex flex-wrap items-center justify-center gap-8 opacity-90">
-  <Image src="/partners/acta.png" alt="ACTA" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-  <Image src="/partners/ccif.png" alt="CCIF Cyprus" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-  <Image src="/partners/petitpas.png" alt="Petit Pas" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-  <Image src="/partners/stpeuropa.png" alt="STP Europa" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-  <Image src="/partners/uzinaduzina.png" alt="Uzinaduzina" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-  <Image src="/partners/4elements.png" alt="4 Elements" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
-</div>
-</div>
+
       <style jsx>{`
         @keyframes fadeUp {
           from {

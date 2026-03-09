@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import WelcomeClient from "./WelcomeClient";
+import FooterPartners from "@/components/layout/FooterPartners";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -79,6 +80,7 @@ export default async function WelcomePage({
           displayName={displayName}
           initialLang={initialLang}
         />
+       <FooterPartners />
       </div>
     </div>
   );
