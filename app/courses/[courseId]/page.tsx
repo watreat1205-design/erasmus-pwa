@@ -187,7 +187,7 @@ export default async function CourseViewPage({
   }
 
   const LockedRow = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-base text-gray-800">
+    <div className="flex items-center justify-between rounded-2xl border border-white/60 bg-white/70 px-4 py-4 text-base text-gray-800 shadow-sm">
       <div className="truncate">{children}</div>
       <span className="ml-3 shrink-0 text-sm font-medium text-gray-600">
         🔒 <TLocked />
@@ -197,7 +197,7 @@ export default async function CourseViewPage({
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0 ">
+      <div className="absolute inset-0">
         <Image
           src="/templates/5.jpg"
           alt=""
@@ -211,15 +211,15 @@ export default async function CourseViewPage({
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
       <div className="relative z-10">
-        <div className="mx-auto max-w-4xl px-6 py-12">
+        <div className="mx-auto max-w-5xl px-6 pt-10 pb-12">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="max-w-3xl">
-              <h1 className="text-4xl font-semibold !text-white">
+              <h1 className="text-4xl font-semibold tracking-tight !text-white sm:text-5xl">
                 {pickI18n(course.title_i18n, lang, course.title)}
               </h1>
 
               {course.description ? (
-                <p className="mt-3 text-base !text-white">
+                <p className="mt-3 max-w-2xl text-base leading-7 !text-white">
                   {pickI18n(course.description_i18n, lang, course.description)}
                 </p>
               ) : (
@@ -228,16 +228,15 @@ export default async function CourseViewPage({
                 </p>
               )}
             </div>
-           
-             <div className="w-full sm:w-auto">
+
+            <div className="w-full sm:w-auto">
               <AllCoursesButtonClient />
-             </div>
-            
+            </div>
           </div>
 
           {!isEnrolled && (
-            <div className="mt-8 rounded-xl border border-gray-200 bg-white p-8">
-              <h2 className="text-xl font-semibold text-gray-900">
+            <div className="mt-8 rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+              <h2 className="text-xl font-semibold tracking-tight text-gray-900">
                 <TEnrollTitle />
               </h2>
 
@@ -258,7 +257,7 @@ export default async function CourseViewPage({
 
           <div className="mt-10 space-y-6">
             {!sections.length ? (
-              <div className="rounded-xl border border-gray-200 bg-white p-8">
+              <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
                 <p className="text-gray-800">
                   <TNoSections />
                 </p>
@@ -273,16 +272,24 @@ export default async function CourseViewPage({
                   return (
                     <div
                       key={section.id}
-                      className="rounded-xl border border-gray-200 bg-white p-8"
+                      className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md"
                     >
-                      <div className="text-lg font-semibold text-gray-900">
+                      <div className="text-xl font-semibold tracking-tight text-gray-900">
                         {section.position}.{" "}
                         {pickI18n(section.title_i18n, lang, section.title)}
                       </div>
 
-                      <div className="mt-5 space-y-3">
-                        <div className="text-base font-medium text-gray-800">
-                          <TLessons />
+                      <div className="mt-6 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                            📚
+                          </div>
+                          <div>
+                            <div className="text-base font-semibold text-gray-900">
+                              <TLessons />
+                            </div>
+                            <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                          </div>
                         </div>
 
                         {sectionLessons.length ? (
@@ -294,7 +301,7 @@ export default async function CourseViewPage({
                                 <Link
                                   key={lesson.id}
                                   href={href}
-                                  className="block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
+                                  className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
                                 >
                                   {lesson.position}.{" "}
                                   {pickI18n(
@@ -322,15 +329,23 @@ export default async function CourseViewPage({
                         )}
 
                         {moduleQuiz && (
-                          <div className="mt-6">
-                            <div className="text-base font-medium text-gray-800">
-                              <TModuleQuiz />
+                          <div className="mt-8">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                                🧠
+                              </div>
+                              <div>
+                                <div className="text-base font-semibold text-gray-900">
+                                  <TModuleQuiz />
+                                </div>
+                                <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                              </div>
                             </div>
 
                             {isEnrolled ? (
                               <Link
                                 href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
-                                className="mt-3 block rounded-md border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 hover:bg-gray-50"
+                                className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
                               >
                                 {pickI18n(
                                   moduleQuiz.title_i18n,

@@ -1,8 +1,9 @@
-// app/my-courses/[courseId]/lessons/[lessonId]/external/page.tsx
+// app/courses/[courseId]/lessons/[lessonId]/external/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
 
 function isAllowed(url: string) {
   try {
@@ -20,6 +21,7 @@ function isAllowed(url: string) {
       "vimeo.com",
       "www.vimeo.com",
       "player.vimeo.com",
+      "pjjslpdbnwfkvlrxrkpr.supabase.co",
     ];
 
     return allowedHosts.some(
@@ -43,11 +45,11 @@ export default function ExternalViewerPage() {
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="flex items-center justify-between">
             <div className="text-lg font-semibold">External</div>
-             <button
+            <button
               type="button"
               onClick={() => window.location.assign(backHref)}
               className="rounded-md border px-4 py-2 text-sm hover:bg-gray-50"
-             >
+            >
               ← Back to activity
             </button>
           </div>
@@ -60,24 +62,33 @@ export default function ExternalViewerPage() {
     );
   }
 
+  const lower = url.toLowerCase();
+
   const isVideo =
-    url.includes("youtube.com/embed/") ||
-    url.includes("youtube-nocookie.com/embed/") ||
-    url.includes("player.vimeo.com/video/");
+    lower.includes("youtube.com/embed/") ||
+    lower.includes("youtube-nocookie.com/embed/") ||
+    lower.includes("player.vimeo.com/video/");
+
+  const isPdf = lower.includes(".pdf");
+
+  const isForm =
+    lower.includes("docs.google.com/forms") || lower.includes("forms.gle/");
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="flex items-center justify-between">
           <div className="text-lg font-semibold">
-            {isVideo ? "Video" : "External resource"}
+            {isVideo ? "Video" : isPdf ? "Document" : "External resource"}
           </div>
-          <Link
-            href={backHref}
+
+          <button
+            type="button"
+            onClick={() => window.location.assign(backHref)}
             className="rounded-md border px-4 py-2 text-sm hover:bg-gray-50"
           >
             ← Back to activity
-          </Link>
+          </button>
         </div>
 
         {isVideo ? (
@@ -91,7 +102,11 @@ export default function ExternalViewerPage() {
               />
             </div>
           </div>
-        ) : (
+        ) : isPdf ? (
+          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
+            <PdfDocumentViewerNoSSR url={url} />
+          </div>
+        ) : isForm ? (
           <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
             <div className="text-sm text-gray-700">
               This form cannot be embedded here (Google blocks it).
@@ -105,13 +120,25 @@ export default function ExternalViewerPage() {
                 Take the quiz
               </Link>
 
-              <Link
-                href={backHref}
+              <button
+                type="button"
+                onClick={() => window.location.assign(backHref)}
                 className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
               >
                 ← Back to activity
-              </Link>
+              </button>
             </div>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-medium text-blue-700 underline"
+            >
+              Open resource in new tab
+            </a>
           </div>
         )}
       </div>

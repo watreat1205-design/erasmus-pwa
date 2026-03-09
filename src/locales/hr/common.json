@@ -43,8 +43,11 @@
     "subtitle": "Pregledajte dostupne tečajeve.",
     "loadError": "Nije moguće učitati tečajeve.",
     "empty": "Još nema objavljenih tečajeva.",
-    "noDescription": "Bez opisa.",
-    "open": "Otvori"
+    "noDescription": "Istražite aktivnosti u ovom modulu kako biste produbili razumijevanje TEAL pedagogije.",
+    "open": "Otvori",
+    "openCourse": "Otvori tečaj",
+    "activities": "Aktivnosti",
+    "quizzes": "Kvizovi"
   },
   "common": {
     "back": "Natrag",
@@ -151,7 +154,7 @@
     "title": "Moji tečajevi",
     "subtitle": "Tečajevi na koje ste upisani.",
     "empty": "Još niste upisani ni na jedan tečaj.",
-    "noDescription": "Nema opisa.",
+    "noDescription": "Istražite aktivnosti u ovom modulu kako biste produbili razumijevanje TEAL pedagogije.",
     "progress": "Napredak",
     "completed": "Završeno",
     "openCourse": "Otvori tečaj",

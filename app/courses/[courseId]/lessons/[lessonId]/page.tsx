@@ -1,10 +1,12 @@
+//  app/courses/[courseId]/lessons/[lessonId]/page.tsx
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
 import LessonActionsClient from "./LessonActionsClient";
-import ResourcesTitleClient from "./ResourcesTitleClient";
+import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
 import { getServerTranslation } from "@/lib/i18n/server";
 import { pickI18n } from "@/lib/i18n/pick";
+import ActivityContentRenderer from "@/components/activity/ActivityContentRenderer";
+import { getActivityContentByLesson } from "@/src/lib/activity/content";
 
 export default async function LessonPage({
   params,
@@ -208,17 +210,20 @@ export default async function LessonPage({
   const next = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
 
   const section = (sections ?? []).find((s) => s.id === current.section_id);
+  const activityContent = getActivityContentByLesson(current.title, current.position);
 
   // Split: lesson PDF (render inline) vs other PDFs (iframe)
   const lessonPdf = lessonFiles.find((f) => isLessonPdf(f.name));
-  const otherFiles = lessonFiles.filter((f) => f.name !== lessonPdf?.name);
+  const otherFiles = lessonFiles.filter(
+  (f) => !/^activity-.*\.pdf$/i.test(f.name)
+);
 
   const getPublicUrl = (name: string) =>
     supabase.storage
       .from("course-assets")
       .getPublicUrl(`${current.assets_path}/${name}`).data.publicUrl;
        return (
-  <div className="mx-auto max-w-5xl px-6 py-6">
+  <div className="mx-auto max-w-5xl px-6 pt-10 pb-6">
     {/* Header */}
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
@@ -261,59 +266,80 @@ export default async function LessonPage({
         </div>
       )}
 
-      {/* Resources */}
-      {lessonFiles.length > 0 && current.assets_path && (
-        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
-          <h3 className="text-lg font-semibold text-gray-900">
-            <ResourcesTitleClient />
-          </h3>
+            {/* Structured activity content */}
+      {activityContent ? (
+        <div className="mt-6">
+          <ActivityContentRenderer activity={activityContent} />
+        </div>
+      ) : null}
 
-          {/* Lesson PDF inline */}
-          {lessonPdf && (
-            <div className="mt-4 space-y-2">
-              <div className="text-sm font-medium text-gray-900">{lessonPdf.name}</div>
-              <PdfDocumentViewerNoSSR url={getPublicUrl(lessonPdf.name)} />
-            </div>
-          )}
+      {/* Other files / slides */}
+      {otherFiles.length > 0 && current.assets_path && (
+        <div className="mt-6 rounded-[30px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+           <div className="flex items-center gap-3">
+           <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+           📚
+         </div>
+         <div>
+           
+         <h3 className="text-lg font-semibold text-gray-900">Resources</h3>
+         <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+         </div>
+        </div>
+          <div className="mt-4 grid gap-4">
+                {otherFiles.map((file) => {
+                 const publicUrl = getPublicUrl(file.name);
+const isPdf = file.name.toLowerCase().endsWith(".pdf");
+const isPpt =
+  file.name.toLowerCase().endsWith(".ppt") ||
+  file.name.toLowerCase().endsWith(".pptx");
 
-          {/* Other files */}
-          {otherFiles.length > 0 && (
-            <div className="mt-8 space-y-8">
-              {otherFiles.map((file) => {
-                const publicUrl = getPublicUrl(file.name);
-                const isPdf = file.name.toLowerCase().endsWith(".pdf");
+return (
+  <div
+    key={file.name}
+    className="flex flex-col gap-3 rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm transition hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <div className="text-sm font-semibold text-gray-900">{file.name}</div>
+      <div className="mt-1 text-sm text-gray-600">
+        {isPpt
+          ? "Presentation file"
+          : isPdf
+          ? "Supporting PDF"
+          : "Supporting file"}
+      </div>
+    </div>
 
-                return (
-                  <div key={file.name} className="space-y-2">
-                    <div className="text-sm font-medium text-gray-900">{file.name}</div>
-                      {isPdf ? (
-                       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-2">
-                        <PdfDocumentViewerNoSSR url={publicUrl} />
-                       </div>
-                      ) : (
-                  
-                      <Link
-                        href={publicUrl}
-                        target="_blank"
-                        className="text-sm text-blue-700 underline"
-                      >
-                        Open file
-                      </Link>
-                    )}
-                  </div>
-                );
+    <Link
+  href={`/courses/${courseId}/lessons/${lessonId}/external?url=${encodeURIComponent(
+    publicUrl
+  )}`}
+  className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
+>
+  Open file
+</Link>
+
+  </div>
+);
               })}
-            </div>
-          )}
+          </div>
         </div>
       )}
 
       {/* Module Quiz */}
       {moduleQuiz?.id && (
-        <div className="mt-10 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mt-10 rounded-[30px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Module Quiz</h2>
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                 🧠
+                 </div>
+                 <div>
+                   <h2 className="text-lg font-semibold tracking-tight text-gray-900">Module Quiz</h2>
+                   <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                </div>
+              </div>
               <p className="mt-1 text-sm text-gray-700">
                 {pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}
               </p>
@@ -344,7 +370,7 @@ export default async function LessonPage({
 
             <Link
               href={`/quizzes/${moduleQuiz.id}`}
-              className="inline-flex items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold !text-white hover:bg-gray-900"
+              className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold !text-white shadow-sm hover:bg-emerald-800"
             >
               {lastAttempt
                 ? lastAttempt.passed
@@ -372,7 +398,7 @@ export default async function LessonPage({
         {next ? (
           <Link
             href={`/courses/${courseId}/lessons/${next.id}`}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium !text-white hover:bg-gray-800"
+            className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
           >
             Next →
           </Link>

@@ -52,4 +52,5 @@ i18n
   return i18n;
 }
 
+
 export default i18n;

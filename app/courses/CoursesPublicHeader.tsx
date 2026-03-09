@@ -2,12 +2,16 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function CoursesPublicHeader() {
-  const { t, ready } = useTranslation("common");
+  const { t } = useTranslation("common");
+  const [mounted, setMounted] = useState(false);
 
-  if (!ready) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div>
@@ -17,16 +21,25 @@ export default function CoursesPublicHeader() {
           prefetch={false}
           className="inline-flex items-center text-sm font-medium text-white hover:underline"
         >
-          ← {t("common.backToWelcome", { defaultValue: "Back to welcome" })}
+          ←{" "}
+          {mounted
+            ? t("common.backToWelcome", { defaultValue: "Back to welcome" })
+            : "Back to welcome"}
         </Link>
       </div>
 
       <div>
         <h1 className="text-3xl font-semibold text-white">
-          {t("courses.title", { defaultValue: "Courses" })}
+          {mounted
+            ? t("courses.title", { defaultValue: "Courses" })
+            : "Courses"}
         </h1>
         <p className="mt-2 text-sm text-white/90">
-          {t("courses.subtitle", { defaultValue: "Browse available courses." })}
+          {mounted
+            ? t("courses.subtitle", {
+                defaultValue: "Browse available courses.",
+              })
+            : "Browse available courses."}
         </p>
       </div>
     </div>

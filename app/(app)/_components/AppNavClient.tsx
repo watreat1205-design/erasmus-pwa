@@ -25,7 +25,7 @@ export default function AppNavClient({
   return (
     <nav className="flex items-center gap-4">
       <Link href="/dashboard">{t("nav.dashboard")}</Link>
-      <Link href="/my-courses">{t("nav.courses")}</Link>
+      <Link href="/courses">{t("nav.courses")}</Link>
 
       {role && canViewAdmin && (
         <>

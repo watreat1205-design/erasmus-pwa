@@ -43,8 +43,11 @@
     "subtitle": "Browse available courses.",
     "loadError": "Could not load courses.",
     "empty": "No published courses yet.",
-    "noDescription": "No description.",
-    "open": "Open" 
+    "noDescription": "Explore the activities in this module to deepen your understanding of TEAL pedagogy.",
+    "open": "Open", 
+    "openCourse": "Open course",
+    "activities": "Activities",
+    "quizzes": "Quizzes"
  },
   "common": {
     "back": "Back",
@@ -169,7 +172,7 @@
     "title": "My Courses",
     "subtitle": "Courses you are enrolled in.",
     "empty": "You are not enrolled in any courses yet.",
-    "noDescription": "No description.",
+    "noDescription": "Explore the activities in this module to deepen your understanding of TEAL pedagogy.",
     "progress": "Progress",
     "completed": "Completed",
     "openCourse": "Open course",

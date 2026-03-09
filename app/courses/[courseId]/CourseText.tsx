@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 export function TNoDescription() {
   const { t } = useTranslation("common");
-  return <>{t("courses.noDescription", { defaultValue: "No description." })}</>;
+  return <>{t("courses.noDescription", { defaultValue: "NoDescription" })}</>;
 }
 
 export function TEnrollTitle() {

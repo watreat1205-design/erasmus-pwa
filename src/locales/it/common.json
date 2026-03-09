@@ -43,8 +43,11 @@
     "subtitle": "Sfoglia i corsi disponibili.",
     "loadError": "Impossibile caricare i corsi.",
     "empty": "Nessun corso pubblicato al momento.",
-    "noDescription": "Nessuna descrizione.",
-    "open": "Apri"
+    "noDescription": "Esplora le attività di questo modulo per approfondire la tua comprensione della pedagogia TEAL.",
+    "open": "Apri",
+    "openCourse": "Apri corso",
+    "activities": "Attività",
+    "quizzes": "Quiz"
   },
   "common": {
     "back": "Indietro",
@@ -151,7 +154,7 @@
     "title": "I miei corsi",
     "subtitle": "Corsi a cui sei iscritto/a.",
     "empty": "Non sei ancora iscritto/a a nessun corso.",
-    "noDescription": "Nessuna descrizione.",
+    "noDescription": "Esplora le attività di questo modulo per approfondire la tua comprensione della pedagogia TEAL.",
     "progress": "Progresso",
     "completed": "Completato",
     "openCourse": "Apri corso",

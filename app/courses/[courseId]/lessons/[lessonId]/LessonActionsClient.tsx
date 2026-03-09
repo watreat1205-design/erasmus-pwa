@@ -1,7 +1,10 @@
+// app/courses/[courseId]/lessons/[lessonId]/LessonActionsClient.tsx
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { ensureI18n } from "@/i18n";
 import { markLessonComplete, markLessonIncomplete } from "@/app/courses/actions";
 
 export default function LessonActionsClient({
@@ -13,6 +16,10 @@ export default function LessonActionsClient({
   lessonId: string;
   isCompleted: boolean;
 }) {
+  useEffect(() => {
+    ensureI18n();
+  }, []);
+
   const { t } = useTranslation("common");
 
   return (

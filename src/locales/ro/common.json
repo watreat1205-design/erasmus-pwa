@@ -43,8 +43,11 @@
     "subtitle": "Răsfoiește cursurile disponibile.",
     "loadError": "Nu s-au putut încărca cursurile.",
     "empty": "Nu există încă cursuri publicate.",
-    "noDescription": "Fără descriere.",
-    "open": "Deschide"
+    "noDescription": "Explorați activitățile din acest modul pentru a vă aprofunda înțelegerea pedagogiei TEAL.",
+    "open": "Deschide",
+    "openCourse": "Deschide cursul",
+    "activities": "Activități",
+    "quizzes": "Chestionare"
   },
   "common": {
     "back": "Înapoi",
@@ -151,7 +154,7 @@
     "title": "Cursurile mele",
     "subtitle": "Cursuri la care ești înscris(ă).",
     "empty": "Nu ești înscris(ă) la niciun curs încă.",
-    "noDescription": "Fără descriere.",
+    "noDescription": "Explorați activitățile din acest modul pentru a vă aprofunda înțelegerea pedagogiei TEAL.",
     "progress": "Progres",
     "completed": "Finalizat",
     "openCourse": "Deschide cursul",

@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { ensureI18n } from "../../src/i18n";
@@ -30,8 +30,11 @@ export default function WelcomeClient({
 }: WelcomeClientProps) {
   const router = useRouter();
   const { t } = useTranslation("common");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     async function init() {
       const instance = await ensureI18n();
       if (initialLang && instance.language !== initialLang) {
@@ -73,7 +76,9 @@ export default function WelcomeClient({
           />
           <div className="leading-tight">
             <div className="text-sm text-white sm:text-base">
-              {t("brand.tagline", { defaultValue: "e-learning platform" })}
+              {mounted
+                ? t("brand.tagline", { defaultValue: "e-learning platform" })
+                : "e-learning platform"}
             </div>
           </div>
         </Link>
@@ -102,7 +107,9 @@ export default function WelcomeClient({
                 prefetch={false}
                 className="hidden rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-white sm:inline-flex"
               >
-                {t("nav.register", { defaultValue: "Register" })}
+                {mounted
+                  ? t("nav.register", { defaultValue: "Register" })
+                  : "Register"}
               </Link>
 
               <Link
@@ -110,7 +117,7 @@ export default function WelcomeClient({
                 prefetch={false}
                 className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:text-base"
               >
-                {t("nav.login", { defaultValue: "Login" })}
+                {mounted ? t("nav.login", { defaultValue: "Login" }) : "Login"}
               </Link>
             </>
           ) : (
@@ -119,7 +126,7 @@ export default function WelcomeClient({
               prefetch={false}
               className="inline-flex rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:text-base"
             >
-              {t("nav.logout", { defaultValue: "Logout" })}
+              {mounted ? t("nav.logout", { defaultValue: "Logout" }) : "Logout"}
             </Link>
           )}
         </nav>
@@ -129,23 +136,30 @@ export default function WelcomeClient({
         <section className="w-full">
           <div className="max-w-2xl animate-[fadeUp_.35s_ease-out]">
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-white/80 drop-shadow-sm sm:text-5xl">
-              {t("welcome.title", { defaultValue: "Welcome" })}
+              {mounted ? t("welcome.title", { defaultValue: "Welcome" }) : "Welcome"}
             </h1>
 
             <p className="mt-4 text-base font-medium leading-7 text-white/90 sm:text-lg">
-              {t("welcome.subtitle", {
-                defaultValue: "Digital learning platform for trainers and educators.",
-              })}
+              {mounted
+                ? t("welcome.subtitle", {
+                    defaultValue:
+                      "Digital learning platform for trainers and educators.",
+                  })
+                : "Digital learning platform for trainers and educators."}
             </p>
 
             {loggedIn ? (
               <p className="mt-4 text-sm font-medium text-white/90">
-                {displayName
-                  ? t("welcome.backWithName", {
-                      name: displayName,
-                      defaultValue: `Welcome back, ${displayName}`,
-                    })
-                  : t("welcome.back", { defaultValue: "Welcome back" })}
+                {mounted
+                  ? displayName
+                    ? t("welcome.backWithName", {
+                        name: displayName,
+                        defaultValue: `Welcome back, ${displayName}`,
+                      })
+                    : t("welcome.back", { defaultValue: "Welcome back" })
+                  : displayName
+                  ? `Welcome back, ${displayName}`
+                  : "Welcome back"}
               </p>
             ) : null}
 
@@ -155,7 +169,9 @@ export default function WelcomeClient({
                 prefetch={false}
                 className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
               >
-                {t("buttons.goToCourses", { defaultValue: "Go to Courses" })}
+                {mounted
+                  ? t("buttons.goToCourses", { defaultValue: "Go to Courses" })
+                  : "Go to Courses"}
               </Link>
 
               <Link
@@ -163,13 +179,30 @@ export default function WelcomeClient({
                 prefetch={false}
                 className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
               >
-                {t("buttons.goToDashboard", { defaultValue: "Go to Dashboard" })}
+                {mounted
+                  ? t("buttons.goToDashboard", {
+                      defaultValue: "Go to Dashboard",
+                    })
+                  : "Go to Dashboard"}
               </Link>
             </div>
           </div>
         </section>
       </main>
-
+       {/* Partners */}
+   <div className="mt-24 border-t border-white/20 pt-12 pb-16">
+  <p className="mb-6 text-center text-sm text-white/80">
+    Project partners
+  </p>
+     <div className="flex flex-wrap items-center justify-center gap-8 opacity-90">
+  <Image src="/partners/acta.png" alt="ACTA" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+  <Image src="/partners/ccif.png" alt="CCIF Cyprus" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+  <Image src="/partners/petitpas.png" alt="Petit Pas" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+  <Image src="/partners/stpeuropa.png" alt="STP Europa" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+  <Image src="/partners/uzinaduzina.png" alt="Uzinaduzina" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+  <Image src="/partners/4elements.png" alt="4 Elements" width={120} height={60} className="h-12 w-auto object-contain opacity-80 hover:opacity-100 transition" />
+</div>
+</div>
       <style jsx>{`
         @keyframes fadeUp {
           from {
