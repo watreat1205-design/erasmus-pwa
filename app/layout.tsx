@@ -1,8 +1,10 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import VideoModalClient from "../components/VideoModalClient";
 import localFont from "next/font/local";
 import Providers from "./providers";
+import GlobalFooter from "@/components/layout/GlobalFooter";
 
 export const metadata: Metadata = {
   title: "Erasmus PWA",
@@ -25,12 +27,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={notoSans.variable}>
-      <body suppressHydrationWarning className="font-sans">
-        <Providers>
-          {children}
-          <VideoModalClient />
-        </Providers>
-      </body>
+    <body suppressHydrationWarning className="font-sans">
+      <Providers>
+        {children}
+       <GlobalFooter />
+      <VideoModalClient />
+     </Providers>
+     </body>  
     </html>
   );
 }

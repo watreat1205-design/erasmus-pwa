@@ -80,7 +80,7 @@ export default async function WelcomePage({
           displayName={displayName}
           initialLang={initialLang}
         />
-       <FooterPartners />
+       <FooterPartners compact />
       </div>
     </div>
   );
