@@ -215,9 +215,10 @@ export default async function LessonPage({
   // Split: lesson PDF (render inline) vs other PDFs (iframe)
   const lessonPdf = lessonFiles.find((f) => isLessonPdf(f.name));
   const otherFiles = lessonFiles.filter(
-  (f) => !/^activity-.*\.pdf$/i.test(f.name)
+  (f) =>
+    !/^activity-.*\.pdf$/i.test(f.name) &&
+    !/^case-study-/i.test(f.name)
 );
-
   const getPublicUrl = (name: string) =>
     supabase.storage
       .from("course-assets")

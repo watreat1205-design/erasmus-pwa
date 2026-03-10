@@ -1,3 +1,4 @@
+// src/components/activity/ActivityContentRenderer.tsx
 "use client";
 
 import type { ActivityContent, ActivitySection } from "@/src/lib/activity/content-types";
@@ -12,7 +13,7 @@ function getSectionIcon(section: ActivitySection) {
     case "videos":
       return "🎥";
     case "links":
-      return "📚";
+      return "📖";
     case "list":
       return "✅";
     case "text":
@@ -152,7 +153,7 @@ function renderSection(section: ActivitySection) {
         </SectionCard>
       );
 
-             case "videos":
+    case "videos":
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -210,8 +211,8 @@ function renderSection(section: ActivitySection) {
                 {item.description ? (
                   <div className="mt-1 text-sm text-gray-600">{item.description}</div>
                 ) : null}
-                <div className="mt-3 text-sm font-medium text-blue-700">
-                  Open resource →
+                <div className="mt-4 text-sm font-medium text-emerald-700">
+                 Open material →
                 </div>
               </button>
             ))}
@@ -229,6 +230,15 @@ export default function ActivityContentRenderer({
 }: {
   activity: ActivityContent;
 }) {
+  const stepsSection = activity.sections.find(
+    (section) => section.type === "steps"
+  );
+
+  const flowSteps =
+    stepsSection && stepsSection.type === "steps"
+      ? stepsSection.steps.slice(0, 3)
+      : [];
+
   return (
     <div className="space-y-8">
       <section className="relative overflow-hidden rounded-[34px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_12px_32px_rgba(0,0,0,0.10)] backdrop-blur-md sm:p-8">
@@ -240,7 +250,7 @@ export default function ActivityContentRenderer({
             </div>
 
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl">
-              Activity 1.1 — {activity.title}
+              {activity.title}
             </h1>
 
             {activity.intro ? (
@@ -265,56 +275,43 @@ export default function ActivityContentRenderer({
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[30px] border border-white/50 bg-emerald-50/75 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md sm:p-6">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-lime-100/35 via-transparent to-emerald-100/45" />
-        <div className="relative">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-emerald-50/70 shadow-sm">
-              🚀
+      {flowSteps.length > 0 ? (
+        <section className="relative overflow-hidden rounded-[30px] border border-white/50 bg-emerald-50/75 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md sm:p-6">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-lime-100/35 via-transparent to-emerald-100/45" />
+          <div className="relative">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-emerald-50/70 shadow-sm">
+                🚀
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Activity Flow</h2>
+                <p className="text-sm text-gray-600">
+                  A simple guide to complete this activity
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Activity Flow</h2>
-              <p className="text-sm text-gray-600">
-                A simple guide to complete this activity
-              </p>
+
+            <div className="grid gap-3 md:grid-cols-3">
+              {flowSteps.map((step, index) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm"
+                >
+                  <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                    Step {index + 1}
+                  </div>
+                  <div className="mt-2 text-sm font-medium text-gray-900">
+                    {step.title}
+                  </div>
+                  <div className="mt-1 text-sm text-gray-600">
+                    {step.body?.[0] ?? ""}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-
-          <div className="grid gap-3 md:grid-cols-3">
-            <div className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm">
-              <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                Step 1
-              </div>
-              <div className="mt-2 text-sm font-medium text-gray-900">Watch videos</div>
-              <div className="mt-1 text-sm text-gray-600">
-                Start with the visual introduction to TEAL concepts.
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm">
-              <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                Step 2
-              </div>
-              <div className="mt-2 text-sm font-medium text-gray-900">
-                Explore materials
-              </div>
-              <div className="mt-1 text-sm text-gray-600">
-                Review the lesson structure, requirements, and resources.
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm">
-              <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                Step 3
-              </div>
-              <div className="mt-2 text-sm font-medium text-gray-900">Take quiz</div>
-              <div className="mt-1 text-sm text-gray-600">
-                Complete the activity with the quiz and reflection.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {activity.sections.map(renderSection)}
     </div>
