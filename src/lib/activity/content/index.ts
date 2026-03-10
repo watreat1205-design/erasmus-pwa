@@ -3,6 +3,8 @@ import type { ActivityContent } from "@/src/lib/activity/content-types";
 import { activity11Content } from "./activity-1-1";
 import { activity12Content } from "./activity-1-2";
 import { activity13Content } from "./activity-1-3";
+import { activity14Content } from "./activity-1-4";
+import { activity15Content } from "./activity-1-5";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -34,6 +36,22 @@ export function getActivityContentByLesson(
   ) {
     return activity13Content;
   }
+
+  if (
+  title.includes("activity 1.4") ||
+  title.includes("digital tools for teal") ||
+  lessonPosition === 4
+) {
+  return activity14Content;
+}
+
+if (
+  title.includes("activity 1.5") ||
+  title.includes("designing teal activities") ||
+  lessonPosition === 5
+) {
+  return activity15Content;
+}
 
   return null;
 }
