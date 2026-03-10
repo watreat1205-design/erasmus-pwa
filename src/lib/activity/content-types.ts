@@ -1,4 +1,18 @@
 // src/lib/activity/content-types.ts
+export type ResourceType =
+  | "case-study"
+  | "article"
+  | "slides"
+  | "external"
+  | "video";
+
+export type ActivityLink = {
+  title: string;
+  url: string;
+  description?: string;
+  resourceType?: ResourceType;
+};
+
 export type ActivityMetaItem = {
   label: string;
   value: string;
@@ -36,10 +50,10 @@ export type ActivityVideosSection = {
   type: "videos";
   title: string;
   items: {
-  title: string;
-  url: string;
-  description?: string;
-  thumbnailUrl?: string;
+    title: string;
+    url: string;
+    description?: string;
+    thumbnailUrl?: string;
   }[];
 };
 
@@ -47,11 +61,7 @@ export type ActivityLinksSection = {
   id: string;
   type: "links";
   title: string;
-  items: {
-    title: string;
-    url: string;
-    description?: string;
-  }[];
+  items: ActivityLink[];
 };
 
 export type ActivityCardsSection = {

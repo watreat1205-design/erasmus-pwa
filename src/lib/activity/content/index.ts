@@ -1,6 +1,8 @@
+// src/lib/activity/content/index.ts
 import type { ActivityContent } from "@/src/lib/activity/content-types";
 import { activity11Content } from "./activity-1-1";
 import { activity12Content } from "./activity-1-2";
+import { activity13Content } from "./activity-1-3";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -23,6 +25,14 @@ export function getActivityContentByLesson(
     lessonPosition === 2
   ) {
     return activity12Content;
+  }
+
+  if (
+    title.includes("activity 1.3") ||
+    title.includes("deepening teal application") ||
+    lessonPosition === 3
+  ) {
+    return activity13Content;
   }
 
   return null;

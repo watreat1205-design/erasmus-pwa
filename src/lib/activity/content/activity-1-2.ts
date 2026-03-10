@@ -134,24 +134,27 @@ export const activity12Content: ActivityContent = {
           description:
             "Explore a practical scenario on enhancing adult learning through interactive TEAL methods.",
           url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/case-study-teal-for-upskilling.pdf",
+          resourceType: "case-study",
         },
         {
           title: "Case Study — Unmotivated Class",
           description:
             "Review a classroom scenario focused on improving engagement through TEAL strategies.",
           url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/case-study-unmotivated-class.pdf",
+          resourceType: "case-study",
         },
         {
           title: "Slides — Activity 1.2 Presentation",
-          description:
-            "Open the presentation slides used in this activity.",
+          description: "Open the presentation slides used in this activity.",
           url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/a1-2-presentation.pdf",
+          resourceType: "slides",
         },
         {
           title: "Active Learning Strategies — Queen’s University",
           description:
             "Additional reading on active learning strategies and learner engagement.",
           url: "https://www.queensu.ca/ctl/resources/instructors/instructional-strategies/active-learning",
+          resourceType: "external",
         },
       ],
     },

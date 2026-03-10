@@ -167,26 +167,30 @@ export const activity11Content: ActivityContent = {
     },
 
     {
-      id: "further-reading",
-      type: "links",
-      title: "Further Reading",
-      items: [
-        {
-          title: "Active Learning — Edutopia",
-          url: "https://www.edutopia.org/article/active-learning-strategies",
-        },
-        {
-          title: "What is Technology-Enhanced Learning? — WGU",
-          url: "https://www.wgu.edu/blog/what-technology-enhanced-learning2009.html",
-        },
-        {
-          title: "Examples of Collaborative Learning — TeachThought",
-          url: "https://www.teachthought.com/learning/collaborative-learning/",
-        },
-        {
-          title: "Traditional Learning vs TEAL — Canva",
-          url: "https://ctl.columbia.edu/resources-and-technology/teaching-with-technology/teal/",
-        },
+  id: "further-reading",
+  type: "links",
+  title: "Further Reading",
+  items: [
+    {
+      title: "Active Learning — Edutopia",
+      url: "https://www.edutopia.org/article/active-learning-strategies",
+      resourceType: "external",
+    },
+    {
+      title: "What is Technology-Enhanced Learning? — WGU",
+      url: "https://www.wgu.edu/blog/what-technology-enhanced-learning2009.html",
+      resourceType: "external",
+    },
+    {
+      title: "Examples of Collaborative Learning — TeachThought",
+      url: "https://www.teachthought.com/learning/collaborative-learning/",
+      resourceType: "external",
+    },
+    {
+      title: "Traditional Learning vs TEAL — Canva",
+      url: "https://ctl.columbia.edu/resources-and-technology/teaching-with-technology/teal/",
+      resourceType: "external",
+       },
       ],
     },
   ],

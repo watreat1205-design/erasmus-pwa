@@ -4,6 +4,7 @@
 import type { ActivityContent, ActivitySection } from "@/src/lib/activity/content-types";
 import { openInPlatform } from "@/components/lesson/openInPlatform";
 
+
 function getSectionIcon(section: ActivitySection) {
   switch (section.type) {
     case "cards":
@@ -21,6 +22,30 @@ function getSectionIcon(section: ActivitySection) {
     default:
       return "•";
   }
+}
+
+function getLinkIcon(resourceType?: string) {
+  if (resourceType === "video") {
+    return <span>🎥</span>;
+  }
+
+  if (
+    resourceType === "slides" ||
+    resourceType === "article" ||
+    resourceType === "case-study"
+  ) {
+    return <span>📄</span>;
+  }
+
+  return <span>🔗</span>;
+}
+
+function isSlidesResource(resourceType?: string) {
+  return resourceType === "slides";
+}
+
+function isFurtherReadingResource(resourceType?: string) {
+  return resourceType !== "slides";
 }
 
 function SectionCard({
@@ -196,29 +221,97 @@ function renderSection(section: ActivitySection) {
         </SectionCard>
       );
 
-    case "links":
-      return (
-        <SectionCard key={section.id} title={section.title} icon={icon}>
+      case "links": {
+  const furtherReadingItems = section.items.filter((item) =>
+    isFurtherReadingResource(item.resourceType)
+  );
+
+  const slideItems = section.items.filter((item) =>
+    isSlidesResource(item.resourceType)
+  );
+
+  return (
+    <SectionCard key={section.id} title={section.title} icon={icon}>
+      <div className="space-y-8">
+        {furtherReadingItems.length > 0 ? (
           <div className="space-y-3">
-            {section.items.map((item, i) => (
+            <h3 className="text-lg font-semibold text-gray-900">
+              Case Studies and Further Reading
+            </h3>
+
+            {furtherReadingItems.map((item, i) => (
               <button
-                key={i}
+                key={`reading-${i}`}
                 type="button"
                 onClick={() => openInPlatform(item.url)}
                 className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
               >
-                <div className="text-base font-semibold text-gray-900">{item.title}</div>
-                {item.description ? (
-                  <div className="mt-1 text-sm text-gray-600">{item.description}</div>
-                ) : null}
-                <div className="mt-4 text-sm font-medium text-emerald-700">
-                 Open material →
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 text-emerald-700">
+                    {getLinkIcon(item.resourceType)}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="text-base font-semibold text-gray-900">
+                      {item.title}
+                    </div>
+
+                    {item.description ? (
+                      <div className="mt-1 text-sm text-gray-600">
+                        {item.description}
+                      </div>
+                    ) : null}
+
+                    <div className="mt-4 text-sm font-medium text-emerald-700">
+                      Open material →
+                    </div>
+                  </div>
                 </div>
               </button>
             ))}
           </div>
-        </SectionCard>
-      );
+        ) : null}
+
+        {slideItems.length > 0 ? (
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-900">Resources</h3>
+
+            {slideItems.map((item, i) => (
+              <button
+                key={`slides-${i}`}
+                type="button"
+                onClick={() => openInPlatform(item.url)}
+                className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 text-emerald-700">
+                    {getLinkIcon(item.resourceType)}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="text-base font-semibold text-gray-900">
+                      {item.title}
+                    </div>
+
+                    {item.description ? (
+                      <div className="mt-1 text-sm text-gray-600">
+                        {item.description}
+                      </div>
+                    ) : null}
+
+                    <div className="mt-4 text-sm font-medium text-emerald-700">
+                      Open material →
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </SectionCard>
+  );
+}
 
     default:
       return null;
