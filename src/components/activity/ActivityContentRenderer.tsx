@@ -85,11 +85,39 @@ function renderSection(section: ActivitySection) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="space-y-4 text-gray-700">
-            {section.body.map((p, i) => (
-              <p key={i} className="leading-7">
-                {p}
-              </p>
-            ))}
+
+            {section.body.map((p, i) => {
+  const match = p.match(/\[(.*?)\]\((.*?)\)/);
+
+  if (match) {
+    const label = match[1];
+    const url = match[2];
+
+    return (
+      <button
+        key={i}
+        type="button"
+        onClick={() => {
+         if (url.startsWith("/quizzes/")) {
+         window.location.href = url;
+       } else {
+         openInPlatform(url);
+       }
+      }}
+        className="mt-3 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
+      >
+        {label} →
+      </button>
+    );
+  }
+
+    return (
+        <p key={i} className="leading-7">
+         {p}
+        </p>
+       );
+     })}
+
           </div>
         </SectionCard>
       );
@@ -332,7 +360,7 @@ export default function ActivityContentRenderer({
       ? stepsSection.steps.slice(0, 3)
       : [];
 
-  return (
+         return (
     <div className="space-y-8">
       <section className="relative overflow-hidden rounded-[34px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_12px_32px_rgba(0,0,0,0.10)] backdrop-blur-md sm:p-8">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-lime-100/70 via-emerald-50/35 to-green-100/65" />
@@ -368,6 +396,13 @@ export default function ActivityContentRenderer({
         </div>
       </section>
 
+      {(() => {
+        const requirements = activity.sections.find(
+          (section) => section.id === "requirements"
+        );
+        return requirements ? renderSection(requirements) : null;
+      })()}
+
       {flowSteps.length > 0 ? (
         <section className="relative overflow-hidden rounded-[30px] border border-white/50 bg-emerald-50/75 p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md sm:p-6">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-lime-100/35 via-transparent to-emerald-100/45" />
@@ -377,7 +412,9 @@ export default function ActivityContentRenderer({
                 🚀
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Activity Flow</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Activity Flow
+                </h2>
                 <p className="text-sm text-gray-600">
                   A simple guide to complete this activity
                 </p>
@@ -405,8 +442,75 @@ export default function ActivityContentRenderer({
           </div>
         </section>
       ) : null}
+    
+        {/* Learning Focus */}
+{(() => {
+  const section = activity.sections.find((s) => s.id === "learning-focus");
+  return section ? renderSection(section) : null;
+})()}
 
-      {activity.sections.map(renderSection)}
+{/* Activity 1.1 special layout */}
+{activity.slug === "activity-1-1" ? (
+  <>
+    {(() => {
+      const stepsSection = activity.sections.find((s) => s.type === "steps");
+      if (!stepsSection || stepsSection.type !== "steps") return null;
+
+      const part1 = {
+        ...stepsSection,
+        id: `${stepsSection.id}-part-1`,
+        title: "Step-by-Step Activity (Part 1)",
+        steps: stepsSection.steps.slice(0, 3),
+      };
+
+      return renderSection(part1);
+    })()}
+
+    {(() => {
+      const section = activity.sections.find((s) => s.type === "videos");
+      return section ? renderSection(section) : null;
+    })()}
+
+    {(() => {
+      const stepsSection = activity.sections.find((s) => s.type === "steps");
+      if (!stepsSection || stepsSection.type !== "steps") return null;
+
+      const part2 = {
+        ...stepsSection,
+        id: `${stepsSection.id}-part-2`,
+        title: "Step-by-Step Activity (Part 2)",
+        steps: stepsSection.steps.slice(3),
+      };
+
+      return renderSection(part2);
+    })()}
+  </>
+) : (
+  <>
+    {(() => {
+      const section = activity.sections.find((s) => s.type === "steps");
+      return section ? renderSection(section) : null;
+    })()}
+
+    {(() => {
+      const section = activity.sections.find((s) => s.type === "videos");
+      return section ? renderSection(section) : null;
+    })()}
+  </>
+)}
+
+{/* Assessment */}
+{(() => {
+  const section = activity.sections.find((s) => s.id === "assessment");
+  return section ? renderSection(section) : null;
+})()}
+
+{/* Further Reading */}
+{(() => {
+  const section = activity.sections.find((s) => s.id === "further-reading");
+  return section ? renderSection(section) : null;
+})()}
+
     </div>
   );
 }

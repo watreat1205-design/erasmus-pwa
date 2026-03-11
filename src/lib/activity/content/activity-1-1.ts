@@ -5,13 +5,13 @@ export const activity11Content: ActivityContent = {
   slug: "activity-1-1",
   title: "Exploring TEAL",
   moduleLabel: "Module 1: Introduction to TEAL teaching methodology",
-  intro:
-    "Introduction to TEAL teaching methodology",
+  intro: "Introduction to TEAL teaching methodology",
   meta: [
     { label: "Duration", value: "110 minutes", icon: "⏱" },
     { label: "Setting", value: "F2F", icon: "🧑‍🏫" },
     { label: "Type", value: "Discussion, Group activity", icon: "👥" },
   ],
+
   sections: [
     {
       id: "learning-focus",
@@ -54,15 +54,14 @@ export const activity11Content: ActivityContent = {
         },
       ],
     },
+
     {
-      id: "activity-overview",
-      type: "text",
-      title: "Activity Overview",
-      body: [
-        "The facilitator begins by introducing the module's objectives and providing a brief overview of the session.",
-        "The facilitator explains that the goal is to explore the TEAL (Technology-Enhanced Active Learning) approach and its key components: active learning, technology integration, and collaboration.",
-      ],
+      id: "requirements",
+      type: "list",
+      title: "Requirements",
+      items: ["PC/Laptop", "Mobile Devices", "Internet", "Projector"],
     },
+
     {
       id: "steps",
       type: "steps",
@@ -76,22 +75,22 @@ export const activity11Content: ActivityContent = {
             "The facilitator explains that the goal is to explore the TEAL (Technology-Enhanced Active Learning) approach and its key components: active learning, technology integration, and collaboration.",
           ],
         },
-                  {
+        {
           title: "Icebreaker — Two Truths and a Lie",
           duration: "20 minutes",
           body: [
             'The facilitator starts with the "Two Truths and a Lie" icebreaker activity. Each participant shares three statements about themselves: two are true, and one is false. The rest of the group guesses which statement is the lie.',
             "Activity Objective:",
-            "• Create a relaxed and interactive atmosphere.",
-            "• Encourage communication and interaction among participants.",
-            "• Stimulate reflection on the theme of active learning and technology integration.",
+            "– Create a relaxed and interactive atmosphere.",
+            "– Encourage communication and interaction among participants.",
+            "– Stimulate reflection on the theme of active learning and technology integration.",
             "Discussion Guide (Facilitator):",
-            "• Ask participants to include at least one educational reflection or teaching experience among their statements (e.g., a situation where they used technology or an active learning approach in an interesting or challenging way).",
-            "• Example statements:",
-            `◦ "I used an online platform for collaborative learning in the classroom, but it didn't work as I expected."`,
-            `◦ "I once incorporated technology to make my teaching more engaging, but the students were confused about how to use it."`,
-            "• After the activity, invite participants to reflect on how the shared experiences may relate to the concepts of active learning and technology that will be explored in the module.",
-            "• Stimulate a discussion on how using technology in teaching activities can improve student interaction and make learning more engaging.",
+            "– Ask participants to include at least one educational reflection or teaching experience among their statements (e.g., a situation where they used technology or an active learning approach in an interesting or challenging way).",
+            "– Example statements:",
+            `↳ "I used an online platform for collaborative learning in the classroom, but it didn't work as I expected."`,
+            `↳ "I once incorporated technology to make my teaching more engaging, but the students were confused about how to use it."`,
+            "– After the activity, invite participants to reflect on how the shared experiences may relate to the concepts of active learning and technology that will be explored in the module.",
+            "– Stimulate a discussion on how using technology in teaching activities can improve student interaction and make learning more engaging.",
           ],
         },
         {
@@ -133,16 +132,7 @@ export const activity11Content: ActivityContent = {
         },
       ],
     },
-    {
-      id: "assessment",
-      type: "text",
-      title: "Assessment",
-      body: [
-        "Participants’ understanding of TEAL principles will be assessed through a combination of observation and a digital quiz.",
-        "The facilitator observes participants’ engagement during Think-Pair-Share and group discussion activities. This provides qualitative insights into their ability to apply TEAL concepts and engage in collaborative discussions.",
-        "A digital quiz will also be administered via Google Forms to assess participants’ understanding of TEAL terminology (https://docs.google.com/forms/d/1AMmGgxAbrsx14-H-0XKeu6I5X7BwjGi6-Y7LquThc6c/preview), principles, and comparisons to traditional teaching methods. The quiz will include both multiple choice and short answer questions to test both recall and comprehension of the material.",
-      ],
-    },
+
     {
       id: "videos",
       type: "videos",
@@ -165,11 +155,17 @@ export const activity11Content: ActivityContent = {
         },
       ],
     },
+
     {
-      id: "requirements",
-      type: "list",
-      title: "Requirements",
-      items: ["PC/Laptop", "Mobile Devices", "Internet", "Projector"],
+      id: "assessment",
+      type: "text",
+      title: "Assessment",
+      body: [
+        "Participants’ understanding of TEAL principles will be assessed through a combination of observation and a digital quiz.",
+        "The facilitator observes participants’ engagement during Think-Pair-Share and group discussion activities. This provides qualitative insights into their ability to apply TEAL concepts and engage in collaborative discussions.",
+        "A digital quiz will also be administered via Google Forms to assess participants’ understanding of TEAL terminology, principles, and comparisons to traditional teaching methods. The quiz will include both multiple choice and short answer questions to test both recall and comprehension of the material.",
+        "[Open the Module Quiz](/quizzes/0691176a-40d3-49f7-8b16-6f22274aff03)",
+      ],
     },
 
     {
