@@ -1,4 +1,3 @@
-// app/welcome/WelcomeClient.tsx
 "use client";
 
 import Link from "next/link";
@@ -61,18 +60,18 @@ export default function WelcomeClient({
 
   return (
     <>
-      <header className="flex flex-wrap items-center justify-between gap-3 py-7 sm:py-8">
+      <header className="flex flex-wrap items-center justify-between gap-2 py-0.5 sm:py-1">
         <Link
           href="/welcome"
           prefetch={false}
-          className="flex items-center gap-3 rounded-xl px-2 py-2"
+          className="flex items-center gap-3 rounded-xl px-2 py-1"
         >
           <Image
             src="/brand/drops-logo1.png"
             alt="DROPS logo"
             width={160}
             height={160}
-            className="h-32 w-32 object-contain sm:h-40 sm:w-40"
+            className="h-20 w-20 object-contain sm:h-28 sm:w-28"
           />
           <div className="leading-tight">
             <div className="text-sm text-white sm:text-base">
@@ -132,8 +131,8 @@ export default function WelcomeClient({
         </nav>
       </header>
 
-      <main className="flex flex-1 items-center">
-        <section className="w-full">
+      <main className="flex items-start">
+        <section className="w-full pt-0">
           <div className="max-w-2xl animate-[fadeUp_.35s_ease-out]">
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-white/80 drop-shadow-sm sm:text-5xl">
               {mounted
@@ -141,7 +140,7 @@ export default function WelcomeClient({
                 : "Welcome"}
             </h1>
 
-            <p className="mt-4 text-base font-medium leading-7 text-white/90 sm:text-lg">
+            <p className="mt-3 text-base font-medium leading-7 text-white/90 sm:text-lg">
               {mounted
                 ? t("welcome.subtitle", {
                     defaultValue:
@@ -151,7 +150,7 @@ export default function WelcomeClient({
             </p>
 
             {loggedIn ? (
-              <p className="mt-4 text-sm font-medium text-white/90">
+              <p className="mt-3 text-sm font-medium text-white/90">
                 {mounted
                   ? displayName
                     ? t("welcome.backWithName", {
@@ -165,7 +164,7 @@ export default function WelcomeClient({
               </p>
             ) : null}
 
-            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
               <Link
                 href={loggedIn ? "/courses" : "/login?next=/courses"}
                 prefetch={false}

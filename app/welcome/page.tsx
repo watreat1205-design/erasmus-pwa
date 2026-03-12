@@ -63,7 +63,7 @@ export default async function WelcomePage({
   const loggedIn = !!user;
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-[108vh] overflow-hidden">
       <Image
         src="/templates/8.jpg"
         alt=""
@@ -74,13 +74,18 @@ export default async function WelcomePage({
       <div className="absolute inset-0 bg-black/20" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col px-4 sm:px-6">
-        <WelcomeClient
-          loggedIn={loggedIn}
-          displayName={displayName}
-          initialLang={initialLang}
-        />
-       <FooterPartners compact />
+      <div className="relative mx-auto flex min-h-[108vh] max-w-6xl flex-col px-4 sm:px-6">
+        <div className="pt-0">
+          <WelcomeClient
+            loggedIn={loggedIn}
+            displayName={displayName}
+            initialLang={initialLang}
+          />
+        </div>
+
+        <div className="mt-auto">
+          <FooterPartners compact />
+        </div>
       </div>
     </div>
   );

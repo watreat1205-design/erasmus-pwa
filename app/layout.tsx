@@ -5,6 +5,8 @@ import VideoModalClient from "../components/VideoModalClient";
 import localFont from "next/font/local";
 import Providers from "./providers";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import PageContainer from "@/components/layout/PageContainer";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 
 export const metadata: Metadata = {
   title: "Erasmus PWA",
@@ -28,10 +30,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={notoSans.variable}>
     <body suppressHydrationWarning className="font-sans">
-      <Providers>
-        {children}
-       <GlobalFooter />
-      <VideoModalClient />
+     <Providers>
+     <GlobalHeader />
+     
+     <PageContainer>
+      {children}
+     </PageContainer>
+
+     <GlobalFooter />
+     <VideoModalClient />
      </Providers>
      </body>  
     </html>

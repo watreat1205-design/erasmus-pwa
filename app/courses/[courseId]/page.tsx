@@ -186,6 +186,10 @@ export default async function CourseViewPage({
     }
   }
 
+  const visibleSections = sections.filter(
+    (section) => (lessonsBySection.get(section.id) ?? []).length > 0
+  );
+
   const LockedRow = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center justify-between rounded-2xl border border-white/60 bg-white/70 px-4 py-4 text-base text-gray-800 shadow-sm">
       <div className="truncate">{children}</div>
@@ -255,126 +259,129 @@ export default async function CourseViewPage({
             </div>
           )}
 
-          <div className="mt-10 space-y-6">
-            {!sections.length ? (
+          <div className="mt-10">
+            {!visibleSections.length ? (
               <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
                 <p className="text-gray-800">
                   <TNoSections />
                 </p>
               </div>
             ) : (
-              sections
-                .filter((section) => (lessonsBySection.get(section.id) ?? []).length > 0)
-                .map((section) => {
-                  const sectionLessons = lessonsBySection.get(section.id) ?? [];
-                  const moduleQuiz = quizBySection.get(section.id) ?? null;
+              <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+                <div className="space-y-8">
+                  {visibleSections.map((section, index) => {
+                    const sectionLessons = lessonsBySection.get(section.id) ?? [];
+                    const moduleQuiz = quizBySection.get(section.id) ?? null;
 
-                  return (
-                    <div
-                      key={section.id}
-                      className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md"
-                    >
-                      <div className="text-xl font-semibold tracking-tight text-gray-900">
-                        {section.position}.{" "}
-                        {pickI18n(section.title_i18n, lang, section.title)}
-                      </div>
-
-                      <div className="mt-6 space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-                            📚
-                          </div>
-                          <div>
-                            <div className="text-base font-semibold text-gray-900">
-                              <TLessons />
-                            </div>
-                            <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
-                          </div>
+                    return (
+                      <div key={section.id}>
+                        <div className="text-xl font-semibold tracking-tight text-gray-900">
+                          {section.position}.{" "}
+                          {pickI18n(section.title_i18n, lang, section.title)}
                         </div>
 
-                        {sectionLessons.length ? (
-                          <div className="space-y-3">
-                            {sectionLessons.map((lesson) => {
-                              const href = `/courses/${courseId}/lessons/${lesson.id}`;
-
-                              return isEnrolled ? (
-                                <Link
-                                  key={lesson.id}
-                                  href={href}
-                                  className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
-                                >
-                                  {lesson.position}.{" "}
-                                  {pickI18n(
-                                    lesson.title_i18n,
-                                    lang,
-                                    lesson.title
-                                  )}
-                                </Link>
-                              ) : (
-                                <LockedRow key={lesson.id}>
-                                  {lesson.position}.{" "}
-                                  {pickI18n(
-                                    lesson.title_i18n,
-                                    lang,
-                                    lesson.title
-                                  )}
-                                </LockedRow>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <p className="text-base text-gray-600">
-                            <TNoLessons />
-                          </p>
-                        )}
-
-                        {moduleQuiz && (
-                          <div className="mt-8">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-                                🧠
-                              </div>
-                              <div>
-                                <div className="text-base font-semibold text-gray-900">
-                                  <TModuleQuiz />
-                                </div>
-                                <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
-                              </div>
+                        <div className="mt-6 space-y-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                              📚
                             </div>
+                            <div>
+                              <div className="text-base font-semibold text-gray-900">
+                                <TLessons />
+                              </div>
+                              <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                            </div>
+                          </div>
 
-                            {isEnrolled ? (
-                              <Link
-                                href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
-                                className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
-                              >
-                                {pickI18n(
-                                  moduleQuiz.title_i18n,
-                                  lang,
-                                  moduleQuiz.title
-                                )}
-                                {user && passedQuizSet.has(moduleQuiz.id) ? (
-                                  <span className="ml-2 text-sm text-green-700">
-                                    ✓ <TPassed />
-                                  </span>
-                                ) : null}
-                              </Link>
-                            ) : (
-                              <div className="mt-3">
-                                <LockedRow>
+                          {sectionLessons.length ? (
+                            <div className="space-y-3">
+                              {sectionLessons.map((lesson) => {
+                                const href = `/courses/${courseId}/lessons/${lesson.id}`;
+
+                                return isEnrolled ? (
+                                  <Link
+                                    key={lesson.id}
+                                    href={href}
+                                    className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
+                                  >
+                                    {lesson.position}.{" "}
+                                    {pickI18n(
+                                      lesson.title_i18n,
+                                      lang,
+                                      lesson.title
+                                    )}
+                                  </Link>
+                                ) : (
+                                  <LockedRow key={lesson.id}>
+                                    {lesson.position}.{" "}
+                                    {pickI18n(
+                                      lesson.title_i18n,
+                                      lang,
+                                      lesson.title
+                                    )}
+                                  </LockedRow>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-base text-gray-600">
+                              <TNoLessons />
+                            </p>
+                          )}
+
+                          {moduleQuiz && (
+                            <div className="mt-8">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                                  🧠
+                                </div>
+                                <div>
+                                  <div className="text-base font-semibold text-gray-900">
+                                    <TModuleQuiz />
+                                  </div>
+                                  <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                                </div>
+                              </div>
+
+                              {isEnrolled ? (
+                                <Link
+                                  href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
+                                  className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
+                                >
                                   {pickI18n(
                                     moduleQuiz.title_i18n,
                                     lang,
                                     moduleQuiz.title
                                   )}
-                                </LockedRow>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                                  {user && passedQuizSet.has(moduleQuiz.id) ? (
+                                    <span className="ml-2 text-sm text-green-700">
+                                      ✓ <TPassed />
+                                    </span>
+                                  ) : null}
+                                </Link>
+                              ) : (
+                                <div className="mt-3">
+                                  <LockedRow>
+                                    {pickI18n(
+                                      moduleQuiz.title_i18n,
+                                      lang,
+                                      moduleQuiz.title
+                                    )}
+                                  </LockedRow>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {index < visibleSections.length - 1 ? (
+                          <div className="mt-8 border-t border-white/40" />
+                        ) : null}
                       </div>
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </div>
         </div>

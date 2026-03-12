@@ -5,6 +5,7 @@ import { activity12Content } from "./activity-1-2";
 import { activity13Content } from "./activity-1-3";
 import { activity14Content } from "./activity-1-4";
 import { activity15Content } from "./activity-1-5";
+import { activity21Content } from "./activity-2-1";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -53,5 +54,14 @@ if (
   return activity15Content;
 }
 
-  return null;
+if (
+  title.includes("activity 2.1") ||
+  title.includes("exploring agenda 2030") ||
+  title.includes("lesson 2.1") ||
+  lessonPosition === 1
+) {
+  return activity21Content;
+}
+
+return null;
 }
