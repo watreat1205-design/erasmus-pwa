@@ -345,7 +345,7 @@ export default async function CourseViewPage({
 
                               {isEnrolled ? (
                                 <Link
-                                  href={`/courses/${courseId}/quizzes/${moduleQuiz.id}`}
+                                  href={`/quizzes/${moduleQuiz.id}`}
                                   className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
                                 >
                                   {pickI18n(
