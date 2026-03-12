@@ -1,4 +1,3 @@
-// src/components/layout/GlobalHeader.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -27,7 +26,15 @@ export default function GlobalHeader() {
     ensureI18n();
   }, []);
 
-  if (pathname === "/welcome") return null;
+  const noChrome =
+    pathname === "/welcome" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/reset-password");
+
+  if (noChrome) {
+    return null;
+  }
 
   async function changeLang(lang: string) {
     document.cookie = `i18nextLng=${lang}; path=/; max-age=31536000; SameSite=Lax`;
@@ -41,13 +48,8 @@ export default function GlobalHeader() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-0">
-      {/* glass container */}
       <div className="mx-auto max-w-6xl rounded-[28px] border border-white/20 bg-white/12 p-3 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl">
-
-        {/* white inner panel */}
         <div className="flex items-center justify-between gap-4 rounded-2xl bg-white px-5 py-3">
-
-          {/* LOGO */}
           <Link href="/dashboard" className="flex items-center gap-3">
             <Image
               src="/brand/drops-logo.png"
@@ -66,9 +68,7 @@ export default function GlobalHeader() {
             </div>
           </Link>
 
-          {/* CENTER NAV */}
           <div className="flex items-center gap-3">
-
             <Link
               href="/dashboard"
               className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
@@ -88,10 +88,7 @@ export default function GlobalHeader() {
             </Link>
           </div>
 
-          {/* RIGHT SIDE */}
           <div className="flex items-center gap-4">
-
-            {/* language switch */}
             <div className="flex items-center gap-1">
               {LANGS.map((lang) => (
                 <button
@@ -104,7 +101,6 @@ export default function GlobalHeader() {
               ))}
             </div>
 
-            {/* logout */}
             <Link
               href="/logout"
               className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
@@ -113,7 +109,6 @@ export default function GlobalHeader() {
                 ? t("nav.logout", { defaultValue: "Logout" })
                 : "Logout"}
             </Link>
-
           </div>
         </div>
       </div>

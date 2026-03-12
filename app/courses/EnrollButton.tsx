@@ -20,6 +20,8 @@ export default function EnrollButton({ courseId }: { courseId: string }) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+ 
+      console.log("EnrollButton user:", user);
 
       // Guest → login, then return to this exact course page
       if (!user) {

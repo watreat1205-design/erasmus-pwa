@@ -8,7 +8,12 @@ export default function PageContainer({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const noHeader = pathname === "/welcome";
 
-  return <div className={noHeader ? "" : "pt-20"}>{children}</div>;
+  const noChrome =
+    pathname === "/welcome" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/reset-password");
+
+  return <div className={noChrome ? "" : "pt-20"}>{children}</div>;
 }

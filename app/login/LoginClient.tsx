@@ -62,8 +62,8 @@ export default function LoginClient() {
   }
 
   return (
-    <div className="min-h-screen bg-[#eef1f4] px-4 py-6">
-      <div className="mx-auto flex min-h-[calc(100vh-3rem)] items-center justify-center">
+        <div className="min-h-screen bg-[#eef1f4] px-4 pt-4 pb-6">
+          <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] items-start justify-center"> 
         <div className="relative h-[720px] w-[680px] overflow-hidden rounded-2xl border border-black/10 shadow-2xl">
           <Image
             src="/templates/3b.jpg"
