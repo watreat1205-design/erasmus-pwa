@@ -1,5 +1,7 @@
 //  app/courses/[courseId]/lessons/[lessonId]/page.tsx
+
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import LessonActionsClient from "./LessonActionsClient";
 import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
@@ -8,11 +10,16 @@ import { pickI18n } from "@/lib/i18n/pick";
 import ActivityContentRenderer from "@/components/activity/ActivityContentRenderer";
 import { getActivityContentByLesson } from "@/src/lib/activity/content";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function LessonPage({
   params,
 }: {
   params: Promise<{ courseId: string; lessonId: string }>;
 }) {
+   noStore(); 
+
   const { courseId, lessonId } = await params;
   const { lang } = await getServerTranslation();
 
