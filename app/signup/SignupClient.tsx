@@ -78,7 +78,7 @@ export default function SignupClient() {
       id: userId,
       full_name: fullName.trim() || data.user?.user_metadata?.full_name || null,
       email: cleanEmail,
-      role: "user",
+      role: "trainer",
     });
 
     if (profileError) {
