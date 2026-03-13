@@ -12,6 +12,8 @@ export type WelcomeClientProps = {
   loggedIn: boolean;
   displayName: string | null;
   initialLang: string;
+  inviteToken?: string | null;
+  inviteMeta?: unknown;
 };
 
 const LANGS = [
@@ -27,6 +29,8 @@ export default function WelcomeClient({
   loggedIn,
   displayName,
   initialLang,
+  inviteToken: _inviteToken,
+  inviteMeta: _inviteMeta,
 }: WelcomeClientProps) {
   const router = useRouter();
   const { t } = useTranslation("common");
