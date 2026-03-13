@@ -13,7 +13,7 @@ function isPublicRoute(pathname: string) {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/update-password") ||
-    pathname.startsWith("/courses") || // public browsing
+    pathname === "/courses" ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/unauthorized") ||
     pathname.startsWith("/_next") ||
