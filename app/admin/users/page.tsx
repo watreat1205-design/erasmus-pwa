@@ -4,7 +4,7 @@ import { canViewAdmin } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import RoleForm from "./role-form";
 
-type UserRole = "trainer" | "learner" | "dev";
+type UserRole = "trainer" | "admin" | "dev";
 
 type ProfileRow = {
   id: string;

@@ -65,7 +65,7 @@ export default async function CourseViewPage({
 
   const role = await getCurrentUserRole();
 
-  // 0) Load course (needed for title + learner publish guard)
+  // 0) Load course (needed for title +  publish guard)
   const { data: course, error: courseErr } = await supabase
     .from("courses")
     .select("id, title, description, is_published")
@@ -83,7 +83,7 @@ export default async function CourseViewPage({
   }
 
   // Learner: course must be published
-  if (role === "learner" && !course.is_published) {
+  if (role === "trainer" && !course.is_published) {
     return (
       <div style={{ padding: 24 }}>
         <h2>Course</h2>
@@ -93,8 +93,8 @@ export default async function CourseViewPage({
     );
   }
 
-  // 1) Enrollment guard (ONLY learners)
-  if (role === "learner") {
+  // 1) Enrollment guard (not used anymore)
+  if (role === "trainer") {
     const { data: enrollment, error: enrollErr } = await supabase
       .from("course_enrollments")
       .select("id")
@@ -212,7 +212,7 @@ export default async function CourseViewPage({
   const lessons = normalizeCourseLessons(courseLessons);
 
   const visibleLessons =
-    role === "learner"
+    role === "trainer"
       ? lessons.filter((l) => l.is_published === true && l.kind !== "quiz")
       : lessons.filter((l) => l.kind !== "quiz");
 

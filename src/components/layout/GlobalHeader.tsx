@@ -1,3 +1,4 @@
+// src/components/layout/GlobalHeader.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -6,7 +7,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureI18n } from "@/i18n";
-import { createClient } from "@/lib/supabase/client";
 
 const LANGS = [
   { code: "en", label: "EN", emoji: "🇬🇧" },
@@ -21,33 +21,10 @@ export default function GlobalHeader() {
   const pathname = usePathname();
   const { t } = useTranslation("common");
   const [mounted, setMounted] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
     setMounted(true);
     ensureI18n();
-
-    const supabase = createClient();
-
-    async function loadUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      setIsLoggedIn(!!user);
-    }
-
-    void loadUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session?.user);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const noChrome =
@@ -111,38 +88,16 @@ export default function GlobalHeader() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              {LANGS.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => void changeLang(lang.code)}
-                  className="text-sm font-medium text-gray-700 hover:text-black"
-                >
-                  {lang.emoji}
-                </button>
-              ))}
-            </div>
-
-            {isLoggedIn ? (
-              <Link
-                href="/logout"
-                className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+          <div className="flex items-center gap-1">
+            {LANGS.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => void changeLang(lang.code)}
+                className="text-sm font-medium text-gray-700 hover:text-black"
               >
-                {mounted
-                  ? t("nav.logout", { defaultValue: "Logout" })
-                  : "Logout"}
-              </Link>
-            ) : (
-              <Link
-                href={`/login?next=${encodeURIComponent(pathname)}`}
-                className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-              >
-                {mounted
-                  ? t("nav.login", { defaultValue: "Login" })
-                  : "Login"}
-              </Link>
-            )}
+                {lang.emoji}
+              </button>
+            ))}
           </div>
         </div>
       </div>

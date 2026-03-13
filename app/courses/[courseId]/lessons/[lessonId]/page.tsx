@@ -39,44 +39,25 @@ export default async function LessonPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h2>Lesson</h2>
-        <p style={{ color: "crimson" }}>You must be logged in.</p>
-        <Link href="/login">Go to login</Link>
-      </div>
-    );
-  }
-
-  // Enrollment guard
-  const { data: enrollment, error: eErr } = await supabase
-    .from("course_enrollments")
-    .select("id")
-    .eq("course_id", courseId)
-    .eq("user_id", user.id)
+    const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
     .maybeSingle();
 
-  if (eErr) {
+  const role = profile?.role ?? null;
+  const canAccessLearning =
+    role === "trainer" || role === "admin" || role === "dev";
+
+  if (!canAccessLearning) {
     return (
       <div style={{ padding: 24 }}>
         <h2>Lesson</h2>
-        <p style={{ color: "crimson" }}>{eErr.message}</p>
-        <Link href={`/courses/${courseId}`}>← Back to course</Link>
+        <p style={{ color: "crimson" }}>You do not have access to this lesson.</p>
+        <Link href="/dashboard">Go to dashboard</Link>
       </div>
     );
   }
-
-  if (!enrollment) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h2>Lesson</h2>
-        <p style={{ color: "crimson" }}>You are not enrolled in this course.</p>
-        <Link href={`/courses/${courseId}`}>← Back to course</Link>
-      </div>
-    );
-  }
-
   const { data: course, error: cErr } = await supabase
     .from("courses")
     .select("id, title, title_i18n")

@@ -30,7 +30,7 @@ export default function RoleForm({
         onChange={(e) => setRole(e.target.value as UserRole)}
       >
         <option value="trainer">trainer</option>
-        <option value="learner">learner</option>
+        <option value="admin">admin</option>
         <option value="dev">dev</option>
       </select>
 

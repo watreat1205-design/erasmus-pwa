@@ -296,7 +296,7 @@ export async function setLessonPublished(formData: FormData) {
 
   if (error) throw error;
 
-  // refresh editor + learner pages
+  // refresh editor + course pages
   if (courseId) revalidatePath(`/trainer/courses/${courseId}/edit`);
   revalidatePath("/trainer/courses");
   if (courseId) revalidatePath(`/my-courses/${courseId}`);

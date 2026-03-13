@@ -123,37 +123,6 @@ export default async function LessonPage({
     );
   }
 
-  if (!enrollment) {
-    return (
-      <div className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 -translate-y-7">
-          <Image src="/templates/5.jpg" alt="" fill priority className="object-cover object-[center_-260px]" />
-        </div>
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
-
-        <div className="relative z-10 mx-auto max-w-3xl px-6 py-6">
-          <div className="rounded-xl border border-white/20 bg-white/85 p-3">
-            <h2 className="text-xl font-semibold text-gray-900">
-              <T k="lesson.accessDenied" fallback="Access denied" />
-            </h2>
-            <p className="mt-2 text-sm text-gray-700">
-              <T k="lesson.notEnrolled" fallback="You are not enrolled in this course." />
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/my-courses"
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
-              >
-                ← <T k="lesson.backToMyCourses" fallback="Back to My Courses" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Course (for title)
   const { data: course, error: cErr } = await supabase
     .from("courses")

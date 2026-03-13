@@ -134,7 +134,7 @@ export default async function MyCoursesPage() {
     );
   }
 
-  // Courses query (learners see only published)
+  // Courses query (trainer see only published)
   const coursesQuery = supabase
     .from("courses")
     .select("id, title, description, is_published")
@@ -142,7 +142,7 @@ export default async function MyCoursesPage() {
     .order("title", { ascending: true });
 
   const { data: courses, error: cErr } =
-    role === "learner"
+    role === "trainer" || role === "admin" || role === "dev"
       ? await coursesQuery.eq("is_published", true)
       : await coursesQuery;
 

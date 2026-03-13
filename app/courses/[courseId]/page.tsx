@@ -3,7 +3,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import EnrollButton from "../EnrollButton";
 import AllCoursesButtonClient from "./AllCoursesButtonClient";
 import { getServerTranslation } from "@/lib/i18n/server";
 import { pickI18n } from "@/lib/i18n/pick";
@@ -83,6 +82,16 @@ export default async function CourseViewPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+    const { data: profile } = user
+    ? await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle()
+    : { data: null };
+
+  const role = profile?.role ?? null;
+  const canAccessLearning = !!role; 
 
   const { data: course, error: cErr } = await supabase
     .from("courses")
@@ -114,19 +123,6 @@ export default async function CourseViewPage({
         </div>
       </div>
     );
-  }
-
-  let isEnrolled = false;
-
-  if (user) {
-    const { data: enrollment } = await supabase
-      .from("course_enrollments")
-      .select("id")
-      .eq("course_id", courseId)
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    isEnrolled = !!enrollment;
   }
 
   const { data: sectionsData } = await supabase
@@ -238,27 +234,6 @@ export default async function CourseViewPage({
             </div>
           </div>
 
-          {!isEnrolled && (
-            <div className="mt-8 rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-              <h2 className="text-xl font-semibold tracking-tight text-gray-900">
-                <TEnrollTitle />
-              </h2>
-
-              <p className="mt-2 text-base text-gray-700">
-                <TEnrollBody />
-              </p>
-
-              <div className="mt-5">
-                <EnrollButton courseId={courseId} />
-                {!user && (
-                  <p className="mt-3 text-sm text-gray-600">
-                    <TLoginHint />
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
           <div className="mt-10">
             {!visibleSections.length ? (
               <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
@@ -298,7 +273,7 @@ export default async function CourseViewPage({
                               {sectionLessons.map((lesson) => {
                                 const href = `/courses/${courseId}/lessons/${lesson.id}`;
 
-                                return isEnrolled ? (
+                                return canAccessLearning ? (
                                   <Link
                                     key={lesson.id}
                                     href={href}
@@ -343,7 +318,7 @@ export default async function CourseViewPage({
                                 </div>
                               </div>
 
-                              {isEnrolled ? (
+                              {canAccessLearning ? (
                                 <Link
                                   href={`/quizzes/${moduleQuiz.id}`}
                                   className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"

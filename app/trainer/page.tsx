@@ -17,7 +17,7 @@ export default async function TrainerPage() {
   return (
     <main style={{ padding: 24 }}>
       <h1>Trainer Panel</h1>
-      <p>Coming next: course builder, uploads, and learner management.</p>
+      <p>Coming next: course builder, uploads, and trainer management.</p>
     </main>
   );
 }

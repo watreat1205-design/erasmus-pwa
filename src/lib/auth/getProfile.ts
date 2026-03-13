@@ -2,6 +2,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "./roles";
 
+function normalizeRole(role: string | null | undefined): UserRole {
+  if (role === "dev" || role === "admin" || role === "trainer") return role;
+  return "trainer";
+}
+
 export async function getMyProfile() {
   const supabase = await createSupabaseServerClient();
 
@@ -24,7 +29,7 @@ export async function getMyProfile() {
       id: user.id,
       email: user.email ?? null,
       full_name: (user.user_metadata?.full_name as string | undefined) ?? null,
-      role: "learner" as UserRole,
+      role: "trainer" as UserRole,
     };
   }
 
@@ -33,12 +38,12 @@ export async function getMyProfile() {
       id: user.id,
       email: user.email ?? null,
       full_name: (user.user_metadata?.full_name as string | undefined) ?? null,
-      role: "learner" as UserRole,
+      role: "trainer" as UserRole,
     };
   }
 
   return {
     ...profile,
-    role: (profile.role ?? "learner") as UserRole,
+    role: normalizeRole(profile.role),
   };
 }

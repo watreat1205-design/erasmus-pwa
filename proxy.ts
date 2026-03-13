@@ -3,8 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { ACCESS } from "@/lib/auth/access";
 
-/* ---------------- PUBLIC ROUTES ---------------- */
-
 function isPublicRoute(pathname: string) {
   return (
     pathname === "/" ||
@@ -13,15 +11,12 @@ function isPublicRoute(pathname: string) {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/update-password") ||
-    pathname.startsWith("/courses") || // public browsing
     pathname.startsWith("/auth") ||
     pathname.startsWith("/unauthorized") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon")
   );
 }
-
-/* ---------------- ROLE MATCH ---------------- */
 
 function matchAllowed(pathname: string) {
   const keys = Object.keys(ACCESS).sort((a, b) => b.length - a.length);
@@ -34,7 +29,10 @@ function matchAllowed(pathname: string) {
   return undefined;
 }
 
-/* ---------------- MAIN PROXY ---------------- */
+function normalizeRole(role: string | null | undefined) {
+  if (role === "trainer" || role === "admin" || role === "dev") return role;
+  return null;
+}
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -63,24 +61,20 @@ export async function proxy(req: NextRequest) {
     }
   );
 
-  // Always refresh/read auth session first
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Public routes still need auth refresh, but no redirect/role checks
   if (isPublicRoute(pathname)) {
     return res;
   }
 
   const allowedKey = matchAllowed(pathname);
 
-  // Route not protected by ACCESS map
   if (!allowedKey) {
     return res;
   }
 
-  // Protected route + no user -> redirect to login
   if (!user) {
     const loginUrl = req.nextUrl.clone();
     loginUrl.pathname = "/login";
@@ -88,7 +82,6 @@ export async function proxy(req: NextRequest) {
 
     const redirectRes = NextResponse.redirect(loginUrl);
 
-    // preserve any cookies that were refreshed during this request
     res.cookies.getAll().forEach((cookie) => {
       redirectRes.cookies.set(cookie);
     });
@@ -102,10 +95,14 @@ export async function proxy(req: NextRequest) {
     .eq("id", user.id)
     .single();
 
-  const role = !profileError && profile?.role ? profile.role : "learner";
+  if (profileError) {
+    console.error("proxy profile error:", profileError);
+  }
+
+  const role = normalizeRole(profile?.role);
   const allowed = ACCESS[allowedKey] ?? [];
 
-  if (!allowed.includes(role)) {
+  if (!role || !allowed.includes(role)) {
     const redirectRes = NextResponse.redirect(new URL("/unauthorized", req.url));
 
     res.cookies.getAll().forEach((cookie) => {
@@ -117,8 +114,6 @@ export async function proxy(req: NextRequest) {
 
   return res;
 }
-
-/* ---------------- MATCHER ---------------- */
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],

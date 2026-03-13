@@ -19,8 +19,14 @@ export async function getCurrentUserRole(): Promise<UserRole | null> {
 
   if (error) {
     console.error("getCurrentUserRole error:", error);
-    return "learner";
+    return null;
   }
 
-  return (data?.role ?? "learner") as UserRole;
+  const role = data?.role;
+
+  if (role === "trainer" || role === "admin" || role === "dev") {
+    return role;
+  }
+
+  return null;
 }

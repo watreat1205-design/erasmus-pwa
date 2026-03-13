@@ -1,9 +1,9 @@
-export type UserRole = "learner" | "trainer" | "admin_ro" | "dev";
+// src/lib/auth/roles.ts
+export type UserRole = "trainer" | "admin" | "dev";
 
 export const Role = {
-  Learner: "learner",
   Trainer: "trainer",
-  AdminRO: "admin_ro",
+  Admin: "admin",
   Dev: "dev",
 } as const;
 
