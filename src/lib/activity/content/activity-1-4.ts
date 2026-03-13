@@ -1,3 +1,4 @@
+// src/lib/activity/content/activity-1-4.ts
 import type { ActivityContent } from "@/src/lib/activity/content-types";
 
 export const activity14Content: ActivityContent = {
@@ -138,9 +139,9 @@ export const activity14Content: ActivityContent = {
         },
         {
           title: "Mentimeter Tutorial",
-          url: "https://www.youtube.com/watch?v=H5V3kku4y6Q",
-          thumbnailUrl: "https://img.youtube.com/vi/H5V3kku4y6Q/hqdefault.jpg",
-        },
+          url: "https://www.youtube.com/watch?v=CsasywVt6E8&t=4s",
+          thumbnailUrl: "https://img.youtube.com/vi/CsasywVt6E8/hqdefault.jpg",
+       }
       ],
     },
 
@@ -186,19 +187,28 @@ export const activity14Content: ActivityContent = {
         },
         {
           title: "Collaborative Digital Presentations — Edutopia",
-          url: "https://www.edutopia.org/article/collaborative-digital-presentations",
+          url: "https://www.edutopia.org/video/collaborative-digital-presentations-enrich-projects-tech2learn-series",
+          resourceType: "external",
+        },
+        {
+          title: "Using Kahoot! for Engaging Quizzes and Assessments",
+          description:
+         "A guide on how to effectively use Kahoot! in the classroom to engage students and assess learning.",
+          url: "https://kahoot.com/",
           resourceType: "external",
         },
         {
           title: "Getting Started with Miro",
-          url: "https://miro.com/guide/",
+          url: "https://miro.com/",
           resourceType: "external",
         },
         {
-          title: "Mentimeter Guide",
-          url: "https://www.mentimeter.com/blog",
+          title: "Mentimeter for Interactive Presentations",
+          description:
+         "How to use Mentimeter to create real-time interactive presentations, polls, and surveys to engage students.",
+          url: "https://www.mentimeter.com/",
           resourceType: "external",
-        },
+       },  
       ],
     },
   ],

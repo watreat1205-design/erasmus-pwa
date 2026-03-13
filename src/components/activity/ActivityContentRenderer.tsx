@@ -505,12 +505,13 @@ export default function ActivityContentRenderer({
   return section ? renderSection(section) : null;
 })()}
 
-{/* Further Reading */}
+{/* Resources / Further Reading */}
 {(() => {
-  const section = activity.sections.find((s) => s.id === "further-reading");
+  const section =
+    activity.sections.find((s) => s.id === "further-reading") ||
+    activity.sections.find((s) => s.id === "resources");
   return section ? renderSection(section) : null;
 })()}
-
     </div>
   );
 }

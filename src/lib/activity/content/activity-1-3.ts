@@ -82,7 +82,7 @@ export const activity13Content: ActivityContent = {
         },
         {
           title: "Reading",
-          duration: "60 minutes",
+          duration: "30 minutes",
           body: [
             'The facilitator provides participants with the article titled "Exploring student perceptions and use of face-to-face classes, technology-enhanced active learning, and online resources."',
             "Participants read the article individually for approximately 30 minutes.",
