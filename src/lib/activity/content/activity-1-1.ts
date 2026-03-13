@@ -195,7 +195,7 @@ export const activity11Content: ActivityContent = {
         },
         {
           title: "Active Learning — Edutopia",
-          url: "https://www.edutopia.org/topic/active-learning",
+          url: "https://www.edutopia.org/article/prioritizing-active-learning-experiences",
           resourceType: "external",
         },
         {
