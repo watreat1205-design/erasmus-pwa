@@ -35,11 +35,21 @@ export default async function LessonPage({
 
   const supabase = await createSupabaseServerClient();
 
-  const {
+    const {
     data: { user },
   } = await supabase.auth.getUser();
 
-    const { data: profile } = await supabase
+  if (!user) {
+    return (
+      <div style={{ padding: 24 }}>
+        <h2>Lesson</h2>
+        <p style={{ color: "crimson" }}>You must be logged in.</p>
+        <Link href="/login">Go to login</Link>
+      </div>
+    );
+  }
+
+  const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -58,22 +68,6 @@ export default async function LessonPage({
       </div>
     );
   }
-  const { data: course, error: cErr } = await supabase
-    .from("courses")
-    .select("id, title, title_i18n")
-    .eq("id", courseId)
-    .single();
-
-  if (cErr || !course) {
-    return (
-      <div style={{ padding: 24 }}>
-        <h2>Lesson</h2>
-        <p style={{ color: "crimson" }}>{cErr?.message ?? "Course not found"}</p>
-        <Link href="/courses">← Back</Link>
-      </div>
-    );
-  }
-
   const { data: sections, error: sErr } = await supabase
     .from("course_sections")
     .select("id, title, position, title_i18n")
