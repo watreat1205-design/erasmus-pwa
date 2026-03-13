@@ -205,7 +205,7 @@ export const activity11Content: ActivityContent = {
         },
         {
           title: "Examples of Collaborative Learning — TeachThought",
-          url: "https://www.teachthought.com/pedagogy/examples-of-collaborative-learning/",
+          url: "https://www.teachthought.com/pedagogy-posts/collaborative-learning-tips/",
           resourceType: "external",
         },
       ],
