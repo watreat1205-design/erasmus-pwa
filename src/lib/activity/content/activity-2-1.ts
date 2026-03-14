@@ -12,8 +12,8 @@ export const activity21Content: ActivityContent = {
 
   meta: [
     { label: "Duration", value: "100 minutes", icon: "⏱" },
-    { label: "Setting", value: "Face-to-Face", icon: "🧑‍🏫" },
-    { label: "Type", value: "Video, Quizz, other", icon: "👥" },
+    { label: "Setting", value: "F2F", icon: "🧑‍🏫" },
+    { label: "Type", value: "Video, Quiz, Other", icon: "👥" },
   ],
 
   sections: [
@@ -32,12 +32,12 @@ export const activity21Content: ActivityContent = {
           title: "Knowledge",
           items: [
             "Sustainability, Agenda 2030, EU Green Deal, Fit for 55",
-            "Identify the context of the agenda 2030 and to know the objectives of the SDG.",
-            "Know the 17SDGs and their specific target and understand the importance of each goal and how they are connected.",
-            "Understanding the overarching aim of the European Green Deal to make the EU climate-neutral by 2050.",
-            "Awareness of how the Green Deal aims to decouple economic growth from resource use and ensure no person or place is left behind in the transition.",
-            "Knowledge of the various policies and initiatives under the Green Deal, including Fit for 55 packages.",
-            "Fit for 55 packages, highlighting its key components, objectives, and implementation strategies.",
+            "Identify the context of Agenda 2030 and understand the objectives of the SDGs.",
+            "Know the 17 SDGs and their specific targets and understand the importance of each goal and how they are connected.",
+            "Understand the overarching aim of the European Green Deal to make the EU climate-neutral by 2050.",
+            "Be aware of how the Green Deal aims to decouple economic growth from resource use and ensure that no person or place is left behind in the transition.",
+            "Know the various policies and initiatives under the Green Deal, including the Fit for 55 package.",
+            "Understand the Fit for 55 package, highlighting its key components, objectives, and implementation strategies.",
           ],
         },
         {
@@ -69,10 +69,17 @@ export const activity21Content: ActivityContent = {
       title: "Activity Overview",
       body: [
         "Introduction of the module by the facilitator.",
-        "Proposing to listen a song; How can we make the world a better place? Listen to this song and learn how people plan to improve the world.",
-        "The facilitator will present an Interactive Presentation related to the agenda 2030 and to know the objectives of the SDG.",
+        "Participants listen to a song: How can we make the world a better place? They listen and learn how people plan to improve the world.",
+        "The facilitator presents an interactive presentation related to Agenda 2030 and the objectives of the SDGs.",
         "Participants explore the 17 SDGs and understand the importance of each goal and how they are connected.",
       ],
+    },
+
+    {
+      id: "requirements",
+      type: "list",
+      title: "Requirements",
+      items: ["PC/Laptop", "Mobile Devices", "Internet", "Projector"],
     },
 
     {
@@ -85,36 +92,36 @@ export const activity21Content: ActivityContent = {
           duration: "5 minutes",
           body: [
             "Introduction of the module by the facilitator.",
-            "Proposing to listen a song; How can we make the world a better place?",
-            "Listen to this song and learn how people plan to improve the world.",
-            "Sustainable development goals | LearnEnglish Teens.",
+            "The facilitator proposes listening to a song: How can we make the world a better place?",
+            "Participants listen to the song and learn how people plan to improve the world.",
+            "Resource used: Sustainable Development Goals | LearnEnglish Teens.",
           ],
         },
         {
-          title: "Icebreaking activity: How’s the Weather related to the topic?",
+          title: "Icebreaking activity — How’s the Weather related to the topic?",
           duration: "10 minutes",
           body: [
-            "This is a funny yet unique way to ask the participants how they feel related to the topic.",
-            "This helps people to get to know each other in a team.",
-            "Ask someone to stand within a circle to see each other.",
-            "Then, ask that person to describe his/her current mood by comparing the same with the weather.",
+            "This is a funny yet unique way to ask participants how they feel related to the topic.",
+            "This helps people get to know each other in a team.",
+            "Ask participants to stand within a circle so they can see each other.",
+            "Then ask each person to describe their current mood by comparing it with the weather.",
             "Example responses:",
-            "Today I’m feeling sunny because of the positive energies inside me.",
+            "Today I’m feeling sunny because of the positive energy inside me.",
             "My situation is like an overcast sky; I feel a bit stressed.",
           ],
         },
         {
-          title: "Interactive Presentation: Agenda 2030 and the SDGs",
+          title: "Interactive Presentation — Agenda 2030 and the SDGs",
           duration: "30 minutes",
           body: [
             "The facilitator introduces Agenda 2030 and the 17 Sustainable Development Goals.",
             "On 25 September 2015, the 193 member states of the UN approved the 2030 Agenda for Sustainable Development.",
-            "This Agenda is made up of 17 Sustainable Development Goals (SDGs), further broken down into 169 targets, to be met by 2030 with the intention of leaving no-one behind.",
-            "The threat of climate change is now more real than ever, and the SDGs are crucial if we want to avoid compromising our children's future.",
+            "This Agenda is made up of 17 Sustainable Development Goals (SDGs), further broken down into 169 targets, to be met by 2030 with the intention of leaving no one behind.",
+            "The threat of climate change is now more real than ever, and the SDGs are crucial if we want to avoid compromising our children’s future.",
             "The 2030 Agenda is a continuation of the UN Millennium Development Goals (2000–2015).",
             "The Paris Agreement (COP21) in 2015 marked an important milestone in the fight against climate change.",
             "Both developed and developing countries committed to reducing greenhouse gas emissions.",
-            "The facilitator shows a video related to the 17 SDGs.",
+            "The facilitator also shows a video related to the 17 SDGs.",
           ],
         },
         {
@@ -122,21 +129,21 @@ export const activity21Content: ActivityContent = {
           duration: "20 minutes",
           body: [
             "Participants work in pairs.",
-            "Choose the right goal number of each statement.",
-            "Discussion and quiz activity.",
+            "They choose the correct goal number for each statement.",
+            "This is followed by discussion and a quiz activity.",
           ],
         },
         {
           title: "Activity to become a changemaker",
           duration: "35 minutes",
           body: [
-            "Activity to transform our world into the world we all deserve.",
-            "This is a great opportunity to learn from each other and get inspired to make a difference.",
-            "Work individually and mention all the things you have in your house that you rarely use and probably were a waste of money.",
-            "If you had the chance to give them back, what would you get instead?",
-            "Activity in two groups: Needs or wants?",
+            "This activity encourages participants to think about how to transform our world into the world we all deserve.",
+            "It is a great opportunity to learn from each other and get inspired to make a difference.",
+            "Participants work individually and mention the things they have at home that they rarely use and that were probably a waste of money.",
+            "They reflect on what they would choose instead if they had the chance to return them.",
+            "The activity continues in two groups: Needs or Wants?",
             "Needs are things that you must have to live or survive, for example energy.",
-            "A want is something we may like to have but we can live without it, for example a computer.",
+            "A want is something we may like to have but can live without, for example a computer.",
             "Groups start a debate following the example provided by the facilitator.",
             "Example topic: What does healthcare mean? What happens when someone is sick? Do people check their temperature and take medicines if they need them? Do they go to the doctor or hospital when they feel unwell?",
           ],
@@ -152,6 +159,7 @@ export const activity21Content: ActivityContent = {
         {
           title: "Sustainable Development Goals | LearnEnglish Teens",
           url: "https://www.youtube.com/watch?v=LBxlsEiL7ic&t=11s",
+          thumbnailUrl: "https://img.youtube.com/vi/LBxlsEiL7ic/hqdefault.jpg",
           description:
             "Listen to this song and learn how people plan to improve the world.",
         },
@@ -159,18 +167,12 @@ export const activity21Content: ActivityContent = {
     },
 
     {
-      id: "requirements",
-      type: "list",
-      title: "Requirements",
-      items: ["PC/Laptop", "Mobile Devices", "Internet", "Projector"],
-    },
-
-    {
       id: "assessment",
       type: "text",
       title: "Assessment",
       body: [
-        "An assessment quiz.",
+        "An assessment quiz is used at the end of the activity.",
+        "Participants match each goal with the correct goal number.",
         "Match the goal with the goal number and write a–h next to the numbers 1–8.",
       ],
     },
@@ -182,10 +184,16 @@ export const activity21Content: ActivityContent = {
       items: [
         {
           title: "Slides — Activity 2.1 Presentation",
-          description:
-            "PowerPoint Presentation used during the activity.",
+          description: "PowerPoint presentation used during the activity.",
           url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-2/Activity-2-1/a2-1-presentation.pdf",
           resourceType: "slides",
+        },
+        {
+          title: "Song — Sustainable Development Goals | LearnEnglish Teens",
+          description:
+            "Video/song resource used in the introduction of the activity.",
+          url: "https://www.youtube.com/watch?v=LBxlsEiL7ic&t=11s",
+          resourceType: "external",
         },
       ],
     },
