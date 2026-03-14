@@ -11,12 +11,15 @@ export function getActivityContentByLesson(
   lessonTitle?: string | null,
   lessonPosition?: number | null
 ): ActivityContent | null {
-  const title = String(lessonTitle ?? "").toLowerCase().trim();
+  const title = String(lessonTitle ?? "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
 
+  // ---------- MODULE 1 ----------
   if (
     title.includes("activity 1.1") ||
-    title.includes("exploring teal") ||
-    lessonPosition === 1
+    title.includes("exploring teal")
   ) {
     return activity11Content;
   }
@@ -24,44 +27,49 @@ export function getActivityContentByLesson(
   if (
     title.includes("activity 1.2") ||
     title.includes("teal in action") ||
-    title.includes("applying teal strategies in real scenarios") ||
-    lessonPosition === 2
+    title.includes("applying teal strategies in real scenarios")
   ) {
     return activity12Content;
   }
 
   if (
     title.includes("activity 1.3") ||
-    title.includes("deepening teal application") ||
-    lessonPosition === 3
+    title.includes("deepening teal application")
   ) {
     return activity13Content;
   }
 
   if (
-  title.includes("activity 1.4") ||
-  title.includes("digital tools for teal") ||
-  lessonPosition === 4
-) {
-  return activity14Content;
-}
+    title.includes("activity 1.4") ||
+    title.includes("digital tools for teal")
+  ) {
+    return activity14Content;
+  }
 
-if (
-  title.includes("activity 1.5") ||
-  title.includes("designing teal activities") ||
-  lessonPosition === 5
-) {
-  return activity15Content;
-}
+  if (
+    title.includes("activity 1.5") ||
+    title.includes("designing teal activities with digital integration") ||
+    title.includes("designing teal activities")
+  ) {
+    return activity15Content;
+  }
 
-if (
-  title.includes("activity 2.1") ||
-  title.includes("exploring agenda 2030") ||
-  title.includes("lesson 2.1") ||
-  lessonPosition === 1
-) {
-  return activity21Content;
-}
+  // ---------- MODULE 2 ----------
+  if (
+    title.includes("activity 2.1") ||
+    title.includes("exploring agenda 2030")
+  ) {
+    return activity21Content;
+  }
 
-return null;
+  // ---------- LAST-RESORT FALLBACK ----------
+  // Use with caution only if title is missing or malformed.
+  // For now, keep disabled to avoid cross-module mismatches.
+  // if (lessonPosition === 1) return activity11Content;
+  // if (lessonPosition === 2) return activity12Content;
+  // if (lessonPosition === 3) return activity13Content;
+  // if (lessonPosition === 4) return activity14Content;
+  // if (lessonPosition === 5) return activity15Content;
+
+  return null;
 }
