@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
+import { toEmbed } from "@/src/lib/toEmbed";
 
 function isAllowed(url: string) {
   try {
@@ -35,11 +36,11 @@ function isAllowed(url: string) {
 export default function ExternalViewerPage() {
   const params = useParams<{ courseId: string; lessonId: string }>();
   const sp = useSearchParams();
-  const url = (sp.get("url") ?? "").trim();
+  const rawUrl = (sp.get("url") ?? "").trim();
 
   const backHref = `/courses/${params.courseId}/lessons/${params.lessonId}`;
 
-  if (!url || !isAllowed(url)) {
+  if (!rawUrl || !isAllowed(rawUrl)) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto max-w-5xl px-6 py-10">
@@ -62,17 +63,20 @@ export default function ExternalViewerPage() {
     );
   }
 
-  const lower = url.toLowerCase();
+  const embedUrl = toEmbed(rawUrl);
+  const lowerRaw = rawUrl.toLowerCase();
+  const lowerEmbed = embedUrl.toLowerCase();
 
   const isVideo =
-    lower.includes("youtube.com/embed/") ||
-    lower.includes("youtube-nocookie.com/embed/") ||
-    lower.includes("player.vimeo.com/video/");
+    lowerEmbed.includes("youtube.com/embed/") ||
+    lowerEmbed.includes("youtube-nocookie.com/embed/") ||
+    lowerEmbed.includes("player.vimeo.com/video/");
 
-  const isPdf = lower.includes(".pdf");
+  const isPdf = lowerRaw.includes(".pdf");
+  const forceIframePdf = lowerRaw.includes("fit-for-55-article.pdf");
 
   const isForm =
-    lower.includes("docs.google.com/forms") || lower.includes("forms.gle/");
+    lowerRaw.includes("docs.google.com/forms") || lowerRaw.includes("forms.gle/");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,18 +99,31 @@ export default function ExternalViewerPage() {
           <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
             <div className="aspect-video w-full">
               <iframe
-                src={url}
+                src={embedUrl}
                 className="h-full w-full"
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
               />
             </div>
           </div>
-        ) : isPdf ? (
-          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
-            <PdfDocumentViewerNoSSR url={url} />
+
+         ) : isPdf ? (
+             forceIframePdf ? (
+             <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+             <div className="h-[80vh] w-full">
+             <iframe
+             src={rawUrl}
+             title="PDF document"
+             className="h-full w-full"
+           />
+           </div>
           </div>
-        ) : isForm ? (
+         ) : (
+         <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
+           <PdfDocumentViewerNoSSR url={rawUrl} />
+         </div>
+          )
+         ) : isForm ? (
           <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
             <div className="text-sm text-gray-700">
               This form cannot be embedded here (Google blocks it).
@@ -132,7 +149,7 @@ export default function ExternalViewerPage() {
         ) : (
           <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
             <a
-              href={url}
+              href={rawUrl}
               target="_blank"
               rel="noreferrer"
               className="text-sm font-medium text-blue-700 underline"

@@ -211,7 +211,16 @@ export default async function LessonPage({
   title: current.title,
   position: current.position,
   });
-  const activityContent = getActivityContentByLesson(current.title, current.position);
+  const resolvedLessonTitle = pickI18n(
+  (current as any).title_i18n,
+  lang,
+  current.title
+);
+
+const activityContent = getActivityContentByLesson(
+  resolvedLessonTitle,
+  current.position
+);
   console.log("ACTIVITY MATCHED", activityContent?.slug ?? null);
 
   // Split: lesson PDF (render inline) vs other PDFs (iframe)

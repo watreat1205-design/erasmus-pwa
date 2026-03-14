@@ -11,6 +11,7 @@ import { activity21Content } from "./activity-2-1";
 import { activity22Content } from "./activity-2-2";
 import { activity23Content } from "./activity-2-3";
 import { activity24Content } from "./activity-2-4";
+import { activity25Content } from "./activity-2-5";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -96,6 +97,14 @@ export function getActivityContentByLesson(
   ) {
     return activity24Content;
   }
+
+  if (
+  title.includes("activity 2 5") ||
+  title.includes("fit for 55 packages") ||
+  title.includes("fit for 55")
+) {
+  return activity25Content;
+}
 
   return null;
 }
