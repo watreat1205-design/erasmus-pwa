@@ -133,11 +133,11 @@ export const activity24Content: ActivityContent = {
         "They demonstrate understanding by identifying practical actions that support Green Deal objectives.",
       ],
     },
-      {
-      id: "resources",
-      type: "links",
-      title: "Resources",
-      items: [
+    {
+  id: "resources",
+  type: "links",
+  title: "Resources",
+  items: [
     {
       title: "Slides — Activity 2.4 Presentation",
       description: "Presentation used during the activity.",
@@ -148,16 +148,15 @@ export const activity24Content: ActivityContent = {
       title: "Case Study — Greener Schools: Reducing Carbon Footprints in Education",
       description: "Case study resource for group analysis.",
       url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-2/Activity-2-4/case-study-greener-schools.pdf",
-      resourceType: "pdf",
+      resourceType: "external",
     },
     {
       title: "Case Study — Sustainable Mobility Campaign",
       description: "Case study resource for group analysis.",
       url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-2/Activity-2-4/case-study-sustainable-mobility.pdf",
-      resourceType: "pdf",
-     },
+      resourceType: "external",
+      },
     ],
-   }
-
+   }  
   ],
 };
