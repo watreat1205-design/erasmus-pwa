@@ -7,6 +7,7 @@ import { activity14Content } from "./activity-1-4";
 import { activity15Content } from "./activity-1-5";
 import { activity21Content } from "./activity-2-1";
 import { activity22Content } from "./activity-2-2";
+import { activity23Content } from "./activity-2-3";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -71,6 +72,13 @@ export function getActivityContentByLesson(
     title.includes("change maker")
   ) {
     return activity22Content;
+  }
+
+  if (
+  title.includes("activity 2.3") ||
+  title.includes("needs and wants")
+  ) {
+  return activity23Content;
   }
 
   // ---------- LAST-RESORT FALLBACK ----------
