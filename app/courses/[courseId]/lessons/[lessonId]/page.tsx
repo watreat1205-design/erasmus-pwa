@@ -207,7 +207,12 @@ export default async function LessonPage({
   const next = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
 
   const section = (sections ?? []).find((s) => s.id === current.section_id);
+  console.log("LESSON DEBUG", {
+  title: current.title,
+  position: current.position,
+  });
   const activityContent = getActivityContentByLesson(current.title, current.position);
+  console.log("ACTIVITY MATCHED", activityContent?.slug ?? null);
 
   // Split: lesson PDF (render inline) vs other PDFs (iframe)
   const lessonPdf = lessonFiles.find((f) => isLessonPdf(f.name));
