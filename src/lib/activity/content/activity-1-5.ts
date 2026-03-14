@@ -62,7 +62,7 @@ export const activity15Content: ActivityContent = {
       title: "Activity Overview",
       body: [
         "Participants work in small groups to design a TEAL activity addressing a sustainability challenge such as waste reduction, biodiversity conservation, or energy efficiency.",
-        "Each group integrates digital tools into their learning design and prepares a short presentation explaining how the activity supports active learning, collaboration, and technology integration.",
+        ""Each group completes a TEAL activity design template, integrating digital tools and defining learning objectives, activity steps, assessment methods, and accessibility considerations.",
       ],
     },
 
