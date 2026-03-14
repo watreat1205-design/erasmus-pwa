@@ -6,6 +6,7 @@ import { activity13Content } from "./activity-1-3";
 import { activity14Content } from "./activity-1-4";
 import { activity15Content } from "./activity-1-5";
 import { activity21Content } from "./activity-2-1";
+import { activity22Content } from "./activity-2-2";
 
 export function getActivityContentByLesson(
   lessonTitle?: string | null,
@@ -61,7 +62,13 @@ export function getActivityContentByLesson(
   ) {
     return activity21Content;
   }
-
+  
+  if (
+  title.includes("activity 2.2") ||
+  title.includes("to become a changemaker")
+ ) {
+  return activity22Content;
+ }
   // ---------- LAST-RESORT FALLBACK ----------
   // Use with caution only if title is missing or malformed.
   // For now, keep disabled to avoid cross-module mismatches.
