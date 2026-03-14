@@ -63,12 +63,16 @@ export function getActivityContentByLesson(
     return activity21Content;
   }
   
-  if (
-  title.includes("activity 2.2") ||
-  title.includes("to become a changemaker")
- ) {
-  return activity22Content;
- }
+    if (
+    title.includes("activity 2.2") ||
+    title.includes("activity 2.2:") ||
+    title.includes("to become a changemaker") ||
+    title.includes("to become a change maker") ||
+    title.includes("change maker")
+  ) {
+    return activity22Content;
+  }
+
   // ---------- LAST-RESORT FALLBACK ----------
   // Use with caution only if title is missing or malformed.
   // For now, keep disabled to avoid cross-module mismatches.
