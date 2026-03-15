@@ -1,3 +1,4 @@
+// src/components/quiz/QuestionCard.tsx
 export default function QuestionCard({
   index,
   required,

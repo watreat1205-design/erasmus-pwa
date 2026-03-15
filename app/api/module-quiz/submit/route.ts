@@ -1,4 +1,3 @@
-// app/api/module-quiz/submit/route.ts
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -22,7 +21,6 @@ export async function POST(req: Request) {
     );
   }
 
-  // Auth user
   const {
     data: { user },
     error: userErr,
@@ -32,7 +30,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  // 1) Fetch quiz.course_id (needed to check certificate)
   const { data: quiz, error: quizErr } = await supabase
     .from("module_quizzes")
     .select("id, course_id, is_published")
@@ -47,7 +44,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Quiz not published" }, { status: 403 });
   }
 
-  // 2) Compute attempt_no = max(attempt_no)+1 for this user+quiz
   const { data: prevAttempts, error: prevErr } = await supabase
     .from("module_quiz_attempts")
     .select("attempt_no")
@@ -62,7 +58,6 @@ export async function POST(req: Request) {
 
   const nextAttemptNo = (prevAttempts?.[0]?.attempt_no ?? 0) + 1;
 
-  // 3) Create attempt
   const { data: attempt, error: attemptErr } = await supabase
     .from("module_quiz_attempts")
     .insert({
@@ -70,7 +65,6 @@ export async function POST(req: Request) {
       user_id: user.id,
       started_at: new Date().toISOString(),
       attempt_no: nextAttemptNo,
-      // submitted_at/score_percent/passed remain NULL initially
     })
     .select("id")
     .single();
@@ -84,8 +78,6 @@ export async function POST(req: Request) {
 
   const attempt_id = attempt.id as string;
 
-  // 4) Insert answers (bulk)
-  // IMPORTANT: Do NOT send is_correct from client; DB will set it in grading
   const answerRows = answers.map((a) => ({
     attempt_id,
     question_id: a.question_id,
@@ -97,12 +89,10 @@ export async function POST(req: Request) {
     .insert(answerRows);
 
   if (ansErr) {
-    // Optional cleanup: delete attempt if answers insert failed
     await supabase.from("module_quiz_attempts").delete().eq("id", attempt_id);
     return NextResponse.json({ error: ansErr.message }, { status: 500 });
   }
 
-  // 5) Grade attempt (RPC)
   const { data: gradeRows, error: gradeErr } = await supabase
     .rpc("grade_module_quiz_attempt", { p_attempt_id: attempt_id });
 
@@ -112,7 +102,6 @@ export async function POST(req: Request) {
 
   const grade = Array.isArray(gradeRows) ? gradeRows[0] : gradeRows;
 
-  // 6) Check if certificate exists now (trigger may have inserted it)
   const { data: cert, error: certErr } = await supabase
     .from("certificates")
     .select("id, file_path, issued_at")
@@ -124,7 +113,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: certErr.message }, { status: 500 });
   }
 
-  // 7) Fetch submitted answers with correctness
   const { data: reviewRows, error: reviewErr } = await supabase
     .from("module_quiz_answers")
     .select("question_id, chosen_index, is_correct")
@@ -138,7 +126,7 @@ export async function POST(req: Request) {
 
   const { data: questionRows, error: questionErr } = questionIds.length
     ? await supabase
-        .from("quiz_questions")
+        .from("module_quiz_questions")
         .select("id, correct_index")
         .in("id", questionIds)
     : { data: [], error: null };

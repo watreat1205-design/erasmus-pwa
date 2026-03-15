@@ -12,13 +12,14 @@ type ModuleQuiz = {
   id: string;
   title: string;
   pass_score: number;
-  course_quiz_id: string;
+  course_quiz_id: string | null;
 };
 
 type QuizQuestion = {
   id: string;
   prompt: string;
   options: string[];
+  position: number;
 };
 
 type ReviewItem = {
@@ -44,6 +45,39 @@ function BackgroundShell({ children }: { children: React.ReactNode }) {
       <div className="relative">{children}</div>
     </div>
   );
+}
+
+function getQuizIntro(quizTitle: string) {
+  const title = quizTitle.toLowerCase();
+
+  if (title.includes("module 1")) {
+    return {
+      intro:
+        "This short quiz assesses your understanding of the TEAL approach. Please answer the following questions based on what you have learned in ACTIVITY 1.1: Exploring TEAL of MODULE 1: Introduction to TEAL teaching methodology. The quiz will examine your knowledge of the definition of TEAL, its core components (active learning, technology integration, and collaboration), its origins, and how it compares to traditional teaching methods.",
+      quote:
+        "\"The best teachers are those who show you where to look, but don't tell you what to see.\" – Alexandra K. Trenfor. We hope this quiz helps you see how TEAL can enhance your teaching!",
+      note:
+        "Note: The quiz is for learning. You can retake it if needed.",
+    };
+  }
+
+  if (title.includes("module 2")) {
+    return {
+      intro:
+        "This short quiz assesses your understanding of the topics covered in Module 2. Please answer the following questions based on the material you studied about the Agenda 2030 and the Sustainable Development Goals (SDGs).",
+      quote:
+        "\"There is a lot of important information about the SDGs that is worth knowing and sharing with your friends, family, and society.\"",
+      note:
+        "Note: The quiz is for learning. You can retake it if needed.",
+    };
+  }
+
+  return {
+    intro:
+      "This short quiz assesses your understanding of the topics covered in this module. Please answer the following questions based on the material you studied.",
+    quote: "",
+    note: "Note: The quiz is for learning. You can retake it if needed.",
+  };
 }
 
 export default function QuizDetailPage() {
@@ -85,18 +119,13 @@ export default function QuizDetailPage() {
         return;
       }
 
-      if (!quizData?.course_quiz_id) {
-        setError(t("quizzes.misconfigured"));
-        setLoading(false);
-        return;
-      }
-
       setQuiz(quizData);
 
       const { data: qData, error: qErr } = await supabase
-        .from("quiz_questions")
-        .select("id, question, options")
-        .eq("quiz_id", quizData.course_quiz_id);
+        .from("module_quiz_questions")
+        .select("id, prompt, options, position")
+        .eq("quiz_id", quizData.id)
+        .order("position", { ascending: true });
 
       if (cancelled) return;
 
@@ -106,11 +135,12 @@ export default function QuizDetailPage() {
         return;
       }
 
-      const normalized =
+      const normalized: QuizQuestion[] =
         (qData ?? []).map((q: any) => ({
           id: q.id,
-          prompt: q.question,
+          prompt: q.prompt,
           options: Array.isArray(q.options) ? q.options : [],
+          position: Number(q.position ?? 0),
         })) ?? [];
 
       setQuestions(normalized);
@@ -119,14 +149,21 @@ export default function QuizDetailPage() {
     }
 
     load();
+
     return () => {
       cancelled = true;
     };
-  }, [quizId, supabase, t]);
+  }, [quizId, supabase]);
 
   async function submit() {
     setSubmitting(true);
     setError(null);
+
+    if (!questions.length) {
+      setSubmitting(false);
+      setError("This quiz has no questions yet.");
+      return;
+    }
 
     const unanswered = answers.findIndex((v) => v == null);
     if (unanswered !== -1) {
@@ -197,81 +234,97 @@ export default function QuizDetailPage() {
     );
   }
 
+  const quizIntro = getQuizIntro(quiz.title);
+
   return (
     <BackgroundShell>
       <QuizPaper
         activityTitle={quiz.title}
         quizTitle={t("quizzes.welcomeTitle", { title: quiz.title })}
       >
-        {questions.map((q, qi) => {
-          const reviewItem = review.find(
-            (r) => String(r.question_id) === String(q.id)
-          );
+        <div className="mb-6 rounded-md border border-gray-200 bg-white p-5 text-sm text-gray-700">
+          <p>{quizIntro.intro}</p>
 
-          return (
-            <QuestionCard key={q.id} index={qi + 1} prompt={q.prompt} required points={1}>
-              {q.options.map((opt, oi) => {
-                const chosen = answers[qi] === oi;
-                const isSelectedCorrect = !!reviewItem?.is_correct && chosen;
-                const isSelectedWrong = !!reviewItem && chosen && !reviewItem.is_correct;
+          {quizIntro.quote ? <p className="mt-3">{quizIntro.quote}</p> : null}
 
-                return (
-                  <div key={oi} className="mb-2">
-                    <label className="flex gap-2 text-sm">
-                      <input
-                        type="radio"
-                        disabled={!!result}
-                        checked={answers[qi] === oi}
-                        onChange={() => {
-                          const copy = [...answers];
-                          copy[qi] = oi;
-                          setAnswers(copy);
-                        }}
-                      />
-                      <span>{opt}</span>
-                    </label>
+          <p className="mt-3">{quizIntro.note}</p>
+        </div>
 
-                    {result && chosen && isSelectedCorrect && (
-                      <div className="ml-6 mt-1 text-sm text-green-600">
-                        ✓ Correct
-                      </div>
-                    )}
+        {!questions.length ? (
+          <div className="rounded-md bg-white p-4 text-sm text-gray-700">
+            This quiz has no questions yet.
+          </div>
+        ) : (
+          questions.map((q, qi) => {
+            const reviewItem = review.find(
+              (r) => String(r.question_id) === String(q.id)
+            );
 
-                    {result && chosen && isSelectedWrong && (
-                      <div className="ml-6 mt-1 text-sm text-red-600">
-                        ✗ Incorrect
-                      </div>
-                    )}
+            return (
+              <QuestionCard key={q.id} index={qi + 1} prompt={q.prompt} required points={1}>
+                {q.options.map((opt, oi) => {
+                  const chosen = answers[qi] === oi;
+                  const isSelectedCorrect = !!reviewItem?.is_correct && chosen;
+                  const isSelectedWrong = !!reviewItem && chosen && !reviewItem.is_correct;
+
+                  return (
+                    <div key={oi} className="mb-2">
+                      <label className="flex gap-2 text-sm">
+                        <input
+                          type="radio"
+                          disabled={!!result}
+                          checked={answers[qi] === oi}
+                          onChange={() => {
+                            const copy = [...answers];
+                            copy[qi] = oi;
+                            setAnswers(copy);
+                          }}
+                        />
+                        <span>{opt}</span>
+                      </label>
+
+                      {result && chosen && isSelectedCorrect && (
+                        <div className="ml-6 mt-1 text-sm text-green-600">
+                          ✓ Correct
+                        </div>
+                      )}
+
+                      {result && chosen && isSelectedWrong && (
+                        <div className="ml-6 mt-1 text-sm text-red-600">
+                          ✗ Incorrect
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {result && reviewItem && !reviewItem.is_correct && (
+                  <div className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+                    <div>
+                      Your answer:{" "}
+                      <span className="font-medium">
+                        {q.options[reviewItem.chosen_index] ?? "Not available"}
+                      </span>
+                    </div>
+                    <div className="mt-1">
+                      Correct answer:{" "}
+                      <span className="font-medium">
+                        {q.options[reviewItem.correct_index ?? -1] ?? "Not available"}
+                      </span>
+                    </div>
                   </div>
-                );
-              })}
-
-              {result && reviewItem && !reviewItem.is_correct && (
-                <div className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-                  <div>
-                    Your answer:{" "}
-                    <span className="font-medium">
-                      {q.options[reviewItem.chosen_index] ?? "Not available"}
-                    </span>
-                  </div>
-                  <div className="mt-1">
-                    Correct answer:{" "}
-                    <span className="font-medium">
-                      {q.options[reviewItem.correct_index ?? -1] ?? "Not available"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </QuestionCard>
-          );
-        })}
+                )}
+              </QuestionCard>
+            );
+          })
+        )}
 
         {!result ? (
           <div className="mt-6 text-right">
             <button
-              disabled={submitting}
+              disabled={submitting || !questions.length}
               onClick={submit}
-              className="rounded-md bg-black px-5 py-2 text-white"
+              className="rounded-md bg-black px-5 py-2 text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? t("quizzes.submitting") : t("quizzes.submit")}
             </button>
