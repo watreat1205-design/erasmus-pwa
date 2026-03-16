@@ -1,3 +1,4 @@
+// src/lib/activity/content/index.ts
 import type { ActivityContent } from "@/src/lib/activity/content-types";
 
 import { activity11Content } from "./activity-1-1";
@@ -16,6 +17,11 @@ import { activity31Content } from "./activity-3-1";
 import { activity32Content } from "./activity-3-2";
 import { activity33Content } from "./activity-3-3";
 import { activity34Content } from "./activity-3-4";
+
+import { activity61Content } from "./activity-6-1";
+import { activity62Content } from "./activity-6-2";
+import { activity63Content } from "./activity-6-3";
+import { activity64Content } from "./activity-6-4";
 
 function normalize(value?: string | null) {
   return String(value ?? "")
@@ -98,6 +104,27 @@ export function getActivityContentByLesson(
         return activity33Content;
       case 4:
         return activity34Content;
+      default:
+        return null;
+    }
+  }
+
+    // Module 6
+  if (
+    course.includes("ccif") ||
+    course.includes("module 6") ||
+    course.includes("green skills training") ||
+    course.includes("green skills for transformative education")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity61Content;
+      case 2:
+        return activity62Content;
+      case 3:
+        return activity63Content;
+      case 4:
+        return activity64Content;
       default:
         return null;
     }
@@ -197,6 +224,32 @@ export function getActivityContentByLesson(
     title.includes("climate change")
   ) {
     return activity34Content;
+  }
+
+    // Module 6
+  if (title.includes("activity 6 1") || title.includes("green skills")) {
+    return activity61Content;
+  }
+
+  if (
+    title.includes("activity 6 2") ||
+    title.includes("teaching sustainability with tech")
+  ) {
+    return activity62Content;
+  }
+
+  if (
+    title.includes("activity 6 3") ||
+    title.includes("greening the workplace")
+  ) {
+    return activity63Content;
+  }
+
+  if (
+    title.includes("activity 6 4") ||
+    title.includes("esd in action personal blog")
+  ) {
+    return activity64Content;
   }
 
   return null;
