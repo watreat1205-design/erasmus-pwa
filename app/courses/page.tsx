@@ -12,6 +12,7 @@ type CourseRow = {
   id: string;
   title: string;
   description: string | null;
+  position: number | null;
 };
 
 type SectionRow = {
@@ -39,9 +40,9 @@ export default async function CoursesPublicPage() {
 
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, description")
+    .select("id, title, description, position")
     .eq("is_published", true)
-    .order("title", { ascending: true });
+    .order("position", { ascending: true });
 
   const courses: CourseRow[] = data ?? [];
   const courseIds = courses.map((c) => c.id);

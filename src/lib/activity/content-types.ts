@@ -3,6 +3,7 @@ export type ResourceType =
   | "case-study"
   | "article"
   | "slides"
+  | "pdf"
   | "external"
   | "video";
 
@@ -74,13 +75,27 @@ export type ActivityCardsSection = {
   }[];
 };
 
+export type ActivityImageItem = {
+  title: string;
+  url: string;
+  alt?: string;
+};
+
+export type ActivityImagesSection = {
+  id: string;
+  type: "images";
+  title: string;
+  items: ActivityImageItem[];
+};
+
 export type ActivitySection =
   | ActivityListSection
   | ActivityTextSection
   | ActivityStepsSection
   | ActivityVideosSection
   | ActivityLinksSection
-  | ActivityCardsSection;
+  | ActivityCardsSection
+  | ActivityImagesSection;
 
 export type ActivityContent = {
   slug: string;

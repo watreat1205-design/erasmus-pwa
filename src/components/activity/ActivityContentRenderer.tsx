@@ -4,6 +4,7 @@
 import type {
   ActivityContent,
   ActivitySection,
+  ActivityImageItem,
 } from "@/src/lib/activity/content-types";
 import { openInPlatform } from "@/components/lesson/openInPlatform";
 
@@ -21,10 +22,10 @@ function getSectionIcon(section: ActivitySection) {
       return "✅";
     case "text":
       return "📝";
-    default:
-      return "•";
     case "images":
       return "🖼️";
+    default:
+      return "•";
   }
 }
 
@@ -36,7 +37,8 @@ function getLinkIcon(resourceType?: string) {
   if (
     resourceType === "slides" ||
     resourceType === "article" ||
-    resourceType === "case-study"
+    resourceType === "case-study" ||
+    resourceType === "pdf"
   ) {
     return <span>📄</span>;
   }
@@ -45,11 +47,11 @@ function getLinkIcon(resourceType?: string) {
 }
 
 function isSlidesResource(resourceType?: string) {
-  return resourceType === "slides";
+  return resourceType === "slides" || resourceType === "pdf";
 }
 
 function isFurtherReadingResource(resourceType?: string) {
-  return resourceType !== "slides";
+  return resourceType !== "slides" && resourceType !== "pdf";
 }
 
 function SectionCard({
@@ -168,7 +170,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="space-y-4 text-gray-700">
-            {section.body.map((p, i) =>
+            {section.body.map((p: string, i: number) =>
               renderTextWithMarkdownLink(p, `text-${section.id}-${i}`)
             )}
           </div>
@@ -179,7 +181,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <ul className="grid gap-3 sm:grid-cols-2">
-            {section.items.map((item, i) => (
+            {section.items.map((item: string, i: number) => (
               <li
                 key={i}
                 className="rounded-2xl border border-white/60 bg-[#edf8ee]/92 px-4 py-3 text-gray-800 shadow-sm"
@@ -195,24 +197,29 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="grid gap-4 lg:grid-cols-2">
-            {section.cards.map((card, i) => (
-              <div
-                key={i}
-                className="rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-5 shadow-sm"
-              >
-                <h3 className="text-base font-semibold text-gray-900">
-                  {card.title}
-                </h3>
-                <ul className="mt-3 space-y-2 text-sm text-gray-700">
-                  {card.items.map((item, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="mt-1 text-emerald-600">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {section.cards.map(
+              (
+                card: { title: string; items: string[] },
+                i: number
+              ) => (
+                <div
+                  key={i}
+                  className="rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-5 shadow-sm"
+                >
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {card.title}
+                  </h3>
+                  <ul className="mt-3 space-y-2 text-sm text-gray-700">
+                    {card.items.map((item: string, idx: number) => (
+                      <li key={idx} className="flex gap-2">
+                        <span className="mt-1 text-emerald-600">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            )}
           </div>
         </SectionCard>
       );
@@ -221,44 +228,54 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="space-y-5">
-            {section.steps.map((step, i) => (
-              <div
-                key={i}
-                className="rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-5 shadow-sm"
-              >
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {stepStartNumber + i}. {step.title}
-                  </h3>
-                  {step.duration ? (
-                    <span className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-                      {step.duration}
-                    </span>
+            {section.steps.map(
+              (
+                step: {
+                  title: string;
+                  duration?: string;
+                  body: string[];
+                  bullets?: string[];
+                },
+                i: number
+              ) => (
+                <div
+                  key={i}
+                  className="rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-5 shadow-sm"
+                >
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {stepStartNumber + i}. {step.title}
+                    </h3>
+                    {step.duration ? (
+                      <span className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+                        {step.duration}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-4 space-y-3 text-gray-700">
+                    {step.body.map((p: string, idx: number) =>
+                      renderTextWithMarkdownLink(
+                        p,
+                        `step-${section.id}-${i}-${idx}`,
+                        "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
+                      )
+                    )}
+                  </div>
+
+                  {step.bullets?.length ? (
+                    <ul className="mt-4 space-y-2 text-gray-700">
+                      {step.bullets.map((item: string, idx: number) => (
+                        <li key={idx} className="flex gap-2">
+                          <span className="mt-1 text-emerald-600">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   ) : null}
                 </div>
-
-                <div className="mt-4 space-y-3 text-gray-700">
-                  {step.body.map((p, idx) =>
-                    renderTextWithMarkdownLink(
-                      p,
-                      `step-${section.id}-${i}-${idx}`,
-                      "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
-                    )
-                  )}
-                </div>
-
-                {step.bullets?.length ? (
-                  <ul className="mt-4 space-y-2 text-gray-700">
-                    {step.bullets.map((item, idx) => (
-                      <li key={idx} className="flex gap-2">
-                        <span className="mt-1 text-emerald-600">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </div>
-            ))}
+              )
+            )}
           </div>
         </SectionCard>
       );
@@ -267,54 +284,64 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {section.items.map((item, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => openInPlatform(item.url)}
-                className="overflow-hidden rounded-3xl border border-white/60 bg-[#f2f9f2]/92 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <div className="aspect-video w-full overflow-hidden bg-gray-100">
-                  {item.thumbnailUrl ? (
-                    <img
-                      src={item.thumbnailUrl}
-                      alt={item.title}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm text-gray-500">
-                      Video preview
-                    </div>
-                  )}
-                </div>
+            {section.items.map(
+              (
+                item: {
+                  title: string;
+                  url: string;
+                  thumbnailUrl?: string;
+                  description?: string;
+                },
+                i: number
+              ) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => openInPlatform(item.url)}
+                  className="overflow-hidden rounded-3xl border border-white/60 bg-[#f2f9f2]/92 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <div className="aspect-video w-full overflow-hidden bg-gray-100">
+                    {item.thumbnailUrl ? (
+                      <img
+                        src={item.thumbnailUrl}
+                        alt={item.title}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-sm text-gray-500">
+                        Video preview
+                      </div>
+                    )}
+                  </div>
 
-                <div className="p-5">
-                  <div className="text-sm font-medium text-emerald-700">
-                    Video
+                  <div className="p-5">
+                    <div className="text-sm font-medium text-emerald-700">
+                      Video
+                    </div>
+                    <div className="mt-2 text-base font-semibold text-gray-900">
+                      {item.title}
+                    </div>
+                    {item.description ? (
+                      <p className="mt-2 text-sm text-gray-600">
+                        {item.description}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 text-sm font-medium text-blue-700">
+                      Open inside platform →
+                    </div>
                   </div>
-                  <div className="mt-2 text-base font-semibold text-gray-900">
-                    {item.title}
-                  </div>
-                  {item.description ? (
-                    <p className="mt-2 text-sm text-gray-600">
-                      {item.description}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 text-sm font-medium text-blue-700">
-                    Open inside platform →
-                  </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              )
+            )}
           </div>
         </SectionCard>
       );
-  
-        case "images":
+
+    case "images":
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="grid gap-4 md:grid-cols-1">
-            {section.items.map((item, i) => (
+            {section.items.map((item: ActivityImageItem, i: number) => (
               <div
                 key={i}
                 className="overflow-hidden rounded-3xl border border-white/60 bg-[#f2f9f2]/92 shadow-sm"
@@ -333,16 +360,18 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
             ))}
           </div>
         </SectionCard>
-      );          
-
-    case "links": {
-      const furtherReadingItems = section.items.filter((item) =>
-        isFurtherReadingResource(item.resourceType)
       );
 
-      const slideItems = section.items.filter((item) =>
-        isSlidesResource(item.resourceType)
-      );
+      case "links": {
+  const furtherReadingItems = section.items.filter(
+    (item: (typeof section.items)[number]) =>
+      isFurtherReadingResource(item.resourceType)
+  );
+
+  const slideItems = section.items.filter(
+    (item: (typeof section.items)[number]) =>
+      isSlidesResource(item.resourceType)
+  );
 
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
@@ -353,36 +382,46 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                   Case Studies and Further Reading
                 </h3>
 
-                {furtherReadingItems.map((item, i) => (
-                  <button
-                    key={`reading-${i}`}
-                    type="button"
-                    onClick={() => openInPlatform(item.url)}
-                    className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 text-emerald-700">
-                        {getLinkIcon(item.resourceType)}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="text-base font-semibold text-gray-900">
-                          {item.title}
+                {furtherReadingItems.map(
+                  (
+                    item: {
+                      title: string;
+                      url: string;
+                      description?: string;
+                      resourceType?: string;
+                    },
+                    i: number
+                  ) => (
+                    <button
+                      key={`reading-${i}`}
+                      type="button"
+                      onClick={() => openInPlatform(item.url)}
+                      className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 text-emerald-700">
+                          {getLinkIcon(item.resourceType)}
                         </div>
 
-                        {item.description ? (
-                          <div className="mt-1 text-sm text-gray-600">
-                            {item.description}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-base font-semibold text-gray-900">
+                            {item.title}
                           </div>
-                        ) : null}
 
-                        <div className="mt-4 text-sm font-medium text-emerald-700">
-                          Open material →
+                          {item.description ? (
+                            <div className="mt-1 text-sm text-gray-600">
+                              {item.description}
+                            </div>
+                          ) : null}
+
+                          <div className="mt-4 text-sm font-medium text-emerald-700">
+                            Open material →
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  )
+                )}
               </div>
             ) : null}
 
@@ -392,36 +431,46 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                   Resources
                 </h3>
 
-                {slideItems.map((item, i) => (
-                  <button
-                    key={`slides-${i}`}
-                    type="button"
-                    onClick={() => openInPlatform(item.url)}
-                    className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 text-emerald-700">
-                        {getLinkIcon(item.resourceType)}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="text-base font-semibold text-gray-900">
-                          {item.title}
+                {slideItems.map(
+                  (
+                    item: {
+                      title: string;
+                      url: string;
+                      description?: string;
+                      resourceType?: string;
+                    },
+                    i: number
+                  ) => (
+                    <button
+                      key={`slides-${i}`}
+                      type="button"
+                      onClick={() => openInPlatform(item.url)}
+                      className="block w-full rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 text-left shadow-sm transition hover:shadow-md"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 text-emerald-700">
+                          {getLinkIcon(item.resourceType)}
                         </div>
 
-                        {item.description ? (
-                          <div className="mt-1 text-sm text-gray-600">
-                            {item.description}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-base font-semibold text-gray-900">
+                            {item.title}
                           </div>
-                        ) : null}
 
-                        <div className="mt-4 text-sm font-medium text-emerald-700">
-                          Open material →
+                          {item.description ? (
+                            <div className="mt-1 text-sm text-gray-600">
+                              {item.description}
+                            </div>
+                          ) : null}
+
+                          <div className="mt-4 text-sm font-medium text-emerald-700">
+                            Open material →
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  )
+                )}
               </div>
             ) : null}
           </div>
@@ -475,16 +524,25 @@ export default function ActivityContentRenderer({
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            {activity.meta.map((item, i) => (
-              <div
-                key={i}
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/75 px-4 py-2 text-sm text-gray-800 shadow-sm backdrop-blur-sm"
-              >
-                {item.icon ? <span>{item.icon}</span> : null}
-                <span className="font-medium">{item.label}:</span>
-                <span>{item.value}</span>
-              </div>
-            ))}
+            {activity.meta.map(
+              (
+                item: {
+                  label: string;
+                  value: string;
+                  icon?: string;
+                },
+                i: number
+              ) => (
+                <div
+                  key={i}
+                  className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/75 px-4 py-2 text-sm text-gray-800 shadow-sm backdrop-blur-sm"
+                >
+                  {item.icon ? <span>{item.icon}</span> : null}
+                  <span className="font-medium">{item.label}:</span>
+                  <span>{item.value}</span>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>
@@ -515,22 +573,30 @@ export default function ActivityContentRenderer({
             </div>
 
             <div className="grid gap-3 md:grid-cols-3">
-              {flowSteps.map((step, index) => (
-                <div
-                  key={index}
-                  className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                    Step {index + 1}
+              {flowSteps.map(
+                (
+                  step: {
+                    title: string;
+                    body: string[];
+                  },
+                  index: number
+                ) => (
+                  <div
+                    key={index}
+                    className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm"
+                  >
+                    <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                      Step {index + 1}
+                    </div>
+                    <div className="mt-2 text-sm font-medium text-gray-900">
+                      {step.title}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600">
+                      {step.body?.[0] ?? ""}
+                    </div>
                   </div>
-                  <div className="mt-2 text-sm font-medium text-gray-900">
-                    {step.title}
-                  </div>
-                  <div className="mt-1 text-sm text-gray-600">
-                    {step.body?.[0] ?? ""}
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </section>
@@ -604,7 +670,7 @@ export default function ActivityContentRenderer({
         </>
       )}
 
-            {activity.slug === "activity-3-3" ? (
+      {activity.slug === "activity-3-3" ? (
         <>
           {(() => {
             const section = activity.sections.find((s) => s.id === "case-study-1");
@@ -612,7 +678,9 @@ export default function ActivityContentRenderer({
           })()}
 
           {(() => {
-            const section = activity.sections.find((s) => s.id === "case-study-1-image");
+            const section = activity.sections.find(
+              (s) => s.id === "case-study-1-image"
+            );
             return section ? renderSection(section) : null;
           })()}
 
@@ -622,7 +690,9 @@ export default function ActivityContentRenderer({
           })()}
 
           {(() => {
-            const section = activity.sections.find((s) => s.id === "case-study-2-image");
+            const section = activity.sections.find(
+              (s) => s.id === "case-study-2-image"
+            );
             return section ? renderSection(section) : null;
           })()}
         </>
