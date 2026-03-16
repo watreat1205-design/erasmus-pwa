@@ -211,13 +211,20 @@ export default async function LessonPage({
   title: current.title,
   position: current.position,
   });
-  const resolvedLessonTitle = pickI18n(
+  const resolvedCourseTitle = pickI18n(
+  (course as any).title_i18n,
+  lang,
+  course.title
+);
+
+const resolvedLessonTitle = pickI18n(
   (current as any).title_i18n,
   lang,
   current.title
 );
 
 const activityContent = getActivityContentByLesson(
+  resolvedCourseTitle,
   resolvedLessonTitle,
   current.position
 );

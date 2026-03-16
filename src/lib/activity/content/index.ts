@@ -17,20 +17,95 @@ import { activity32Content } from "./activity-3-2";
 import { activity33Content } from "./activity-3-3";
 import { activity34Content } from "./activity-3-4";
 
-export function getActivityContentByLesson(
-  lessonTitle?: string | null,
-  lessonPosition?: number | null
-): ActivityContent | null {
-  const title = String(lessonTitle ?? "")
+function normalize(value?: string | null) {
+  return String(value ?? "")
     .toLowerCase()
     .replace(/[–—:]/g, " ")
     .replace(/\./g, " ")
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
 
-  // ---------- MODULE 1 ----------
+export function getActivityContentByLesson(
+  courseTitle?: string | null,
+  lessonTitle?: string | null,
+  lessonPosition?: number | null
+): ActivityContent | null {
+  const course = normalize(courseTitle);
+  const title = normalize(lessonTitle);
 
+  // ---------- PRIMARY MATCH: COURSE + POSITION ----------
+
+  // Module 1
+  if (
+    course.includes("teal pedagogy") ||
+    course.includes("module 1") ||
+    course.includes("εισαγωγή στη μεθοδολογία διδασκαλίας teal")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity11Content;
+      case 2:
+        return activity12Content;
+      case 3:
+        return activity13Content;
+      case 4:
+        return activity14Content;
+      case 5:
+        return activity15Content;
+      default:
+        return null;
+    }
+  }
+
+  // Module 2
+  if (
+    course.includes("sustainable transition policies") ||
+    course.includes("stp") ||
+    course.includes("module 2") ||
+    course.includes("θεμελιώσεις της περιβαλλοντικής εκπαίδευσης")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity21Content;
+      case 2:
+        return activity22Content;
+      case 3:
+        return activity23Content;
+      case 4:
+        return activity24Content;
+      case 5:
+        return activity25Content;
+      default:
+        return null;
+    }
+  }
+
+  // Module 3
+  if (
+    course.includes("acta") ||
+    course.includes("module 3") ||
+    course.includes("from knowledge to skills for a transformative education") ||
+    course.includes("από τη γνώση στις δεξιότητες για έναν μετασχηματιστικό τύπο εκπαίδευσης")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity31Content;
+      case 2:
+        return activity32Content;
+      case 3:
+        return activity33Content;
+      case 4:
+        return activity34Content;
+      default:
+        return null;
+    }
+  }
+
+  // ---------- FALLBACK: LESSON TITLE ----------
+
+  // Module 1
   if (title.includes("activity 1 1") || title.includes("exploring teal")) {
     return activity11Content;
   }
@@ -65,8 +140,7 @@ export function getActivityContentByLesson(
     return activity15Content;
   }
 
-  // ---------- MODULE 2 ----------
-
+  // Module 2
   if (title.includes("activity 2 1") || title.includes("exploring agenda 2030")) {
     return activity21Content;
   }
@@ -100,29 +174,19 @@ export function getActivityContentByLesson(
     return activity25Content;
   }
 
-  // ---------- MODULE 3 ----------
-
-  if (
-    title.includes("activity 3 1") ||
-    title.includes("digital eco quest") ||
-    (title.includes("lesson 3 1") && lessonPosition === 1)
-  ) {
+  // Module 3
+  if (title.includes("activity 3 1") || title.includes("digital eco quest")) {
     return activity31Content;
   }
 
-  if (
-    title.includes("activity 3 2") ||
-    title.includes("eco footprint challenge") ||
-    (title.includes("lesson 3 2") && lessonPosition === 2)
-  ) {
+  if (title.includes("activity 3 2") || title.includes("eco footprint challenge")) {
     return activity32Content;
   }
 
   if (
     title.includes("activity 3 3") ||
     title.includes("sustainable cities educated citizens") ||
-    title.includes("community becomes an ecological learning space") ||
-    (title.includes("lesson 3 3") && lessonPosition === 3)
+    title.includes("community becomes an ecological learning space")
   ) {
     return activity33Content;
   }
@@ -130,8 +194,7 @@ export function getActivityContentByLesson(
   if (
     title.includes("activity 3 4") ||
     title.includes("environmental education as awareness raising on climate change") ||
-    title.includes("climate change") ||
-    (title.includes("lesson 3 4") && lessonPosition === 4)
+    title.includes("climate change")
   ) {
     return activity34Content;
   }

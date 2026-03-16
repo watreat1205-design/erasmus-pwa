@@ -39,10 +39,11 @@ export default async function CoursesPublicPage() {
   } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
-    .from("courses")
-    .select("id, title, description, position")
-    .eq("is_published", true)
-    .order("position", { ascending: true });
+  .from("courses")
+  .select("id, title, description, position")
+  .eq("is_published", true)
+  .order("position", { ascending: true, nullsFirst: false })
+  .order("title", { ascending: true }); 
 
   const courses: CourseRow[] = data ?? [];
   const courseIds = courses.map((c) => c.id);
