@@ -362,16 +362,16 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
         </SectionCard>
       );
 
-      case "links": {
-  const furtherReadingItems = section.items.filter(
-    (item: (typeof section.items)[number]) =>
-      isFurtherReadingResource(item.resourceType)
-  );
+    case "links": {
+      const furtherReadingItems = section.items.filter(
+        (item: (typeof section.items)[number]) =>
+          isFurtherReadingResource(item.resourceType)
+      );
 
-  const slideItems = section.items.filter(
-    (item: (typeof section.items)[number]) =>
-      isSlidesResource(item.resourceType)
-  );
+      const slideItems = section.items.filter(
+        (item: (typeof section.items)[number]) =>
+          isSlidesResource(item.resourceType)
+      );
 
       return (
         <SectionCard key={section.id} title={section.title} icon={icon}>
@@ -699,14 +699,27 @@ export default function ActivityContentRenderer({
       ) : null}
 
       {(() => {
+        const section = activity.sections.find((s) => s.id === "case-study");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "case-study-image");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
         const section = activity.sections.find((s) => s.id === "assessment");
         return section ? renderSection(section) : null;
       })()}
 
       {(() => {
-        const section =
-          activity.sections.find((s) => s.id === "further-reading") ||
-          activity.sections.find((s) => s.id === "resources");
+        const section = activity.sections.find((s) => s.id === "resources");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "further-reading");
         return section ? renderSection(section) : null;
       })()}
     </div>

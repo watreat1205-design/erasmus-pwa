@@ -9,7 +9,12 @@ import { toEmbed } from "@/src/lib/toEmbed";
 function isAllowed(url: string) {
   try {
     const u = new URL(url);
+    const protocol = u.protocol.toLowerCase();
     const host = u.hostname.toLowerCase();
+
+    if (protocol !== "https:" && protocol !== "http:") {
+      return false;
+    }
 
     const allowedHosts = [
       "docs.google.com",
@@ -23,6 +28,17 @@ function isAllowed(url: string) {
       "www.vimeo.com",
       "player.vimeo.com",
       "pjjslpdbnwfkvlrxrkpr.supabase.co",
+
+      // Module 6 / NGO resource domains
+      "unevoc.unesco.org",
+      "ilo.org",
+      "www.ilo.org",
+      "cedefop.europa.eu",
+      "www.cedefop.europa.eu",
+      "gan-global.org",
+      "www.gan-global.org",
+      "prosci.com",
+      "www.prosci.com",
     ];
 
     return allowedHosts.some(
@@ -73,10 +89,13 @@ export default function ExternalViewerPage() {
     lowerEmbed.includes("player.vimeo.com/video/");
 
   const isPdf = lowerRaw.includes(".pdf");
-  const forceIframePdf = lowerRaw.includes("fit-for-55-article.pdf");
+  const isSupabasePdf = lowerRaw.includes("pjjslpdbnwfkvlrxrkpr.supabase.co");
+  const forceIframePdf =
+    !isSupabasePdf || lowerRaw.includes("fit-for-55-article.pdf");
 
   const isForm =
-    lowerRaw.includes("docs.google.com/forms") || lowerRaw.includes("forms.gle/");
+    lowerRaw.includes("docs.google.com/forms") ||
+    lowerRaw.includes("forms.gle/");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -103,27 +122,49 @@ export default function ExternalViewerPage() {
                 className="h-full w-full"
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
+                title="Embedded video"
               />
             </div>
-          </div>
 
-         ) : isPdf ? (
-             forceIframePdf ? (
-             <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-             <div className="h-[80vh] w-full">
-             <iframe
-             src={rawUrl}
-             title="PDF document"
-             className="h-full w-full"
-           />
-           </div>
+            <div className="border-t border-gray-200 p-4">
+              <a
+                href={rawUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-medium text-blue-700 underline"
+              >
+                Open video in new tab
+              </a>
+            </div>
           </div>
-         ) : (
-         <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
-           <PdfDocumentViewerNoSSR url={rawUrl} />
-         </div>
+        ) : isPdf ? (
+          forceIframePdf ? (
+            <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+              <div className="h-[80vh] w-full">
+                <iframe
+                  src={rawUrl}
+                  title="PDF document"
+                  className="h-full w-full"
+                />
+              </div>
+
+              <div className="border-t border-gray-200 p-4">
+                <a
+                  href={rawUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-medium text-blue-700 underline"
+                >
+                  Open PDF in new tab
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
+              <PdfDocumentViewerNoSSR url={rawUrl} />
+            </div>
           )
-         ) : isForm ? (
+        ) : isForm ? (
           <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
             <div className="text-sm text-gray-700">
               This form cannot be embedded here (Google blocks it).

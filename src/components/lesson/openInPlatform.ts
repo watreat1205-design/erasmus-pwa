@@ -7,6 +7,14 @@ import { toEmbed } from "@/lib/toEmbed";
  */
 const FORCE_VIDEO_NEW_TAB = ["CsasywVt6E8"];
 
+/**
+ * PDFs that should open directly in a new tab.
+ * Keep this list very specific so we do not affect other modules.
+ */
+const FORCE_PDF_NEW_TAB = [
+  "unevoc.unesco.org/pub/nqc_graeducation_fiap.pdf",
+];
+
 function getYouTubeId(url: string) {
   try {
     const u = new URL(url);
@@ -31,7 +39,8 @@ function getYouTubeId(url: string) {
 export function openInPlatform(url: string) {
   if (typeof window === "undefined") return;
 
-  const lower = url.toLowerCase();
+  const trimmedUrl = url.trim();
+  const lower = trimmedUrl.toLowerCase();
 
   const isYouTube =
     lower.includes("youtube.com/") ||
@@ -44,22 +53,31 @@ export function openInPlatform(url: string) {
   const isForms =
     lower.includes("docs.google.com/forms") || lower.includes("forms.gle/");
 
-  const isPdf = lower.endsWith(".pdf");
+  const isPdf = lower.includes(".pdf");
 
   /**
    * If this is a YouTube video that cannot be embedded,
    * open it directly in a new tab.
    */
   if (isYouTube) {
-    const youtubeId = getYouTubeId(url);
+    const youtubeId = getYouTubeId(trimmedUrl);
 
     if (youtubeId && FORCE_VIDEO_NEW_TAB.includes(youtubeId)) {
-      window.open(url, "_blank", "noopener,noreferrer");
+      window.open(trimmedUrl, "_blank", "noopener,noreferrer");
       return;
     }
   }
 
-  const finalUrl = isVideo ? toEmbed(url) : url;
+  /**
+   * If this is a PDF that should not go through the platform viewer,
+   * open it directly in a new tab.
+   */
+  if (isPdf && FORCE_PDF_NEW_TAB.some((pdf) => lower.includes(pdf))) {
+    window.open(trimmedUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  const finalUrl = isVideo ? toEmbed(trimmedUrl) : trimmedUrl;
 
   // Open inside the platform
   if (isVideo || isForms || isPdf) {
@@ -75,10 +93,12 @@ export function openInPlatform(url: string) {
     }
 
     const base = window.location.pathname.replace(/\/external\/?$/, "");
-    window.location.assign(`${base}/external?url=${encodeURIComponent(finalUrl)}`);
+    window.location.assign(
+      `${base}/external?url=${encodeURIComponent(finalUrl)}`
+    );
     return;
   }
 
   // Everything else opens normally
-  window.open(url, "_blank", "noopener,noreferrer");
+  window.open(trimmedUrl, "_blank", "noopener,noreferrer");
 }
