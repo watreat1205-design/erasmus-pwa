@@ -136,18 +136,18 @@ export const activity63Content: ActivityContent = {
       ],
     },
 
-    {
-      id: "case-study",
-      type: "links",
-      title: "Case Study",
-      items: [
+        {
+          id: "case-study",
+          type: "links",
+          title: "Case Study",
+          items: [
         {
           title: "Greek-German “GRÆDUCATION” project",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-6/Activity-6-3/case-study.pdf",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/Case-Studies/dsd-teal/Module-6/Activity-6-3/Case-Studies/case-study.pdf",
           resourceType: "pdf",
         },
-      ],
-    },
+       ],
+     },
 
     {
       id: "assessment",
