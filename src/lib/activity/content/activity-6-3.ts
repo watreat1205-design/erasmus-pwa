@@ -143,7 +143,7 @@ export const activity63Content: ActivityContent = {
           items: [
         {
           title: "Greek-German “GRÆDUCATION” project",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/Case-Studies/dsd-teal/Module-6/Activity-6-3/Case-Studies/case-study.pdf",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-6/Activity-6-3/Case-Studies/case-study.pdf",
           resourceType: "pdf",
         },
        ],
