@@ -18,6 +18,8 @@ import { activity32Content } from "./activity-3-2";
 import { activity33Content } from "./activity-3-3";
 import { activity34Content } from "./activity-3-4";
 
+import { activity51Content } from "./activity-5-1";
+
 import { activity61Content } from "./activity-6-1";
 import { activity62Content } from "./activity-6-2";
 import { activity63Content } from "./activity-6-3";
@@ -104,6 +106,19 @@ export function getActivityContentByLesson(
         return activity33Content;
       case 4:
         return activity34Content;
+      default:
+        return null;
+    }
+  }
+
+       // Module 5
+  if (
+    course.includes("adult education for environmental sustainability") ||
+    course.includes("module 5")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity51Content;
       default:
         return null;
     }
