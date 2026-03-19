@@ -54,6 +54,14 @@ function isFurtherReadingResource(resourceType?: string) {
   return resourceType !== "slides" && resourceType !== "pdf";
 }
 
+function handleActivityLink(url: string) {
+  if (url.startsWith("/quizzes/")) {
+    window.location.href = url;
+  } else {
+    openInPlatform(url);
+  }
+}
+
 function SectionCard({
   title,
   icon,
@@ -98,13 +106,7 @@ function renderTextWithMarkdownLink(
       <button
         key={key}
         type="button"
-        onClick={() => {
-          if (url.startsWith("/quizzes/")) {
-            window.location.href = url;
-          } else {
-            openInPlatform(url);
-          }
-        }}
+        onClick={() => handleActivityLink(url)}
         className={
           buttonClassName ??
           "mt-3 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
@@ -158,6 +160,118 @@ function renderTextWithMarkdownLink(
   return (
     <p key={key} className="leading-7">
       {p}
+    </p>
+  );
+}
+
+function renderStepBodyText(
+  p: string,
+  key: string,
+  buttonClassName?: string
+) {
+  const fullLineMarkdownMatch = p.match(/^\[(.*?)\]\((.*?)\)$/);
+
+  if (fullLineMarkdownMatch) {
+    const label = fullLineMarkdownMatch[1];
+    const url = fullLineMarkdownMatch[2];
+
+    return (
+      <button
+        key={key}
+        type="button"
+        onClick={() => handleActivityLink(url)}
+        className={
+          buttonClassName ??
+          "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
+        }
+      >
+        {label} →
+      </button>
+    );
+  }
+
+  const parenUrlMatch = p.match(/^\((https?:\/\/[^\s)]+)\)\.?$/);
+
+  if (parenUrlMatch) {
+    const url = parenUrlMatch[1];
+
+    return (
+      <button
+        key={key}
+        type="button"
+        onClick={() => openInPlatform(url)}
+        className={
+          buttonClassName ??
+          "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
+        }
+      >
+        Open link →
+      </button>
+    );
+  }
+
+  const plainUrlMatch = p.match(/^(https?:\/\/\S+)$/);
+
+  if (plainUrlMatch) {
+    const url = plainUrlMatch[1];
+
+    return (
+      <button
+        key={key}
+        type="button"
+        onClick={() => openInPlatform(url)}
+        className={
+          buttonClassName ??
+          "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
+        }
+      >
+        Open link →
+      </button>
+    );
+  }
+
+  const inlineMarkdownRegex = /\[([^[\]]+)\]\(([^()\s]+(?:\([^()]*\)[^()]*)*)\)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = inlineMarkdownRegex.exec(p)) !== null) {
+    const [fullMatch, label, url] = match;
+    const matchIndex = match.index;
+
+    if (matchIndex > lastIndex) {
+      parts.push(p.slice(lastIndex, matchIndex));
+    }
+
+    parts.push(
+      <button
+        key={`${key}-link-${matchIndex}`}
+        type="button"
+        onClick={() => handleActivityLink(url)}
+        className="inline font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-800"
+      >
+        {label}
+      </button>
+    );
+
+    lastIndex = matchIndex + fullMatch.length;
+  }
+
+  if (lastIndex === 0) {
+    return (
+      <p key={key} className="leading-7">
+        {p}
+      </p>
+    );
+  }
+
+  if (lastIndex < p.length) {
+    parts.push(p.slice(lastIndex));
+  }
+
+  return (
+    <p key={key} className="leading-7">
+      {parts}
     </p>
   );
 }
@@ -255,7 +369,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
 
                   <div className="mt-4 space-y-3 text-gray-700">
                     {step.body.map((p: string, idx: number) =>
-                      renderTextWithMarkdownLink(
+                      renderStepBodyText(
                         p,
                         `step-${section.id}-${i}-${idx}`,
                         "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
@@ -705,6 +819,11 @@ export default function ActivityContentRenderer({
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "case-study-image");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "pledge");
         return section ? renderSection(section) : null;
       })()}
 
