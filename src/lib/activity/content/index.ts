@@ -19,6 +19,7 @@ import { activity33Content } from "./activity-3-3";
 import { activity34Content } from "./activity-3-4";
 
 import { activity51Content } from "./activity-5-1";
+import { activity52Content } from "./activity-5-2";
 
 import { activity61Content } from "./activity-6-1";
 import { activity62Content } from "./activity-6-2";
@@ -95,7 +96,9 @@ export function getActivityContentByLesson(
     course.includes("acta") ||
     course.includes("module 3") ||
     course.includes("from knowledge to skills for a transformative education") ||
-    course.includes("από τη γνώση στις δεξιότητες για έναν μετασχηματιστικό τύπο εκπαίδευσης")
+    course.includes(
+      "από τη γνώση στις δεξιότητες για έναν μετασχηματιστικό τύπο εκπαίδευσης"
+    )
   ) {
     switch (lessonPosition) {
       case 1:
@@ -111,7 +114,7 @@ export function getActivityContentByLesson(
     }
   }
 
-       // Module 5
+  // Module 5
   if (
     course.includes("adult education for environmental sustainability") ||
     course.includes("module 5")
@@ -119,12 +122,14 @@ export function getActivityContentByLesson(
     switch (lessonPosition) {
       case 1:
         return activity51Content;
+      case 2:
+        return activity52Content;
       default:
         return null;
     }
   }
 
-    // Module 6
+  // Module 6
   if (
     course.includes("ccif") ||
     course.includes("module 6") ||
@@ -183,7 +188,10 @@ export function getActivityContentByLesson(
   }
 
   // Module 2
-  if (title.includes("activity 2 1") || title.includes("exploring agenda 2030")) {
+  if (
+    title.includes("activity 2 1") ||
+    title.includes("exploring agenda 2030")
+  ) {
     return activity21Content;
   }
 
@@ -221,7 +229,10 @@ export function getActivityContentByLesson(
     return activity31Content;
   }
 
-  if (title.includes("activity 3 2") || title.includes("eco footprint challenge")) {
+  if (
+    title.includes("activity 3 2") ||
+    title.includes("eco footprint challenge")
+  ) {
     return activity32Content;
   }
 
@@ -235,13 +246,30 @@ export function getActivityContentByLesson(
 
   if (
     title.includes("activity 3 4") ||
-    title.includes("environmental education as awareness raising on climate change") ||
+    title.includes(
+      "environmental education as awareness raising on climate change"
+    ) ||
     title.includes("climate change")
   ) {
     return activity34Content;
   }
 
-    // Module 6
+  // Module 5
+  if (
+    title.includes("activity 5 1") ||
+    title.includes("empowering personal commitment")
+  ) {
+    return activity51Content;
+  }
+
+  if (
+    title.includes("activity 5 2") ||
+    title.includes("walking the talk")
+  ) {
+    return activity52Content;
+  }
+
+  // Module 6
   if (title.includes("activity 6 1") || title.includes("green skills")) {
     return activity61Content;
   }
