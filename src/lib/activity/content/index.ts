@@ -20,6 +20,8 @@ import { activity34Content } from "./activity-3-4";
 
 import { activity51Content } from "./activity-5-1";
 import { activity52Content } from "./activity-5-2";
+import { activity53Content } from "./activity-5-3";
+import { activity54Content } from "./activity-5-4";
 
 import { activity61Content } from "./activity-6-1";
 import { activity62Content } from "./activity-6-2";
@@ -124,6 +126,10 @@ export function getActivityContentByLesson(
         return activity51Content;
       case 2:
         return activity52Content;
+      case 3:
+        return activity53Content;
+      case 4:
+        return activity54Content;
       default:
         return null;
     }
@@ -267,6 +273,21 @@ export function getActivityContentByLesson(
     title.includes("walking the talk")
   ) {
     return activity52Content;
+  }
+  
+  if (
+    title.includes("activity 5 3") ||
+    title.includes("community action for sustainability")
+  ) {
+    return activity53Content;
+  }
+
+  if (
+    title.includes("activity 5 4") ||
+    title.includes("local voices") ||
+    title.includes("sustainability forum simulation")
+  ) {
+    return activity54Content;
   }
 
   // Module 6

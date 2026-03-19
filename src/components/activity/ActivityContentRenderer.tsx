@@ -827,6 +827,43 @@ export default function ActivityContentRenderer({
         return section ? renderSection(section) : null;
       })()}
 
+            {(() => {
+        const section = activity.sections.find((s) => s.id === "scenario-mockup");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "funding-proposals");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "stakeholder-roles");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "forum-rules");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "facilitator-notes");
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find(
+          (s) => s.id === "expected-learning-outcomes"
+        );
+        return section ? renderSection(section) : null;
+      })()}
+
+      {(() => {
+        const section = activity.sections.find((s) => s.id === "extension");
+        return section ? renderSection(section) : null;
+      })()}
+
       {(() => {
         const section = activity.sections.find((s) => s.id === "assessment");
         return section ? renderSection(section) : null;
