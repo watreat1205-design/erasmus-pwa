@@ -108,18 +108,24 @@ export const activity64Content: ActivityContent = {
             "They are also encouraged to inject personal reflection, for example by describing how their views changed during the course or what actions they now feel committed to taking.",
           ],
         },
+
         {
-          title: "Peer Review Exchange",
-          duration: "30 minutes",
-          body: [
-            "After submitting their first drafts, participants reconvene, or asynchronously swap, for peer feedback.",
-            "The facilitator pairs participants, or forms small groups of 3, ideally matching people with different topics to get fresh perspectives.",
-            "Each participant reads a peer’s draft and provides constructive comments.",
-            "The facilitator provides a simple checklist focusing on clarity of message, personal voice, structure, and one thing they learned from the piece.",
-            "During a live session or via comments in the document, peers share their impressions.",
-            "This process helps improve the blogs and reinforces learning, since each participant engages with another person’s sustainability perspective.",
-          ],
-        },
+  title: "Peer Review Exchange",
+  duration: "30 minutes",
+  body: [
+    "After submitting their first drafts, participants reconvene, or asynchronously swap, for peer feedback.",
+    "The facilitator pairs participants, or forms small groups of 3, ideally matching people with different topics to get fresh perspectives.",
+    "Each participant reads a peer’s draft and provides constructive comments.",
+    "The facilitator provides a simple checklist focusing on clarity of message, personal voice, structure, and one thing they learned from the piece.",
+    "During a live session or via comments in the document, peers share their impressions.",
+    
+    "Example feedback:",
+    "“I loved how you described your experience starting a community garden. It felt very real and engaging. One suggestion: you could add a statistic about food waste to strengthen your argument.”",
+
+    "This process helps improve the blogs and reinforces learning, since each participant engages with another person’s sustainability perspective.",
+  ],
+},
+
         {
           title: "Revision and Finalization",
           duration: "20 minutes",

@@ -87,7 +87,7 @@ export const activity62Content: ActivityContent = {
           title: "Showcase Example",
           duration: "10 minutes",
           body: [
-            "An example 2–3 minute sustainability video is played.",
+            "An example 2–3 minute sustainability video is played, such as the “On Earth Environmental Short Film”.",
             "The facilitator and participants analyse it: What was the core message? What techniques were used to engage the audience, such as humor, data, or visuals?",
             "If an AR demo or video is available, the facilitator shows how AR overlays information on the real world, for example pointing a phone camera at a picture of a forest and seeing virtual wildlife appear.",
             "This inspires participants to think creatively about using technology in their own scripts.",
@@ -126,6 +126,12 @@ export const activity62Content: ActivityContent = {
             "They are encouraged to be creative but also factual, requiring them to draw on knowledge from the course.",
             "For instance, a group writing about climate change for a general public audience might script a scene using AR: the narrator points a phone at a map of the city and an AR overlay shows which districts would be flooded by 2050 if emissions continue.",
             "The facilitator remains available for questions or to review drafts as groups work.",
+
+            "Example Video Script:",
+            "Hi everyone! Welcome to our short video on “Teaching Sustainability with Tech.” Today, we explore how to reduce plastic waste and how AR can enhance learning.",
+            "Plastic pollution is a major global issue, with over 300 million tons produced annually. Much comes from single-use items like bottles and packaging. Education helps change behavior and awareness.",
+            "Augmented Reality (AR) can visualize these impacts. For example, pointing your phone at a recycling bin could show where waste goes or how it affects ecosystems.",
+            "AR increases engagement and helps learners better understand sustainability challenges. It turns passive learning into interactive exploration.",
           ],
         },
         {
@@ -167,10 +173,10 @@ export const activity62Content: ActivityContent = {
       type: "text",
       title: "Assessment",
       body: [
-        "Group Work and Script Quality: The facilitator evaluates each group’s script based on a rubric that checks content accuracy, clarity of message, creativity and innovation, and appropriateness for audience. This assesses how well participants applied their knowledge and communication skills. All groups’ scripts are collected as evidence of learning.",
-        "Collaboration and Participation: During the activity, the facilitator monitors group dynamics and ensures everyone contributes. Effective collaboration, such as sharing tasks and listening to each other’s ideas, is noted positively. If a group struggles to organize or has uneven participation, the facilitator can address this in feedback, as teamwork is a key skill targeted by the course.",
-        "Feedback Integration: An important learning outcome is being able to receive and use feedback. In their final submitted script, after the session groups may refine their work based on discussion. The facilitator looks for incorporation of at least one improvement suggested during feedback, showing that participants can reflect and iterate on their work.",
-        "Self-Reflection: Each participant writes a short reflection after the session on what they learned from creating the video script. This narrative self-assessment allows them to articulate new insights or challenges overcome, and helps the facilitator gauge individual learning and identify any lingering misconceptions to address in future sessions.",
+        "Group Work and Script Quality: The facilitator evaluates each group’s script based on a rubric that checks content accuracy, clarity of message, creativity and innovation, and appropriateness for audience.",
+        "Collaboration and Participation: The facilitator monitors group dynamics and ensures everyone contributes.",
+        "Feedback Integration: Participants improve their scripts based on feedback.",
+        "Self-Reflection: Each participant reflects on what they learned.",
       ],
     },
 
@@ -182,20 +188,14 @@ export const activity62Content: ActivityContent = {
         {
           title: "On Earth Environmental Short Film",
           url: "https://www.youtube.com/watch?v=QQYgCxu988s",
-          resourceType: "external",
-        },
-        {
-          title: "Sustainability Video Ideas + Free AI Generators",
-          url: "https://www.youtube.com/watch?v=BSHmM0ZtFlw",
           resourceType: "video",
         },
         {
-          title: "Sustainability Video Ideas (Examples)",
-          url: "https://globalowls.com/marketing-examples/sustainability-video-ideas/",
+          title: "Creating Short Videos for Environmental Awareness: Tips for Impact",
+          url: "https://shortlab.io/en/blog/creating-short-videos-for-environmental-awareness-tips-for-impact/",
           resourceType: "external",
         },
       ],
     },
   ],
 };
-
