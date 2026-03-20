@@ -11,28 +11,28 @@ export default function FooterPartners({
         <div
           className={
             compact
-              ? "rounded-t-[28px] border border-white/20 bg-white/10 backdrop-blur-xl shadow-xl p-3 text-center"
-              : "rounded-t-[28px] border border-white/20 bg-white/10 backdrop-blur-xl shadow-xl p-4 text-center"
+              ? "rounded-t-[28px] border border-white/20 bg-white/10 p-3 text-center shadow-xl backdrop-blur-xl"
+              : "rounded-t-[28px] border border-white/20 bg-white/10 p-4 text-center shadow-xl backdrop-blur-xl"
           }
         >
           <div
             className={
               compact
-                ? "rounded-[22px] bg-white/5 px-5 py-4"
+                ? "rounded-[22px] bg-white/5 px-4 py-3"
                 : "rounded-[22px] bg-white/5 px-6 py-6"
             }
           >
             <h3
               className={
                 compact
-                  ? "mb-4 text-[11px] font-semibold uppercase tracking-widest text-white/80"
+                  ? "mb-3 text-[10px] font-semibold uppercase tracking-widest text-white/80"
                   : "mb-6 text-sm font-semibold uppercase tracking-widest text-white/80"
               }
             >
               Project Partners
             </h3>
 
-            <div className={compact ? "mb-4 flex justify-center" : "mb-6 flex justify-center"}>
+            <div className={compact ? "mb-3 flex justify-center" : "mb-6 flex justify-center"}>
               <Image
                 src="/partners/NGO-logos.jpg"
                 alt="Project partner organizations"
@@ -40,7 +40,7 @@ export default function FooterPartners({
                 height={250}
                 className={
                   compact
-                    ? "h-auto w-full max-w-3xl object-contain"
+                    ? "h-auto w-full max-w-[820px] object-contain"
                     : "h-auto w-full max-w-4xl object-contain"
                 }
                 priority
@@ -50,7 +50,7 @@ export default function FooterPartners({
             <p
               className={
                 compact
-                  ? "mx-auto max-w-4xl text-[11px] leading-relaxed text-white/70"
+                  ? "mx-auto max-w-4xl text-[10px] leading-relaxed text-white/70"
                   : "mx-auto max-w-3xl text-xs leading-relaxed text-white/70"
               }
             >

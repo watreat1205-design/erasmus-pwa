@@ -63,30 +63,49 @@ export default async function WelcomePage({
   const loggedIn = !!user;
 
   return (
-    <div className="relative min-h-[108vh] overflow-hidden">
-      <Image
-        src="/templates/8.jpg"
-        alt=""
-        fill
-        priority
-        className="object-cover object-[center_55%]"
-      />
-      <div className="absolute inset-0 bg-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
+  <div className="relative min-h-[118vh] overflow-hidden">
+    <Image
+      src="/templates/8.jpg"
+      alt=""
+      fill
+      priority
+      className="object-cover object-[center_55%]"
+    />
+    <div className="absolute inset-0 bg-black/20" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
-      <div className="relative mx-auto flex min-h-[108vh] max-w-6xl flex-col px-4 sm:px-6">
-        <div className="pt-0">
-          <WelcomeClient
-            loggedIn={loggedIn}
-            displayName={displayName}
-            initialLang={initialLang}
-          />
-        </div>
+    <div className="relative mx-auto flex min-h-[118vh] max-w-6xl flex-col px-4 sm:px-6">
+      <div className="pt-0">
+        <WelcomeClient
+          loggedIn={loggedIn}
+          displayName={displayName}
+          initialLang={initialLang}
+        />
+      </div>
 
-        <div className="mt-auto">
-          <FooterPartners compact />
+      <div className="mt-auto pb-6">
+        <FooterPartners compact />
+
+        <div className="-mt-px mx-auto max-w-6xl px-4">
+          <div className="rounded-b-[28px] border border-white/20 border-t-0 bg-white/10 px-4 py-3 text-center backdrop-blur-xl shadow-xl">
+            <p className="text-xs text-white/80">
+              Developed by{" "}
+              <span className="font-medium text-white">
+                Andreas Aristodemou
+              </span>
+            </p>
+            <p className="text-xs">
+              <a
+                href="mailto:aristodemou.a1@gmail.com"
+                className="text-blue-200 hover:underline"
+              >
+                aristodemou.a1@gmail.com
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

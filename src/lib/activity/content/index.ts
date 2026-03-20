@@ -18,6 +18,11 @@ import { activity32Content } from "./activity-3-2";
 import { activity33Content } from "./activity-3-3";
 import { activity34Content } from "./activity-3-4";
 
+import { activity41Content } from "./activity-4-1";
+import { activity42Content } from "./activity-4-2";
+import { activity43Content } from "./activity-4-3";
+import { activity44Content } from "./activity-4-4";
+
 import { activity51Content } from "./activity-5-1";
 import { activity52Content } from "./activity-5-2";
 import { activity53Content } from "./activity-5-3";
@@ -111,6 +116,28 @@ export function getActivityContentByLesson(
         return activity33Content;
       case 4:
         return activity34Content;
+      default:
+        return null;
+    }
+  }
+
+      // Module 4
+  if (
+    course.includes(
+      "foundations of environmental education and sustainable development"
+    ) ||
+    course.includes("module 4") ||
+    course.includes("ecological transition")
+  ) {
+    switch (lessonPosition) {
+      case 1:
+        return activity41Content;
+      case 2:
+        return activity42Content;
+      case 3:
+        return activity43Content;
+       case 4:
+        return activity44Content;
       default:
         return null;
     }
@@ -260,7 +287,41 @@ export function getActivityContentByLesson(
     return activity34Content;
   }
 
-  // Module 5
+      // Module 4
+  if (
+    title.includes("activity 4 1") ||
+    title.includes("walking the green path") ||
+    title.includes("what is ecological transition") ||
+    title.includes("ecological transition")
+  ) {
+    return activity41Content;
+  }
+
+   if (
+    title.includes("activity 4 2") ||
+    title.includes("reality check") ||
+    title.includes("mapping the transition in our own backyard")
+  ) {
+    return activity42Content;
+  }
+
+    if (
+     title.includes("activity 4 3") ||
+     title.includes("green life scenarios") ||
+     title.includes("who gets what in the transition")
+  ) {
+    return activity43Content;
+  } 
+ 
+     if (
+      title.includes("activity 4 4") ||
+      title.includes("from policy to practice") ||
+      title.includes("case study reflection")
+  ) {
+    return activity44Content;
+  }
+
+ // Module 5
   if (
     title.includes("activity 5 1") ||
     title.includes("empowering personal commitment")
