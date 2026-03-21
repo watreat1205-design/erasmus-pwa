@@ -289,7 +289,7 @@ export function getActivityContentByLesson(
 
       // Module 4
   if (
-    title.includes("activity 4 1") ||
+    title.includes("activity  1") ||
     title.includes("walking the green path") ||
     title.includes("what is ecological transition") ||
     title.includes("ecological transition")
@@ -298,7 +298,7 @@ export function getActivityContentByLesson(
   }
 
    if (
-    title.includes("activity 4 2") ||
+    title.includes("activity  2") ||
     title.includes("reality check") ||
     title.includes("mapping the transition in our own backyard")
   ) {
@@ -306,7 +306,7 @@ export function getActivityContentByLesson(
   }
 
     if (
-     title.includes("activity 4 3") ||
+     title.includes("activity  3") ||
      title.includes("green life scenarios") ||
      title.includes("who gets what in the transition")
   ) {
@@ -314,7 +314,7 @@ export function getActivityContentByLesson(
   } 
  
      if (
-      title.includes("activity 4 4") ||
+      title.includes("activity  4") ||
       title.includes("from policy to practice") ||
       title.includes("case study reflection")
   ) {

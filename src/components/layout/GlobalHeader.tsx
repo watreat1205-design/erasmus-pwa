@@ -4,7 +4,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureI18n } from "@/i18n";
 
@@ -21,6 +21,7 @@ export default function GlobalHeader() {
   const pathname = usePathname();
   const { t } = useTranslation("common");
   const [mounted, setMounted] = useState(false);
+  const headerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -32,6 +33,38 @@ export default function GlobalHeader() {
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
     pathname.startsWith("/reset-password");
+
+  useEffect(() => {
+    if (noChrome) {
+      document.documentElement.style.setProperty("--global-header-height", "0px");
+      return;
+    }
+
+    const updateHeaderHeight = () => {
+      const height = headerRef.current?.offsetHeight ?? 0;
+      document.documentElement.style.setProperty(
+        "--global-header-height",
+        `${height}px`
+      );
+    };
+
+    updateHeaderHeight();
+
+    const observer = new ResizeObserver(() => {
+      updateHeaderHeight();
+    });
+
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+
+    window.addEventListener("resize", updateHeaderHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeaderHeight);
+    };
+  }, [noChrome]);
 
   if (noChrome) {
     return null;
@@ -48,7 +81,10 @@ export default function GlobalHeader() {
   }
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-50 px-2 pt-2 sm:px-4 sm:pt-0">
+    <div
+      ref={headerRef}
+      className="fixed left-0 right-0 top-0 z-50 px-2 pt-2 sm:px-4 sm:pt-0"
+    >
       <div className="mx-auto max-w-6xl rounded-[24px] border border-white/20 bg-white/12 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:rounded-[28px] sm:p-3">
         <div className="rounded-2xl bg-white px-3 py-3 sm:px-5 sm:py-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">

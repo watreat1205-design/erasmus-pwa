@@ -1,3 +1,4 @@
+// src/components/layout/PageContainer.tsx
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -15,5 +16,15 @@ export default function PageContainer({
     pathname.startsWith("/signup") ||
     pathname.startsWith("/reset-password");
 
-  return <div className={noChrome ? "" : "pt-20"}>{children}</div>;
+  return (
+    <div
+      className={
+        noChrome
+          ? ""
+          : "pt-[calc(var(--global-header-height,0px)+16px)]"
+      }
+    >
+      {children}
+    </div>
+  );
 }
