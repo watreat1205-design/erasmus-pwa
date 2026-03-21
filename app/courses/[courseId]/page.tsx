@@ -6,18 +6,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import AllCoursesButtonClient from "./AllCoursesButtonClient";
 import { getServerTranslation } from "@/lib/i18n/server";
 import { pickI18n } from "@/lib/i18n/pick";
-import {
-  TNoDescription,
-  TEnrollTitle,
-  TEnrollBody,
-  TLoginHint,
-  TNoSections,
-  TLessons,
-  TNoLessons,
-  TModuleQuiz,
-  TLocked,
-  TPassed,
-} from "./CourseText";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -53,6 +41,91 @@ type ModuleQuizRow = {
   title_i18n?: Record<string, string> | null;
 };
 
+function uiLabel(
+  lang: string,
+  key:
+    | "backToCourses"
+    | "noDescription"
+    | "noSections"
+    | "activities"
+    | "noLessons"
+    | "quizSection"
+    | "locked"
+    | "passed"
+    | "courseTitle"
+) {
+  const labels: Record<string, Record<string, string>> = {
+    en: {
+      backToCourses: "Courses",
+      noDescription: "No description available.",
+      noSections: "No sections available yet.",
+      activities: "Activities",
+      noLessons: "No lessons available yet.",
+      quizSection: "Quizzes",
+      locked: "Locked",
+      passed: "Passed",
+      courseTitle: "Course",
+    },
+    el: {
+      backToCourses: "Μαθήματα",
+      noDescription: "Δεν υπάρχει διαθέσιμη περιγραφή.",
+      noSections: "Δεν υπάρχουν ακόμη διαθέσιμες ενότητες.",
+      activities: "Δραστηριότητες",
+      noLessons: "Δεν υπάρχουν ακόμη διαθέσιμα μαθήματα.",
+      quizSection: "Κουίζ",
+      locked: "Κλειδωμένο",
+      passed: "Επιτυχία",
+      courseTitle: "Μάθημα",
+    },
+    it: {
+      backToCourses: "Corsi",
+      noDescription: "Nessuna descrizione disponibile.",
+      noSections: "Nessuna sezione ancora disponibile.",
+      activities: "Activities",
+      noLessons: "Nessuna attività ancora disponibile.",
+      quizSection: "Quiz",
+      locked: "Bloccato",
+      passed: "Superato",
+      courseTitle: "Corso",
+    },
+    es: {
+      backToCourses: "Cursos",
+      noDescription: "No hay descripción disponible.",
+      noSections: "Aún no hay secciones disponibles.",
+      activities: "Actividades",
+      noLessons: "Aún no hay actividades disponibles.",
+      quizSection: "Cuestionarios",
+      locked: "Bloqueado",
+      passed: "Aprobado",
+      courseTitle: "Curso",
+    },
+    ro: {
+      backToCourses: "Cursuri",
+      noDescription: "Nu există nicio descriere disponibilă.",
+      noSections: "Nu există încă secțiuni disponibile.",
+      activities: "Activități",
+      noLessons: "Nu există încă activități disponibile.",
+      quizSection: "Quiz-uri",
+      locked: "Blocat",
+      passed: "Promovat",
+      courseTitle: "Curs",
+    },
+    hr: {
+      backToCourses: "Tečajevi",
+      noDescription: "Opis nije dostupan.",
+      noSections: "Još nema dostupnih cjelina.",
+      activities: "Aktivnosti",
+      noLessons: "Još nema dostupnih aktivnosti.",
+      quizSection: "Kvizovi",
+      locked: "Zaključano",
+      passed: "Položeno",
+      courseTitle: "Tečaj",
+    },
+  };
+
+  return labels[lang]?.[key] ?? labels.en[key];
+}
+
 export default async function CourseViewPage({
   params,
 }: {
@@ -67,10 +140,12 @@ export default async function CourseViewPage({
     return (
       <div className="min-h-screen bg-gray-100 px-6 py-10">
         <div className="mx-auto max-w-4xl">
-          <h2 className="text-2xl font-semibold text-gray-900">Course</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            {uiLabel(lang, "courseTitle")}
+          </h2>
           <p className="mt-3 text-red-600">Missing courseId in URL.</p>
           <Link href="/courses" className="mt-4 inline-block text-sm underline">
-            ← Back to Courses
+            ← {uiLabel(lang, "backToCourses")}
           </Link>
         </div>
       </div>
@@ -82,7 +157,8 @@ export default async function CourseViewPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-    const { data: profile } = user
+
+  const { data: profile } = user
     ? await supabase
         .from("profiles")
         .select("role")
@@ -91,7 +167,7 @@ export default async function CourseViewPage({
     : { data: null };
 
   const role = profile?.role ?? null;
-  const canAccessLearning = !!role; 
+  const canAccessLearning = !!role;
 
   const { data: course, error: cErr } = await supabase
     .from("courses")
@@ -112,13 +188,15 @@ export default async function CourseViewPage({
         <div className="absolute inset-0 bg-black/30" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-6 py-10 text-white">
-          <h2 className="text-2xl font-semibold">Course</h2>
+          <h2 className="text-2xl font-semibold">
+            {uiLabel(lang, "courseTitle")}
+          </h2>
           <p className="mt-3 text-red-200">{cErr?.message ?? "Not found"}</p>
           <Link
             href="/courses"
             className="mt-4 inline-flex rounded-md bg-black/40 px-3 py-2 text-sm font-medium !text-white hover:bg-black/60"
           >
-            ← Back to Courses
+            ← {uiLabel(lang, "backToCourses")}
           </Link>
         </div>
       </div>
@@ -190,7 +268,7 @@ export default async function CourseViewPage({
     <div className="flex items-center justify-between rounded-2xl border border-white/60 bg-white/70 px-4 py-4 text-base text-gray-800 shadow-sm">
       <div className="truncate">{children}</div>
       <span className="ml-3 shrink-0 text-sm font-medium text-gray-600">
-        🔒 <TLocked />
+        🔒 {uiLabel(lang, "locked")}
       </span>
     </div>
   );
@@ -224,7 +302,7 @@ export default async function CourseViewPage({
                 </p>
               ) : (
                 <p className="mt-3 text-base text-white/80">
-                  <TNoDescription />
+                  {uiLabel(lang, "noDescription")}
                 </p>
               )}
             </div>
@@ -237,9 +315,7 @@ export default async function CourseViewPage({
           <div className="mt-10">
             {!visibleSections.length ? (
               <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-                <p className="text-gray-800">
-                  <TNoSections />
-                </p>
+                <p className="text-gray-800">{uiLabel(lang, "noSections")}</p>
               </div>
             ) : (
               <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
@@ -262,7 +338,7 @@ export default async function CourseViewPage({
                             </div>
                             <div>
                               <div className="text-base font-semibold text-gray-900">
-                                <TLessons />
+                                {uiLabel(lang, "activities")}
                               </div>
                               <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
                             </div>
@@ -279,7 +355,6 @@ export default async function CourseViewPage({
                                     href={href}
                                     className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
                                   >
-                                    {lesson.position}.{" "}
                                     {pickI18n(
                                       lesson.title_i18n,
                                       lang,
@@ -288,7 +363,6 @@ export default async function CourseViewPage({
                                   </Link>
                                 ) : (
                                   <LockedRow key={lesson.id}>
-                                    {lesson.position}.{" "}
                                     {pickI18n(
                                       lesson.title_i18n,
                                       lang,
@@ -299,9 +373,11 @@ export default async function CourseViewPage({
                               })}
                             </div>
                           ) : (
-                            <p className="text-base text-gray-600">
-                              <TNoLessons />
-                            </p>
+                            <div className="rounded-2xl border border-dashed border-white/60 bg-white/50 px-4 py-4 text-sm text-gray-600">
+                              <p className="text-base text-gray-600">
+                                {uiLabel(lang, "noLessons")}
+                              </p>
+                            </div>
                           )}
 
                           {moduleQuiz && (
@@ -312,7 +388,7 @@ export default async function CourseViewPage({
                                 </div>
                                 <div>
                                   <div className="text-base font-semibold text-gray-900">
-                                    <TModuleQuiz />
+                                    {uiLabel(lang, "quizSection")}
                                   </div>
                                   <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
                                 </div>
@@ -330,7 +406,7 @@ export default async function CourseViewPage({
                                   )}
                                   {user && passedQuizSet.has(moduleQuiz.id) ? (
                                     <span className="ml-2 text-sm text-green-700">
-                                      ✓ <TPassed />
+                                      ✓ {uiLabel(lang, "passed")}
                                     </span>
                                   ) : null}
                                 </Link>
