@@ -1,4 +1,3 @@
-// app/login/LoginClient.tsx
 "use client";
 
 import Image from "next/image";
@@ -31,6 +30,7 @@ export default function LoginClient() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,8 +62,8 @@ export default function LoginClient() {
   }
 
   return (
-        <div className="min-h-screen bg-[#eef1f4] px-4 pt-4 pb-6">
-          <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] items-start justify-center"> 
+    <div className="min-h-screen bg-[#eef1f4] px-4 pt-4 pb-6">
+      <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] items-start justify-center">
         <div className="relative h-[720px] w-[680px] overflow-hidden rounded-2xl border border-black/10 shadow-2xl">
           <Image
             src="/templates/3b.jpg"
@@ -96,16 +96,28 @@ export default function LoginClient() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  required
-                  autoComplete="current-password"
-                  className="w-full rounded-lg border px-4 py-1.5"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    required
+                    autoComplete="current-password"
+                    className="w-full rounded-lg border px-4 py-1.5 pr-12"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 hover:text-gray-900"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? "🙈" : "👁"}
+                  </button>
+                </div>
 
                 <div className="flex items-center justify-end">
                   <Link

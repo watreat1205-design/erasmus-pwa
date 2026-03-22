@@ -34,6 +34,7 @@ export default function SignupClient() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -136,16 +137,28 @@ export default function SignupClient() {
                   placeholder="Email"
                 />
 
+                <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full rounded-lg border px-4 py-1.5"
+                  className="w-full rounded-lg border px-4 py-1.5 pr-12"
                   placeholder="Password"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-sm text-gray-600 hover:text-gray-900"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                 >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
+              </div>
 
                 {msg && (
                   <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">
