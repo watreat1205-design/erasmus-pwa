@@ -2,8 +2,12 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
 import { getMyProfile } from "../../src/lib/auth/getProfile";
 import { createClient as createSupabaseClient } from "../../lib/supabase/server";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // CHANGE THIS IMPORT PATH to your actual server Supabase helper if needed.
 import { createClient } from "../../src/lib/supabase/server";
@@ -54,6 +58,7 @@ function formatDate(value: string | null | undefined) {
 }
 
 export default async function ProfilePage() {
+    noStore();
   const profile = await getMyProfile().catch(() => null);
 
   if (!profile) {
