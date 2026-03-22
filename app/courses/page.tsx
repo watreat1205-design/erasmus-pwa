@@ -1,6 +1,5 @@
 // app/courses/page.tsx
 import Link from "next/link";
-import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import CoursesHeaderClient from "./CoursesHeaderClient";
 import CoursesPublicHeader from "./CoursesPublicHeader";
@@ -39,11 +38,11 @@ export default async function CoursesPublicPage() {
   } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
-  .from("courses")
-  .select("id, title, description, position")
-  .eq("is_published", true)
-  .order("position", { ascending: true, nullsFirst: false })
-  .order("title", { ascending: true }); 
+    .from("courses")
+    .select("id, title, description, position")
+    .eq("is_published", true)
+    .order("position", { ascending: true, nullsFirst: false })
+    .order("title", { ascending: true });
 
   const courses: CourseRow[] = data ?? [];
   const courseIds = courses.map((c) => c.id);
@@ -91,15 +90,15 @@ export default async function CoursesPublicPage() {
     const courseId = sectionToCourse.get(lesson.section_id);
     if (!courseId) continue;
     lessonToCourse.set(lesson.id, courseId);
-    lessonCountByCourse.set(courseId, (lessonCountByCourse.get(courseId) ?? 0) + 1);
+    lessonCountByCourse.set(
+      courseId,
+      (lessonCountByCourse.get(courseId) ?? 0) + 1
+    );
   }
 
-  const quizCountByCourse = new Map<string, number>();
   const quizToCourse = new Map<string, string>();
-
   for (const quiz of quizzes) {
     quizToCourse.set(quiz.id, quiz.course_id);
-    quizCountByCourse.set(quiz.course_id, (quizCountByCourse.get(quiz.course_id) ?? 0) + 1);
   }
 
   const completedLessonsByCourse = new Map<string, number>();
@@ -117,6 +116,7 @@ export default async function CoursesPublicPage() {
     for (const row of lessonProgressData ?? []) {
       const courseId = lessonToCourse.get((row as { lesson_id: string }).lesson_id);
       if (!courseId) continue;
+
       completedLessonsByCourse.set(
         courseId,
         (completedLessonsByCourse.get(courseId) ?? 0) + 1
@@ -151,52 +151,6 @@ export default async function CoursesPublicPage() {
 
   if (error) {
     return (
-      <div className="relative min-h-screen overflow-hidden">
-        <Image
-          src="/templates/5.jpg"
-          alt=""
-          fill
-          priority
-          className="absolute inset-0"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-
-        <div className="relative z-10 mx-auto max-w-5xl px-6 py-10 text-white">
-          <div className="mb-4">
-            <Link
-              href="/welcome"
-              className="inline-flex items-center rounded-md bg-black/40 px-2 py-1 text-sm font-medium !text-white backdrop-blur-sm hover:bg-black/60"
-            >
-              ← Back to welcome
-            </Link>
-          </div>
-
-          <h1 className="mt-6 text-2xl font-semibold">Courses</h1>
-          <p className="mt-2 text-white/90">Could not load courses.</p>
-
-          <pre className="mt-4 overflow-auto rounded-xl bg-black/40 p-4 text-xs">
-            {error.message}
-          </pre>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0">
-        <Image
-          src="/templates/5.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-        />
-      </div>
-
-      <div className="absolute inset-0 bg-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
-
       <div className="relative z-10">
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="flex items-start justify-between gap-4">
@@ -206,111 +160,146 @@ export default async function CoursesPublicPage() {
             </div>
           </div>
 
-          {!courses.length ? (
-            <div className="mt-8 rounded-2xl border border-white/20 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
-              <p className="text-gray-800">No published courses available yet.</p>
-            </div>
-          ) : (
-            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {courses.map((course) => {
-                const lessonCount = lessonCountByCourse.get(course.id) ?? 0;
+          <div className="mt-8 rounded-2xl border border-white/20 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+            <h1 className="text-2xl font-semibold text-gray-900">Courses</h1>
+            <p className="mt-2 text-gray-800">Could not load courses.</p>
 
-                // For the current approval phase, each module card should show only 1 module quiz
-               const quizCount = 1;
+            <pre className="mt-4 overflow-auto rounded-xl bg-black/80 p-4 text-xs text-white">
+              {error.message}
+            </pre>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-               const completedLessons = completedLessonsByCourse.get(course.id) ?? 0;
-               const passedQuizzesRaw = passedQuizzesByCourse.get(course.id) ?? 0;
-               const passedQuizzes = Math.min(passedQuizzesRaw, 1);
+  return (
+    <div className="relative z-10">
+      <div className="mx-auto max-w-5xl px-6 py-10">
+        <div className="flex items-start justify-between gap-4">
+          <CoursesPublicHeader />
+          <div className="shrink-0">
+            <CoursesHeaderClient />
+          </div>
+        </div>
 
-                const totalUnits = lessonCount + quizCount;
-                const completedUnits = completedLessons + passedQuizzes;
-                const progressPercent =
-                  totalUnits > 0 ? Math.round((completedUnits / totalUnits) * 100) : 0;
+        {!courses.length ? (
+          <div className="mt-8 rounded-2xl border border-white/20 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+            <p className="text-gray-800">No published courses available yet.</p>
+          </div>
+        ) : (
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {courses.map((course) => {
+              const lessonCount = lessonCountByCourse.get(course.id) ?? 0;
 
-                return (
-                  <div
-                    key={course.id}
-                    className="group rounded-[26px] border border-white/25 bg-white/78 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition hover:-translate-y-[2px] hover:bg-white/84 hover:shadow-md"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/60 bg-emerald-50/90 text-lg shadow-sm">
-                          📘
-                        </div>
+              // For the current approval phase, each module card should show only 1 module quiz
+              const quizCount = 1;
 
-                        <div className="min-w-0">
-                          <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                            {course.title}
-                          </h2>
+              const completedLessons =
+                completedLessonsByCourse.get(course.id) ?? 0;
+              const passedQuizzesRaw =
+                passedQuizzesByCourse.get(course.id) ?? 0;
+              const passedQuizzes = Math.min(passedQuizzesRaw, 1);
 
-                          <div className="mt-2 text-sm text-gray-600">
-                            {lessonCount} {t("courses.activities", { defaultValue: "Activities" })} •{" "}
-                            {quizCount}{" "}
-                            {t("courses.moduleQuiz", { defaultValue: "Module quiz" })}
-                          </div>
-                        </div>
+              const totalUnits = lessonCount + quizCount;
+              const completedUnits = completedLessons + passedQuizzes;
+              const progressPercent =
+                totalUnits > 0
+                  ? Math.round((completedUnits / totalUnits) * 100)
+                  : 0;
+
+              return (
+                <div
+                  key={course.id}
+                  className="group rounded-[26px] border border-white/25 bg-white/78 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition hover:-translate-y-[2px] hover:bg-white/84 hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/60 bg-emerald-50/90 text-lg shadow-sm">
+                        📘
                       </div>
 
-                      <span className="mt-1 text-gray-400 transition group-hover:translate-x-1">
-                        →
-                      </span>
+                      <div className="min-w-0">
+                        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+                          {course.title}
+                        </h2>
+
+                        <div className="mt-2 text-sm text-gray-600">
+                          {lessonCount}{" "}
+                          {t("courses.activities", {
+                            defaultValue: "Activities",
+                          })}{" "}
+                          • {quizCount}{" "}
+                          {t("courses.moduleQuiz", {
+                            defaultValue: "Module quiz",
+                          })}
+                        </div>
+                      </div>
                     </div>
 
-                    {course.description ? (
-                      <p className="mt-4 text-sm leading-6 text-gray-700">
-                        {course.description}
-                      </p>
-                    ) : (
-                      <p className="mt-4 text-sm leading-6 text-gray-600">
-                        {t("courses.noDescription", {
-                          defaultValue:
-                            "Explore the activities in this module to deepen your understanding of TEAL pedagogy.",
-                        })}
-                      </p>
-                    )}
-
-                    <Link
-                      href={`/courses/${course.id}`}
-                      className="mt-5 inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
-                    >
-                      {t("courses.openCourse", { defaultValue: "Open course" })}
-                    </Link>
-
-                    {user ? (
-                      <div className="mt-5">
-                        <div className="flex items-center justify-between text-xs font-medium text-gray-700">
-                          <span>
-                            {t("courses.progress", { defaultValue: "Progress" })}
-                          </span>
-                          <span>{progressPercent}%</span>
-                        </div>
-
-                        <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white/70">
-                          <div
-                            className="h-full rounded-full bg-emerald-600 transition-all"
-                            style={{ width: `${progressPercent}%` }}
-                          />
-                        </div>
-
-                        <div className="mt-2 text-xs text-gray-600">
-                          {completedLessons}/{lessonCount}{" "}
-                          {t("courses.activitiesCompleted", {
-                            defaultValue: "activities completed",
-                          })}
-                          {" • "}
-                          {passedQuizzes}/{quizCount}{" "}
-                          {t("courses.quizzesPassed", {
-                            defaultValue: "quizzes passed",
-                          })}
-                        </div>
-                      </div>
-                    ) : null}
+                    <span className="mt-1 text-gray-400 transition group-hover:translate-x-1">
+                      →
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+
+                  {course.description ? (
+                    <p className="mt-4 text-sm leading-6 text-gray-700">
+                      {course.description}
+                    </p>
+                  ) : (
+                    <p className="mt-4 text-sm leading-6 text-gray-600">
+                      {t("courses.noDescription", {
+                        defaultValue:
+                          "Explore the activities in this module to deepen your understanding of TEAL pedagogy.",
+                      })}
+                    </p>
+                  )}
+
+                  <Link
+                    href={`/courses/${course.id}`}
+                    className="mt-5 inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                  >
+                    {t("courses.openCourse", {
+                      defaultValue: "Open course",
+                    })}
+                  </Link>
+
+                  {user ? (
+                    <div className="mt-5">
+                      <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+                        <span>
+                          {t("courses.progress", {
+                            defaultValue: "Progress",
+                          })}
+                        </span>
+                        <span>{progressPercent}%</span>
+                      </div>
+
+                      <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white/70">
+                        <div
+                          className="h-full rounded-full bg-emerald-600 transition-all"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+
+                      <div className="mt-2 text-xs text-gray-600">
+                        {completedLessons}/{lessonCount}{" "}
+                        {t("courses.activitiesCompleted", {
+                          defaultValue: "activities completed",
+                        })}
+                        {" • "}
+                        {passedQuizzes}/{quizCount}{" "}
+                        {t("courses.quizzesPassed", {
+                          defaultValue: "quizzes passed",
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

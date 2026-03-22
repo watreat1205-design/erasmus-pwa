@@ -246,7 +246,6 @@ export default async function CourseViewPage({
       quizBySection.set(quiz.section_id, quiz);
     }
   }
-
   const passedQuizSet = new Set<string>();
   if (user) {
     const { data: quizAttempts } = await supabase
@@ -273,170 +272,155 @@ export default async function CourseViewPage({
     </div>
   );
 
-  return (
-    <div className="relative min-h-screen overflow-hidden">
-      <div className="absolute inset-0">
-        <Image
-          src="/templates/5.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover object-center"
-        />
+      return (
+  <div className="relative z-10">
+    <div className="mx-auto max-w-5xl px-6 pt-10 pb-12">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl font-semibold tracking-tight !text-white sm:text-5xl">
+            {pickI18n(course.title_i18n, lang, course.title)}
+          </h1>
+
+          {course.description ? (
+            <p className="mt-3 max-w-2xl text-base leading-7 !text-white">
+              {pickI18n(course.description_i18n, lang, course.description)}
+            </p>
+          ) : (
+            <p className="mt-3 text-base text-white/80">
+              {uiLabel(lang, "noDescription")}
+            </p>
+          )}
+        </div>
+
+        <div className="w-full sm:w-auto">
+          <AllCoursesButtonClient />
+        </div>
       </div>
 
-      <div className="absolute inset-0 bg-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
-
-      <div className="relative z-10">
-        <div className="mx-auto max-w-5xl px-6 pt-10 pb-12">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl font-semibold tracking-tight !text-white sm:text-5xl">
-                {pickI18n(course.title_i18n, lang, course.title)}
-              </h1>
-
-              {course.description ? (
-                <p className="mt-3 max-w-2xl text-base leading-7 !text-white">
-                  {pickI18n(course.description_i18n, lang, course.description)}
-                </p>
-              ) : (
-                <p className="mt-3 text-base text-white/80">
-                  {uiLabel(lang, "noDescription")}
-                </p>
-              )}
-            </div>
-
-            <div className="w-full sm:w-auto">
-              <AllCoursesButtonClient />
-            </div>
+      <div className="mt-10">
+        {!visibleSections.length ? (
+          <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+            <p className="text-gray-800">{uiLabel(lang, "noSections")}</p>
           </div>
+        ) : (
+          <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+            <div className="space-y-8">
+              {visibleSections.map((section, index) => {
+                const sectionLessons = lessonsBySection.get(section.id) ?? [];
+                const moduleQuiz = quizBySection.get(section.id) ?? null;
 
-          <div className="mt-10">
-            {!visibleSections.length ? (
-              <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-                <p className="text-gray-800">{uiLabel(lang, "noSections")}</p>
-              </div>
-            ) : (
-              <div className="rounded-[30px] border border-white/50 bg-emerald-50/70 p-8 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-                <div className="space-y-8">
-                  {visibleSections.map((section, index) => {
-                    const sectionLessons = lessonsBySection.get(section.id) ?? [];
-                    const moduleQuiz = quizBySection.get(section.id) ?? null;
+                return (
+                  <div key={section.id}>
+                    <div className="text-xl font-semibold tracking-tight text-gray-900">
+                      {section.position}.{" "}
+                      {pickI18n(section.title_i18n, lang, section.title)}
+                    </div>
 
-                    return (
-                      <div key={section.id}>
-                        <div className="text-xl font-semibold tracking-tight text-gray-900">
-                          {section.position}.{" "}
-                          {pickI18n(section.title_i18n, lang, section.title)}
+                    <div className="mt-6 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+                          📚
                         </div>
+                        <div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {uiLabel(lang, "activities")}
+                          </div>
+                          <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                        </div>
+                      </div>
 
-                        <div className="mt-6 space-y-4">
+                      {sectionLessons.length ? (
+                        <div className="space-y-3">
+                          {sectionLessons.map((lesson) => {
+                            const href = `/courses/${courseId}/lessons/${lesson.id}`;
+
+                            return canAccessLearning ? (
+                              <Link
+                                key={lesson.id}
+                                href={href}
+                                className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
+                              >
+                                {pickI18n(
+                                  lesson.title_i18n,
+                                  lang,
+                                  lesson.title
+                                )}
+                              </Link>
+                            ) : (
+                              <LockedRow key={lesson.id}>
+                                {pickI18n(
+                                  lesson.title_i18n,
+                                  lang,
+                                  lesson.title
+                                )}
+                              </LockedRow>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl border border-dashed border-white/60 bg-white/50 px-4 py-4 text-sm text-gray-600">
+                          <p className="text-base text-gray-600">
+                            {uiLabel(lang, "noLessons")}
+                          </p>
+                        </div>
+                      )}
+
+                      {moduleQuiz && (
+                        <div className="mt-8">
                           <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-                              📚
+                              🧠
                             </div>
                             <div>
                               <div className="text-base font-semibold text-gray-900">
-                                {uiLabel(lang, "activities")}
+                                {uiLabel(lang, "quizSection")}
                               </div>
                               <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
                             </div>
                           </div>
 
-                          {sectionLessons.length ? (
-                            <div className="space-y-3">
-                              {sectionLessons.map((lesson) => {
-                                const href = `/courses/${courseId}/lessons/${lesson.id}`;
-
-                                return canAccessLearning ? (
-                                  <Link
-                                    key={lesson.id}
-                                    href={href}
-                                    className="block rounded-2xl border border-white/60 bg-white/75 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:bg-white/90 hover:shadow-md"
-                                  >
-                                    {pickI18n(
-                                      lesson.title_i18n,
-                                      lang,
-                                      lesson.title
-                                    )}
-                                  </Link>
-                                ) : (
-                                  <LockedRow key={lesson.id}>
-                                    {pickI18n(
-                                      lesson.title_i18n,
-                                      lang,
-                                      lesson.title
-                                    )}
-                                  </LockedRow>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <div className="rounded-2xl border border-dashed border-white/60 bg-white/50 px-4 py-4 text-sm text-gray-600">
-                              <p className="text-base text-gray-600">
-                                {uiLabel(lang, "noLessons")}
-                              </p>
-                            </div>
-                          )}
-
-                          {moduleQuiz && (
-                            <div className="mt-8">
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-                                  🧠
-                                </div>
-                                <div>
-                                  <div className="text-base font-semibold text-gray-900">
-                                    {uiLabel(lang, "quizSection")}
-                                  </div>
-                                  <div className="mt-1 h-[2px] w-14 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
-                                </div>
-                              </div>
-
-                              {canAccessLearning ? (
-                                <Link
-                                  href={`/quizzes/${moduleQuiz.id}`}
-                                  className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
-                                >
-                                  {pickI18n(
-                                    moduleQuiz.title_i18n,
-                                    lang,
-                                    moduleQuiz.title
-                                  )}
-                                  {user && passedQuizSet.has(moduleQuiz.id) ? (
-                                    <span className="ml-2 text-sm text-green-700">
-                                      ✓ {uiLabel(lang, "passed")}
-                                    </span>
-                                  ) : null}
-                                </Link>
-                              ) : (
-                                <div className="mt-3">
-                                  <LockedRow>
-                                    {pickI18n(
-                                      moduleQuiz.title_i18n,
-                                      lang,
-                                      moduleQuiz.title
-                                    )}
-                                  </LockedRow>
-                                </div>
+                          {canAccessLearning ? (
+                            <Link
+                              href={`/quizzes/${moduleQuiz.id}`}
+                              className="mt-3 block rounded-2xl border border-white/60 bg-[#f2f9f2]/92 px-4 py-4 text-base text-gray-900 shadow-sm transition hover:shadow-md"
+                            >
+                              {pickI18n(
+                                moduleQuiz.title_i18n,
+                                lang,
+                                moduleQuiz.title
                               )}
+                              {user && passedQuizSet.has(moduleQuiz.id) ? (
+                                <span className="ml-2 text-sm text-green-700">
+                                  ✓ {uiLabel(lang, "passed")}
+                                </span>
+                              ) : null}
+                            </Link>
+                          ) : (
+                            <div className="mt-3">
+                              <LockedRow>
+                                {pickI18n(
+                                  moduleQuiz.title_i18n,
+                                  lang,
+                                  moduleQuiz.title
+                                )}
+                              </LockedRow>
                             </div>
                           )}
                         </div>
+                      )}
+                    </div>
 
-                        {index < visibleSections.length - 1 ? (
-                          <div className="mt-8 border-t border-white/40" />
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                    {index < visibleSections.length - 1 ? (
+                      <div className="mt-8 border-t border-white/40" />
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 }
