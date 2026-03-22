@@ -14,7 +14,9 @@ export async function POST(req: Request) {
     );
   }
 
-  let response = NextResponse.json({ ok: true });
+  const response = NextResponse.json({ ok: true });
+
+  const requestCookies = req.headers.get("cookie") ?? "";
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +24,16 @@ export async function POST(req: Request) {
     {
       cookies: {
         getAll() {
-          return response.cookies.getAll();
+          return requestCookies
+            .split(";")
+            .map((c) => c.trim())
+            .filter(Boolean)
+            .map((cookie) => {
+              const index = cookie.indexOf("=");
+              const name = index >= 0 ? cookie.slice(0, index) : cookie;
+              const value = index >= 0 ? cookie.slice(index + 1) : "";
+              return { name, value };
+            });
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
