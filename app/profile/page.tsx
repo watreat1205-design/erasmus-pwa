@@ -160,8 +160,9 @@ export default async function ProfilePage() {
 
           <Link
             href="/dashboard"
+            prefetch={false}
             className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-          >
+          > 
             Back to Dashboard
           </Link>
         </div>
@@ -417,13 +418,15 @@ export default async function ProfilePage() {
               <div className="mt-5 grid gap-3">
                 <Link
                   href="/courses"
+                  prefetch={false}
                   className="inline-flex items-center justify-center rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
-                >
+                > 
                   Go to Courses
                 </Link>
 
                 <Link
                   href="/dashboard"
+                  prefetch={false}
                   className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50"
                 >
                   Open Dashboard
@@ -431,6 +434,7 @@ export default async function ProfilePage() {
 
                 <Link
                   href="/logout"
+                  prefetch={false}
                   className="inline-flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 shadow-sm hover:bg-red-100"
                 >
                   Logout
