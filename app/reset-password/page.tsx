@@ -2,19 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-
-function getHashParams() {
-  if (typeof window === "undefined") return new URLSearchParams();
-  const hash = window.location.hash.startsWith("#")
-    ? window.location.hash.slice(1)
-    : window.location.hash;
-  return new URLSearchParams(hash);
-}
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,25 +18,18 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function initRecovery() {
-      setMessage("");
-
+    async function init() {
       try {
-        const hashParams = getHashParams();
-        const accessToken = hashParams.get("access_token");
-        const refreshToken = hashParams.get("refresh_token");
-        const type = hashParams.get("type");
+        const code = searchParams.get("code");
 
-        if (accessToken && refreshToken && type === "recovery") {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
+        // ✅ NEW SUPABASE FLOW
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
 
           if (error) {
             if (!cancelled) {
+              setMessage("Invalid or expired reset link.");
               setReady(false);
-              setMessage(`Recovery link error: ${error.message}`);
             }
             return;
           }
@@ -54,6 +40,7 @@ export default function ResetPasswordPage() {
           return;
         }
 
+        // fallback (rare)
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -62,10 +49,10 @@ export default function ResetPasswordPage() {
           if (session) {
             setReady(true);
           } else {
-            setReady(false);
             setMessage(
-              "Recovery session not found. Please open the reset link directly from the email again."
+              "Recovery session not found. Please open the reset link from the email again."
             );
+            setReady(false);
           }
         }
       } finally {
@@ -75,16 +62,16 @@ export default function ResetPasswordPage() {
       }
     }
 
-    initRecovery();
+    init();
 
     return () => {
       cancelled = true;
     };
-  }, [supabase]);
+  }, [searchParams, supabase]);
 
   async function handleReset() {
     if (!password.trim()) {
-      setMessage("Please enter a new password.");
+      setMessage("Please enter a password.");
       return;
     }
 
@@ -98,7 +85,7 @@ export default function ResetPasswordPage() {
     if (error) {
       setMessage(error.message);
     } else {
-      setMessage("Password updated successfully. Redirecting to login...");
+      setMessage("Password updated successfully. Redirecting...");
       setTimeout(() => router.push("/login"), 1500);
     }
 
@@ -111,7 +98,7 @@ export default function ResetPasswordPage() {
         <h1 className="mb-4 text-xl font-semibold">Reset Password</h1>
 
         {initializing ? (
-          <p className="text-sm text-gray-600">Checking recovery link...</p>
+          <p>Checking link...</p>
         ) : (
           <>
             <input
@@ -126,7 +113,7 @@ export default function ResetPasswordPage() {
             <button
               onClick={handleReset}
               disabled={!ready || loading}
-              className="w-full rounded bg-black py-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded bg-black py-2 text-white disabled:opacity-50"
             >
               {loading ? "Updating..." : "Update Password"}
             </button>
