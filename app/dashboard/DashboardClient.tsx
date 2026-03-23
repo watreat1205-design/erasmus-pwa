@@ -16,10 +16,12 @@ export default function DashboardClient({
   displayName,
   cards,
   isDev,
+  canSeeAdmin,
 }: {
   displayName: string;
   cards: Card[];
   isDev: boolean;
+  canSeeAdmin: boolean;
 }) {
   useEffect(() => {
     ensureI18n();
@@ -83,6 +85,34 @@ export default function DashboardClient({
               </div>
             </Link>
           ))}
+
+          {canSeeAdmin && (
+            <Link
+              href="/admin"
+              prefetch={false}
+              className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {t("dashboard.adminPanel", { defaultValue: "Admin Panel" })}
+                </h2>
+                <span className="text-gray-400 transition group-hover:translate-x-0.5">
+                  →
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm text-gray-600">
+                {t("dashboard.adminPanelDesc", {
+                  defaultValue:
+                    "View users, registrations, progress, quiz results, and certificates.",
+                })}
+              </p>
+
+              <div className="mt-4 text-sm font-medium text-gray-900 underline-offset-4 group-hover:underline">
+                {t("common.open")}
+              </div>
+            </Link>
+          )}
 
           {isDev && (
             <Link

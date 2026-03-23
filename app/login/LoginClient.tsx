@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginClient() {
   const sp = useSearchParams();
+  const supabase = useMemo(() => createClient(), []);
 
   const inviteToken = (sp.get("invite") ?? "").trim() || null;
   const lang = (sp.get("lang") ?? "").trim() || null;
@@ -26,17 +28,19 @@ export default function LoginClient() {
 
   const signupHref = qs.length > 0 ? `/signup?${qs}` : "/signup";
   const welcomeHref = qs.length > 0 ? `/welcome?${qs}` : "/welcome";
-  const resetHref = qs.length > 0 ? `/reset-password?${qs}` : "/reset-password";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
+  const [resetPending, setResetPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     setPending(true);
 
     try {
@@ -58,6 +62,39 @@ export default function LoginClient() {
     } catch {
       setError("Network error");
       setPending(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    setError(null);
+    setMessage(null);
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
+      setError("Please enter your email first.");
+      return;
+    }
+
+    setResetPending(true);
+
+    try {
+      const redirectBase =
+        typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: `${redirectBase}/reset-password`,
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setMessage("Password reset email sent. Please check your inbox.");
+      }
+    } catch {
+      setError("Could not send reset email.");
+    } finally {
+      setResetPending(false);
     }
   }
 
@@ -120,18 +157,25 @@ export default function LoginClient() {
                 </div>
 
                 <div className="flex items-center justify-end">
-                  <Link
-                    href={resetHref}
-                    prefetch={false}
-                    className="text-sm text-gray-700 hover:underline"
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={resetPending}
+                    className="text-sm text-gray-700 hover:underline disabled:opacity-50"
                   >
-                    Forgot password?
-                  </Link>
+                    {resetPending ? "Sending..." : "Forgot password?"}
+                  </button>
                 </div>
 
                 {error && (
                   <div className="rounded-lg bg-red-100 p-2 text-xs text-red-700">
                     {error}
+                  </div>
+                )}
+
+                {message && (
+                  <div className="rounded-lg bg-emerald-100 p-2 text-xs text-emerald-800">
+                    {message}
                   </div>
                 )}
 

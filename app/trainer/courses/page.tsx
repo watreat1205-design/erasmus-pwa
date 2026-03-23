@@ -1,3 +1,4 @@
+// app/trainer/courses/page.tsx
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { setCoursePublished } from "./actions";

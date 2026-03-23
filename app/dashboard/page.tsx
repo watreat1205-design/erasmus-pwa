@@ -83,6 +83,7 @@ export default async function DashboardPage() {
           displayName={displayName}
           cards={cards}
           isDev={role === "dev"}
+          canSeeAdmin={role === "admin" || role === "dev"}
         />
       </div>
     </div>
