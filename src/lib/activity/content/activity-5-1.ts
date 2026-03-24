@@ -189,6 +189,7 @@ export const activity51Content: ActivityContent = {
         "Key insight/benefit: ____________________________________________________________",
         "",
         "Next action I will continue: _____________________________________________________",
+        "[Download the 30-Day Sustainability Pledge (PDF)](https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-5/Activity-5-1/activity-5-1-pledge.pdf)",
       ],
     },
 
