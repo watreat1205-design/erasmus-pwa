@@ -141,6 +141,12 @@ export default async function AdminPage() {
               >
                 Export CSV
               </Link>
+              <Link
+                href="/admin/export-pdf"
+                className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100"
+              >
+                Export PDF
+              </Link>
             </div>
           </div>
 
