@@ -101,6 +101,14 @@ export default async function CoursesPublicPage() {
     quizToCourse.set(quiz.id, quiz.course_id);
   }
 
+  const quizCountByCourse = new Map<string, number>();
+for (const quiz of quizzes) {
+  quizCountByCourse.set(
+    quiz.course_id,
+    (quizCountByCourse.get(quiz.course_id) ?? 0) + 1
+  );
+}
+
   const completedLessonsByCourse = new Map<string, number>();
   const passedQuizzesByCourse = new Map<string, number>();
 
@@ -193,7 +201,7 @@ export default async function CoursesPublicPage() {
               const lessonCount = lessonCountByCourse.get(course.id) ?? 0;
 
               // For the current approval phase, each module card should show only 1 module quiz
-              const quizCount = 1;
+              const quizCount = Math.min(quizCountByCourse.get(course.id) ?? 0, 1);
 
               const completedLessons =
                 completedLessonsByCourse.get(course.id) ?? 0;
