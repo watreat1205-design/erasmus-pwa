@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ensureFinalCertificateIssuedForCurrentUser } from "@/app/lib/certificates/final";
-import { ensureCertificateIssued } from "@/app/actions/ensureCertificateIssued";
 
 type AnswerPayload = {
   question_id: string;
@@ -106,20 +105,19 @@ export async function POST(req: Request) {
   }
 
   const grade = Array.isArray(gradeRows) ? gradeRows[0] : gradeRows;
-  if (grade?.passed) {
-    await ensureCertificateIssued(quiz.course_id);
-  }
 
   let finalCertificate = null;
   let finalCertificateUnlocked = false;
 
-  try {
-    const finalResult = await ensureFinalCertificateIssuedForCurrentUser();
-    finalCertificate = finalResult.certificate ?? null;
-    finalCertificateUnlocked = !!finalResult.certificate;
-  } catch {
-    finalCertificate = null;
-    finalCertificateUnlocked = false;
+  if (grade?.passed) {
+    try {
+      const finalResult = await ensureFinalCertificateIssuedForCurrentUser();
+      finalCertificate = finalResult.certificate ?? null;
+      finalCertificateUnlocked = !!finalResult.certificate;
+    } catch {
+      finalCertificate = null;
+      finalCertificateUnlocked = false;
+    }
   }
 
   const { data: reviewRows, error: reviewErr } = await supabase
