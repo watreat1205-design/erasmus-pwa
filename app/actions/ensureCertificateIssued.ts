@@ -64,22 +64,25 @@ export async function ensureCertificateIssued(courseId: string) {
   // Requires unique constraint on (user_id, course_id)
   // -----------------------------
 
-const { data: existing } = await supabase
-  .from("certificates")
-  .select("id, verification_code, certificate_number")
-  .eq("user_id", user.id)
-  .eq("course_id", courseId)
-  .maybeSingle();
+  const { data: existingRows } = await supabase
+    .from("certificates")
+    .select("id, verification_code, certificate_number")
+    .eq("user_id", user.id)
+    .eq("course_id", courseId);
+
+  const existing = existingRows?.[0];
 
 if (!existing) {
-  await supabase.from("certificates").insert({
-    user_id: user.id,
-    course_id: courseId,
-    file_path: null,
-    issued_at: new Date().toISOString(),
-    verification_code: generateVerificationCode(),
-    certificate_number: generateCertificateNumber(),
-  });
+  await supabase.from("certificates").upsert({
+  user_id: user.id,
+  course_id: courseId,
+  file_path: null,
+  issued_at: new Date().toISOString(),
+  verification_code: generateVerificationCode(),
+  certificate_number: generateCertificateNumber(),
+}, {
+  onConflict: "user_id,course_id"
+});
 } else if (!existing.verification_code || !existing.certificate_number) {
   await supabase.from("certificates").update({
     verification_code: existing.verification_code ?? generateVerificationCode(),
