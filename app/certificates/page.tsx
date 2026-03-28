@@ -2,16 +2,17 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import CertificatesClient from "./CertificatesClient";
+import { ensureFinalCertificateIssuedForCurrentUser } from "@/app/lib/certificates/final";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type CourseMini = { id: string; title: string };
-
 type CertificateRow = {
   id: string;
   issued_at: string;
-  courses: CourseMini | null;
+  certificate_number: string | null;
+  verification_code: string | null;
+  scope: string;
 };
 
 export default async function CertificatesPage() {
@@ -26,46 +27,50 @@ export default async function CertificatesPage() {
 
   if (userErr || !user) {
     return (
-      <CertificatesClient isLoggedIn={false} certs={[]} errorMessage={null} />
+      <CertificatesClient
+        isLoggedIn={false}
+        cert={null}
+        errorMessage={null}
+        eligible={false}
+        completedCourses={0}
+        totalCourses={6}
+      />
     );
   }
 
+  const eligibility = await ensureFinalCertificateIssuedForCurrentUser();
+
   const { data, error } = await supabase
     .from("certificates")
-    .select("id, issued_at, courses(id, title)")
+    .select("id, issued_at, certificate_number, verification_code, scope")
     .eq("user_id", user.id)
-    .order("issued_at", { ascending: false });
+    .eq("scope", "final")
+    .maybeSingle();
 
-  const certs: CertificateRow[] = (data ?? []).map((row) => {
-    const r = row as {
-      id: unknown;
-      issued_at: unknown;
-      courses: unknown;
-    };
-
-    const courses =
-      r.courses &&
-      typeof r.courses === "object" &&
-      "id" in (r.courses as Record<string, unknown>) &&
-      "title" in (r.courses as Record<string, unknown>)
-        ? {
-            id: String((r.courses as Record<string, unknown>).id ?? ""),
-            title: String((r.courses as Record<string, unknown>).title ?? ""),
-          }
-        : null;
-
-    return {
-      id: String(r.id),
-      issued_at: String(r.issued_at),
-      courses: courses && courses.id ? courses : null,
-    };
-  });
+  const cert = data
+    ? ({
+        id: String(data.id),
+        issued_at: String(data.issued_at),
+        certificate_number:
+          data.certificate_number != null
+            ? String(data.certificate_number)
+            : null,
+        verification_code:
+          data.verification_code != null
+            ? String(data.verification_code)
+            : null,
+        scope: String(data.scope),
+      } satisfies CertificateRow)
+    : null;
 
   return (
     <CertificatesClient
       isLoggedIn={true}
-      certs={certs}
+      cert={cert}
       errorMessage={error ? error.message : null}
+      eligible={eligibility.eligible}
+      completedCourses={eligibility.completedCourses}
+      totalCourses={eligibility.totalCourses}
     />
   );
 }

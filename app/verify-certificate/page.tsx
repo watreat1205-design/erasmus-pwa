@@ -1,3 +1,4 @@
+// app/verify-certificate/page.tsx
 import { Suspense } from "react";
 import VerifyCertificateClient from "./VerifyCertificateClient";
 

@@ -1,6 +1,7 @@
 // app/api/module-quiz/submit/route.ts
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { ensureFinalCertificateIssuedForCurrentUser } from "@/app/lib/certificates/final";
 
 type AnswerPayload = {
   question_id: string;
@@ -94,8 +95,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: ansErr.message }, { status: 500 });
   }
 
-  const { data: gradeRows, error: gradeErr } = await supabase
-    .rpc("grade_module_quiz_attempt", { p_attempt_id: attempt_id });
+  const { data: gradeRows, error: gradeErr } = await supabase.rpc(
+    "grade_module_quiz_attempt",
+    { p_attempt_id: attempt_id }
+  );
 
   if (gradeErr) {
     return NextResponse.json({ error: gradeErr.message }, { status: 500 });
@@ -103,15 +106,16 @@ export async function POST(req: Request) {
 
   const grade = Array.isArray(gradeRows) ? gradeRows[0] : gradeRows;
 
-  const { data: cert, error: certErr } = await supabase
-    .from("certificates")
-    .select("id, file_path, issued_at")
-    .eq("user_id", user.id)
-    .eq("course_id", quiz.course_id)
-    .maybeSingle();
+  let finalCertificate = null;
+  let finalCertificateUnlocked = false;
 
-  if (certErr) {
-    return NextResponse.json({ error: certErr.message }, { status: 500 });
+  try {
+    const finalResult = await ensureFinalCertificateIssuedForCurrentUser();
+    finalCertificate = finalResult.certificate ?? null;
+    finalCertificateUnlocked = !!finalResult.certificate;
+  } catch {
+    finalCertificate = null;
+    finalCertificateUnlocked = false;
   }
 
   const { data: reviewRows, error: reviewErr } = await supabase
@@ -153,8 +157,8 @@ export async function POST(req: Request) {
     passed: grade?.passed ?? null,
     total_questions: grade?.total_questions ?? null,
     correct_answers: grade?.correct_answers ?? null,
-    certificate_unlocked: !!cert,
-    certificate: cert ?? null,
+    final_certificate_unlocked: finalCertificateUnlocked,
+    final_certificate: finalCertificate,
     review,
   });
 }

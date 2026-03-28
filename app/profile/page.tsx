@@ -122,14 +122,16 @@ export default async function ProfilePage() {
       .eq("is_published", true)
       .order("position", { ascending: true, nullsFirst: false })
       .order("title", { ascending: true }),
-
+ 
     supabase
       .from("certificates")
       .select(
-        "id, course_id, file_path, issued_at, verification_code, certificate_number"
-      )
+      "id, course_id, file_path, issued_at, verification_code, certificate_number, scope"
+     )
       .eq("user_id", userId)
-      .order("issued_at", { ascending: false }),
+      .eq("scope", "final")
+      .order("issued_at", { ascending: false }), 
+
   ]);
 
   const dbProfile = profileResult.data as ProfileRow | null;

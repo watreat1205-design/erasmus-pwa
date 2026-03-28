@@ -5,14 +5,13 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureI18n } from "@/i18n";
-import CertificateDownloadButton from "../components/CertificateDownloadButton";
-
-type CourseMini = { id: string; title: string };
 
 type CertificateRow = {
   id: string;
   issued_at: string;
-  courses: CourseMini | null;
+  certificate_number: string | null;
+  verification_code: string | null;
+  scope: string;
 };
 
 function Pill({ children }: { children: React.ReactNode }) {
@@ -25,12 +24,18 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 export default function CertificatesClient({
   isLoggedIn,
-  certs,
+  cert,
   errorMessage,
+  eligible,
+  completedCourses,
+  totalCourses,
 }: {
   isLoggedIn: boolean;
-  certs: CertificateRow[];
+  cert: CertificateRow | null;
   errorMessage: string | null;
+  eligible: boolean;
+  completedCourses: number;
+  totalCourses: number;
 }) {
   useEffect(() => {
     ensureI18n();
@@ -71,11 +76,14 @@ export default function CertificatesClient({
             {t("certificates.title")}
           </h1>
           <p className="mt-1 text-sm text-gray-900">
-            {t("certificates.subtitle")}
+            Final certificate for the full DROPS programme.
           </p>
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <Pill>{t("certificates.total", { count: certs.length })}</Pill>
+            <Pill>
+              {completedCourses}/{totalCourses} modules completed
+            </Pill>
+            <Pill>{cert ? "1 final certificate" : "No certificate yet"}</Pill>
             <Pill>{t("certificates.pdfDownload")}</Pill>
           </div>
         </div>
@@ -95,7 +103,7 @@ export default function CertificatesClient({
         </p>
       ) : null}
 
-      {certs.length === 0 ? (
+      {!cert ? (
         <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-700">
@@ -104,11 +112,25 @@ export default function CertificatesClient({
 
             <div className="flex-1">
               <h2 className="text-base font-semibold text-gray-900">
-                {t("certificates.emptyTitle")}
+                No final certificate yet
               </h2>
               <p className="mt-1 text-sm text-gray-600">
-                {t("certificates.emptyBody")}
+                Complete all required modules, activities, and assessments to
+                unlock the final DROPS certificate.
               </p>
+
+              <p className="mt-3 text-sm font-medium text-gray-800">
+                Progress: {completedCourses}/{totalCourses} modules completed
+              </p>
+
+              <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full bg-emerald-600 transition-all"
+                  style={{
+                    width: `${totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0}%`,
+                  }}
+                />
+              </div>
 
               <Link
                 href="/courses"
@@ -121,40 +143,37 @@ export default function CertificatesClient({
           </div>
         </div>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {certs.map((cert) => (
-            <div
-              key={cert.id}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-base font-semibold text-gray-900">
-                    {cert.courses?.title ?? t("courses.courseFallback")}
-                  </div>
-                  <div className="mt-1 text-sm text-gray-600">
-                    {t("certificates.issued")}:{" "}
-                    {new Date(cert.issued_at).toLocaleString()}
-                  </div>
+        <div className="mt-6 max-w-2xl">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-base font-semibold text-gray-900">
+                  Final DROPS Certificate
                 </div>
-
-                <Pill>{t("certificates.completed")}</Pill>
+                <div className="mt-1 text-sm text-gray-600">
+                  Issued: {new Date(cert.issued_at).toLocaleString()}
+                </div>
+                {cert.certificate_number ? (
+                  <div className="mt-1 text-sm text-gray-600">
+                    Certificate ID: {cert.certificate_number}
+                  </div>
+                ) : null}
               </div>
 
-              <div className="mt-4">
-                {cert.courses?.id ? (
-                  <CertificateDownloadButton courseId={cert.courses.id} />
-                ) : (
-                  <button
-                    disabled
-                    className="inline-flex w-full items-center justify-center rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-600"
-                  >
-                    {t("certificates.unavailable")}
-                  </button>
-                )}
-              </div>
+              <Pill>Completed</Pill>
             </div>
-          ))}
+
+            <div className="mt-4">
+              <a
+                href="/api/certificates/final"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold !text-white hover:bg-gray-900"
+              >
+                Download final certificate PDF
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

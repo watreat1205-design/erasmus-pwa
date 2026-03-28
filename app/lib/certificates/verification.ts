@@ -1,3 +1,4 @@
+// app/lib/certificates/verification.ts
 import crypto from "crypto";
 
 export function generateVerificationCode(): string {

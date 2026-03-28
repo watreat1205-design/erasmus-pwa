@@ -1,3 +1,4 @@
+// app/verify-certificate/VerifyCertificateClient.tsx
 "use client";
 
 import { useMemo, useState } from "react";
