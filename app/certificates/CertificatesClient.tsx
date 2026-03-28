@@ -43,6 +43,34 @@ export default function CertificatesClient({
 
   const { t } = useTranslation("common");
 
+  async function handleDownloadCertificate() {
+    try {
+      const res = await fetch("/api/certificates/final", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to download certificate");
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "drops-final-certificate.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      alert("Could not download certificate.");
+    }
+  }
+
   if (!isLoggedIn) {
     return (
       <div className="mx-auto max-w-5xl p-6">
@@ -127,7 +155,11 @@ export default function CertificatesClient({
                 <div
                   className="h-full rounded-full bg-emerald-600 transition-all"
                   style={{
-                    width: `${totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0}%`,
+                    width: `${
+                      totalCourses > 0
+                        ? Math.round((completedCourses / totalCourses) * 100)
+                        : 0
+                    }%`,
                   }}
                 />
               </div>
@@ -164,14 +196,13 @@ export default function CertificatesClient({
             </div>
 
             <div className="mt-4">
-              <a
-                href="/api/certificates/final"
-                target="_blank"
-                rel="noreferrer"
+              <button
+                type="button"
+                onClick={handleDownloadCertificate}
                 className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold !text-white hover:bg-gray-900"
               >
                 Download final certificate PDF
-              </a>
+              </button>
             </div>
           </div>
         </div>
