@@ -236,16 +236,18 @@ export async function ensureFinalCertificateIssuedForCurrentUser() {
     };
   }
 
-  const { data: existing, error: existingErr } = await supabase
+  const { data: existingRows, error: existingErr } = await supabase
     .from("certificates")
     .select(
       "id, user_id, course_id, file_path, issued_at, verification_code, certificate_number, scope"
     )
     .eq("user_id", user.id)
     .eq("scope", "final")
-    .maybeSingle();
+    .order("issued_at", { ascending: false });
 
   if (existingErr) throw existingErr;
+
+  const existing = (existingRows?.[0] ?? null) as FinalCertificateRow | null;
 
   if (!existing) {
     const insertPayload = {
@@ -266,7 +268,65 @@ export async function ensureFinalCertificateIssuedForCurrentUser() {
       )
       .single();
 
-    if (insertErr) throw insertErr;
+    if (insertErr) {
+      if (insertErr.code === "23505") {
+        const { data: retryRows, error: retryErr } = await supabase
+          .from("certificates")
+          .select(
+            "id, user_id, course_id, file_path, issued_at, verification_code, certificate_number, scope"
+          )
+          .eq("user_id", user.id)
+          .eq("scope", "final")
+          .order("issued_at", { ascending: false });
+
+        if (retryErr) throw retryErr;
+
+        const retryExisting = (retryRows?.[0] ?? null) as FinalCertificateRow | null;
+
+        if (!retryExisting) {
+          throw insertErr;
+        }
+
+        if (
+          !retryExisting.verification_code ||
+          !retryExisting.certificate_number
+        ) {
+          const { data: repaired, error: repairErr } = await supabase
+            .from("certificates")
+            .update({
+              verification_code:
+                retryExisting.verification_code ?? generateVerificationCode(),
+              certificate_number:
+                retryExisting.certificate_number ?? generateCertificateNumber(),
+            })
+            .eq("id", retryExisting.id)
+            .select(
+              "id, user_id, course_id, file_path, issued_at, verification_code, certificate_number, scope"
+            )
+            .single();
+
+          if (repairErr) throw repairErr;
+
+          return {
+            issued: true,
+            eligible: true,
+            certificate: repaired as FinalCertificateRow,
+            completedCourses: eligibility.completedCourses,
+            totalCourses: eligibility.totalCourses,
+          };
+        }
+
+        return {
+          issued: true,
+          eligible: true,
+          certificate: retryExisting,
+          completedCourses: eligibility.completedCourses,
+          totalCourses: eligibility.totalCourses,
+        };
+      }
+
+      throw insertErr;
+    }
 
     return {
       issued: true,
@@ -306,7 +366,7 @@ export async function ensureFinalCertificateIssuedForCurrentUser() {
   return {
     issued: true,
     eligible: true,
-    certificate: existing as FinalCertificateRow,
+    certificate: existing,
     completedCourses: eligibility.completedCourses,
     totalCourses: eligibility.totalCourses,
   };
