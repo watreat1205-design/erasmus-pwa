@@ -102,25 +102,26 @@ function drawCenteredBlock(
 }
 
 async function embedBackground(pdfDoc: PDFDocument) {
-  const pngPath = path.join(
+  const filePath = path.join(
     process.cwd(),
     "public",
     "cert-templates",
     "drops-final-bg.png"
   );
-  const jpgPath = path.join(
-    process.cwd(),
-    "public",
-    "cert-templates",
-    "drops-final-bg.jpg"
-  );
 
   try {
-    const pngBytes = await fs.readFile(pngPath);
-    return { image: await pdfDoc.embedPng(pngBytes), type: "png" as const };
-  } catch {
-    const jpgBytes = await fs.readFile(jpgPath);
-    return { image: await pdfDoc.embedJpg(jpgBytes), type: "jpg" as const };
+    const fileBuffer = await fs.readFile(filePath);
+
+    try {
+      return { image: await pdfDoc.embedPng(fileBuffer), type: "png" as const };
+    } catch {
+      return { image: await pdfDoc.embedJpg(fileBuffer), type: "jpg" as const };
+    }
+  } catch (err) {
+    console.error("❌ Background load error:", err);
+
+    // fallback (prevents 500 crash)
+    return null;
   }
 }
 
@@ -193,12 +194,15 @@ export async function GET() {
   const { width, height } = page.getSize();
 
   const bg = await embedBackground(pdfDoc);
+
+if (bg) {
   page.drawImage(bg.image, {
     x: 0,
     y: 0,
     width,
     height,
   });
+}
 
   page.drawRectangle({
     x: 92,
