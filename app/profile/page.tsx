@@ -1,3 +1,4 @@
+// app/profile/page.tsx
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -52,6 +53,44 @@ function formatDate(value: string | null | undefined) {
   }
 }
 
+type ProfileRow = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+type CourseRow = {
+  id: string;
+  title: string;
+};
+
+type SectionRow = {
+  id: string;
+  course_id: string;
+};
+
+type LessonRow = {
+  id: string;
+  section_id: string;
+};
+
+type ModuleQuizRow = {
+  id: string;
+  course_id: string;
+};
+
+type CertificateRow = {
+  id: string;
+  course_id: string | null;
+  file_path: string | null;
+  issued_at: string | null;
+  verification_code: string | null;
+  certificate_number: string | null;
+};
+
 export default async function ProfilePage() {
   noStore();
 
@@ -70,36 +109,19 @@ export default async function ProfilePage() {
   const lang = cookieStore.get("i18nextLng")?.value ?? "en";
   const userId = user.id;
 
-  const [
-    profileResult,
-    totalCoursesResult,
-    totalLessonsResult,
-    totalModulesResult,
-    completedLessonsResult,
-    completedModulesResult,
-    certificatesResult,
-  ] = await Promise.all([
+  const [profileResult, coursesResult, certificatesResult] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, email, role, created_at, updated_at")
       .eq("id", userId)
       .maybeSingle(),
 
-    supabase.from("courses").select("*", { count: "exact", head: true }),
-
-    supabase.from("lessons").select("*", { count: "exact", head: true }),
-
-    supabase.from("modules").select("*", { count: "exact", head: true }),
-
     supabase
-      .from("lesson_completions")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId),
-
-    supabase
-      .from("module_progress")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId),
+      .from("courses")
+      .select("id, title")
+      .eq("is_published", true)
+      .order("position", { ascending: true, nullsFirst: false })
+      .order("title", { ascending: true }),
 
     supabase
       .from("certificates")
@@ -110,13 +132,146 @@ export default async function ProfilePage() {
       .order("issued_at", { ascending: false }),
   ]);
 
-  const dbProfile = profileResult.data;
-  const totalCourses = totalCoursesResult.count ?? 0;
-  const totalLessons = totalLessonsResult.count ?? 0;
-  const totalModules = totalModulesResult.count ?? 0;
-  const completedLessons = completedLessonsResult.count ?? 0;
-  const completedModules = completedModulesResult.count ?? 0;
-  const certificates = certificatesResult.data ?? [];
+  const dbProfile = profileResult.data as ProfileRow | null;
+  const courses = (coursesResult.data ?? []) as CourseRow[];
+  const certificates = (certificatesResult.data ?? []) as CertificateRow[];
+
+  const courseIds = courses.map((c) => c.id);
+
+  const { data: sectionsData } = courseIds.length
+    ? await supabase
+        .from("course_sections")
+        .select("id, course_id")
+        .in("course_id", courseIds)
+    : { data: [] as SectionRow[] };
+
+  const sections = (sectionsData ?? []) as SectionRow[];
+  const sectionIds = sections.map((s) => s.id);
+
+  const { data: lessonsData } = sectionIds.length
+    ? await supabase
+        .from("course_lessons")
+        .select("id, section_id")
+        .eq("kind", "lesson")
+        .in("section_id", sectionIds)
+    : { data: [] as LessonRow[] };
+
+  const lessons = (lessonsData ?? []) as LessonRow[];
+  const lessonIds = lessons.map((l) => l.id);
+
+  const { data: quizzesData } = courseIds.length
+    ? await supabase
+        .from("module_quizzes")
+        .select("id, course_id")
+        .eq("is_published", true)
+        .in("course_id", courseIds)
+    : { data: [] as ModuleQuizRow[] };
+
+  const quizzes = (quizzesData ?? []) as ModuleQuizRow[];
+  const quizIds = quizzes.map((q) => q.id);
+
+  const sectionToCourse = new Map<string, string>();
+  for (const section of sections) {
+    sectionToCourse.set(section.id, section.course_id);
+  }
+
+  const lessonToCourse = new Map<string, string>();
+  const lessonCountByCourse = new Map<string, number>();
+
+  for (const lesson of lessons) {
+    const courseId = sectionToCourse.get(lesson.section_id);
+    if (!courseId) continue;
+
+    lessonToCourse.set(lesson.id, courseId);
+    lessonCountByCourse.set(
+      courseId,
+      (lessonCountByCourse.get(courseId) ?? 0) + 1
+    );
+  }
+
+  const quizToCourse = new Map<string, string>();
+  for (const quiz of quizzes) {
+    quizToCourse.set(quiz.id, quiz.course_id);
+  }
+
+  const { data: lessonProgressData } = lessonIds.length
+    ? await supabase
+        .from("lesson_progress")
+        .select("lesson_id")
+        .eq("user_id", userId)
+        .in("lesson_id", lessonIds)
+    : { data: [] as { lesson_id: string }[] };
+
+  const completedLessonsByCourse = new Map<string, number>();
+
+  for (const row of lessonProgressData ?? []) {
+    const courseId = lessonToCourse.get((row as { lesson_id: string }).lesson_id);
+    if (!courseId) continue;
+
+    completedLessonsByCourse.set(
+      courseId,
+      (completedLessonsByCourse.get(courseId) ?? 0) + 1
+    );
+  }
+
+  const { data: passedQuizAttempts } = quizIds.length
+    ? await supabase
+        .from("module_quiz_attempts")
+        .select("quiz_id")
+        .eq("user_id", userId)
+        .eq("passed", true)
+        .in("quiz_id", quizIds)
+    : { data: [] as { quiz_id: string }[] };
+
+  const passedQuizzesByCourse = new Map<string, number>();
+  const countedPassedQuizzes = new Set<string>();
+
+  for (const row of passedQuizAttempts ?? []) {
+    const quizId = (row as { quiz_id: string }).quiz_id;
+    if (countedPassedQuizzes.has(quizId)) continue;
+    countedPassedQuizzes.add(quizId);
+
+    const courseId = quizToCourse.get(quizId);
+    if (!courseId) continue;
+
+    passedQuizzesByCourse.set(
+      courseId,
+      (passedQuizzesByCourse.get(courseId) ?? 0) + 1
+    );
+  }
+
+  const totalCourses = courses.length;
+  const totalModules = courses.length;
+  const totalLessons = lessons.length;
+
+  const completedLessons = Array.from(completedLessonsByCourse.values()).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
+  let completedModules = 0;
+
+  for (const course of courses) {
+    const lessonCount = lessonCountByCourse.get(course.id) ?? 0;
+    const completedLessonCount = completedLessonsByCourse.get(course.id) ?? 0;
+    const passedQuizCount = Math.min(
+      passedQuizzesByCourse.get(course.id) ?? 0,
+      1
+    );
+
+    const hasRequiredLessons =
+      lessonCount > 0 && completedLessonCount >= lessonCount;
+
+    const hasQuiz = quizzes.some((quiz) => quiz.course_id === course.id);
+
+    const isCompleted = hasQuiz
+      ? hasRequiredLessons && passedQuizCount >= 1
+      : hasRequiredLessons;
+
+    if (isCompleted) {
+      completedModules += 1;
+    }
+  }
 
   const lessonsProgress =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
@@ -162,7 +317,7 @@ export default async function ProfilePage() {
             href="/dashboard"
             prefetch={false}
             className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-          > 
+          >
             Back to Dashboard
           </Link>
         </div>
@@ -420,7 +575,7 @@ export default async function ProfilePage() {
                   href="/courses"
                   prefetch={false}
                   className="inline-flex items-center justify-center rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
-                > 
+                >
                   Go to Courses
                 </Link>
 

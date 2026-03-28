@@ -1,7 +1,6 @@
 // app/courses/CoursesPublicHeader.tsx
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,19 +14,6 @@ export default function CoursesPublicHeader() {
 
   return (
     <div>
-      <div className="mb-4">
-        <Link
-          href="/welcome"
-          prefetch={false}
-          className="inline-flex items-center text-sm font-medium text-white hover:underline"
-        >
-          ←{" "}
-          {mounted
-            ? t("common.backToWelcome", { defaultValue: "Back to welcome" })
-            : "Back to welcome"}
-        </Link>
-      </div>
-
       <div>
         <h1 className="text-3xl font-semibold text-white">
           {mounted
