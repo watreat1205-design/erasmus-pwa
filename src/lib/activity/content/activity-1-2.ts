@@ -132,21 +132,21 @@ export const activity12Content: ActivityContent = {
         {
           title: "Case Study — TEAL for Upskilling",
           description:
-            "Explore a practical scenario on enhancing adult learning through interactive TEAL methods.",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/case-study-teal-for-upskilling.pdf",
+          "Explore a practical scenario on enhancing adult learning through interactive TEAL methods.",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity-1-2/case-study-teal-for-upskilling.pdf",
           resourceType: "case-study",
         },
         {
           title: "Case Study — Unmotivated Class",
           description:
-            "Review a classroom scenario focused on improving engagement through TEAL strategies.",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/case-study-unmotivated-class.pdf",
+          "Review a classroom scenario focused on improving engagement through TEAL strategies.",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity-1-2/case-study-unmotivated-class.pdf",
           resourceType: "case-study",
         },
         {
           title: "Slides — Activity 1.2 Presentation",
           description: "Open the presentation slides used in this activity.",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity%20-1-2/a1-2-presentation.pdf",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity-1-2/a1-2-presentation.pdf",
           resourceType: "slides",
         },
         {

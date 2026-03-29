@@ -134,7 +134,7 @@ export const activity15Content: ActivityContent = {
         {
           title: "Slides — Activity 1.5 Presentation",
           description: "Open the presentation slides used in this activity.",
-          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity-%201-5/a1-5-presentation.pdf",
+          url: "https://pjjslpdbnwfkvlrxrkpr.supabase.co/storage/v1/object/public/course-assets/dsd-teal/Module-1/Activity-1-5/a1-5-presentation.pdf",
           resourceType: "slides",
         },
         {

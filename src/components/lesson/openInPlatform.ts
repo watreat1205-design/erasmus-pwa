@@ -19,27 +19,33 @@ function getYouTubeId(url: string) {
   try {
     const u = new URL(url);
 
-    // youtu.be format
     if (u.hostname.includes("youtu.be")) {
       return u.pathname.replace("/", "");
     }
 
-    // embed format
     if (u.pathname.includes("/embed/")) {
       return u.pathname.split("/embed/")[1]?.split("/")[0] ?? null;
     }
 
-    // normal watch?v= format
     return u.searchParams.get("v");
   } catch {
     return null;
   }
 }
 
+function normalizeSupabaseCourseAssetUrl(url: string) {
+  return url
+    .replace(/Activity-%20(\d+-\d+)/gi, "Activity-$1")
+    .replace(/Activity%20-(\d+-\d+)/gi, "Activity-$1")
+    .replace(/Activity20-(\d+-\d+)/gi, "Activity-$1")
+    .replace(/Activity -(\d+-\d+)/gi, "Activity-$1")
+    .replace(/Activity-\s+(\d+-\d+)/gi, "Activity-$1");
+}
+
 export function openInPlatform(url: string) {
   if (typeof window === "undefined") return;
 
-  const trimmedUrl = url.trim();
+  const trimmedUrl = normalizeSupabaseCourseAssetUrl(url.trim());
   const lower = trimmedUrl.toLowerCase();
 
   const isYouTube =
@@ -55,10 +61,6 @@ export function openInPlatform(url: string) {
 
   const isPdf = lower.includes(".pdf");
 
-  /**
-   * If this is a YouTube video that cannot be embedded,
-   * open it directly in a new tab.
-   */
   if (isYouTube) {
     const youtubeId = getYouTubeId(trimmedUrl);
 
@@ -68,10 +70,6 @@ export function openInPlatform(url: string) {
     }
   }
 
-  /**
-   * If this is a PDF that should not go through the platform viewer,
-   * open it directly in a new tab.
-   */
   if (isPdf && FORCE_PDF_NEW_TAB.some((pdf) => lower.includes(pdf))) {
     window.open(trimmedUrl, "_blank", "noopener,noreferrer");
     return;
@@ -79,7 +77,6 @@ export function openInPlatform(url: string) {
 
   const finalUrl = isVideo ? toEmbed(trimmedUrl) : trimmedUrl;
 
-  // Open inside the platform
   if (isVideo || isForms || isPdf) {
     const parts = window.location.pathname.split("/").filter(Boolean);
     const courseId = parts[1];
@@ -99,6 +96,6 @@ export function openInPlatform(url: string) {
     return;
   }
 
-  // Everything else opens normally
   window.open(trimmedUrl, "_blank", "noopener,noreferrer");
 }
+

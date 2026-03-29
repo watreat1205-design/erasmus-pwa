@@ -200,7 +200,7 @@ export const activity11Content: ActivityContent = {
         },
         {
           title: "What is Technology-Enhanced Learning? — WGU",
-          url: "https://www.wgu.edu/blog/what-is-technology-enhanced-learning2006.html",
+          url: "https://www.wgu.edu/blog/what-education-technology2312.html",
           resourceType: "external",
         },
         {
