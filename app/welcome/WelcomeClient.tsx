@@ -169,29 +169,42 @@ export default function WelcomeClient({
               </p>
             ) : null}
 
-            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
-              <Link
-                href={loggedIn ? "/courses" : "/login?next=/courses"}
-                prefetch={false}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
-              >
-                {mounted
-                  ? t("buttons.goToCourses", { defaultValue: "Go to Courses" })
-                  : "Go to Courses"}
-              </Link>
+            <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div className="grid gap-3 sm:flex sm:flex-wrap">
+            <Link
+              href={loggedIn ? "/courses" : "/login?next=/courses"}
+              prefetch={false}
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
+            >
+             {mounted
+             ? t("buttons.goToCourses", { defaultValue: "Go to Courses" })
+             : "Go to Courses"}
+            </Link>
 
-              <Link
-                href={loggedIn ? "/dashboard" : "/login?next=/dashboard"}
-                prefetch={false}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
-              >
-                {mounted
-                  ? t("buttons.goToDashboard", {
-                      defaultValue: "Go to Dashboard",
-                    })
-                  : "Go to Dashboard"}
-              </Link>
-            </div>
+            <Link
+              href={loggedIn ? "/dashboard" : "/login?next=/dashboard"}
+              prefetch={false}
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
+            >
+             {mounted
+             ? t("buttons.goToDashboard", {
+              defaultValue: "Go to Dashboard",
+            })
+              : "Go to Dashboard"}
+            </Link>
+           </div>
+
+             <a
+              href="https://drops-sustainability.eu/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 self-start rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 lg:ml-24 lg:self-auto xl:ml-32"
+             >
+                Visit Project Website
+             <span className="transition-transform hover:translate-x-1">→</span>
+            </a>
+           </div>
+                
           </div>
         </section>
       </main>

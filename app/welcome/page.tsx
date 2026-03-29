@@ -82,7 +82,6 @@ export default async function WelcomePage({
           initialLang={initialLang}
         />
       </div>
-
       <div className="mt-auto pb-6">
         <FooterPartners compact />
 
