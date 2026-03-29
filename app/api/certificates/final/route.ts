@@ -118,9 +118,7 @@ async function embedBackground(pdfDoc: PDFDocument) {
       return { image: await pdfDoc.embedJpg(fileBuffer), type: "jpg" as const };
     }
   } catch (err) {
-    console.error("❌ Background load error:", err);
-
-    // fallback (prevents 500 crash)
+    console.error("Background load error:", err);
     return null;
   }
 }
@@ -191,92 +189,112 @@ export async function GET() {
   const fontBold = await pdfDoc.embedFont(boldBytes);
 
   const page = pdfDoc.addPage([842, 595]);
-  const { width, height } = page.getSize();
+  const { width } = page.getSize();
 
   const bg = await embedBackground(pdfDoc);
+  if (bg) {
+    page.drawImage(bg.image, {
+      x: 0,
+      y: 0,
+      width: 842,
+      height: 595,
+    });
+  }
 
-if (bg) {
-  page.drawImage(bg.image, {
-    x: 0,
-    y: 0,
-    width,
-    height,
-  });
-}
-
-  page.drawRectangle({
-    x: 92,
-    y: 145,
-    width: width - 184,
-    height: 280,
-    color: rgb(1, 1, 1),
-    opacity: 0.72,
-  });
-
-  let y = 390;
+  // Main text block
+  let y = 392;
 
   drawCentered(
     page,
     fontBold,
     "CERTIFICATE OF COMPLETION",
     y,
-    26,
+    24,
     rgb(0.12, 0.16, 0.36)
   );
-  y -= 38;
+  y -= 36;
 
-  drawCentered(page, fontRegular, "This certifies that", y, 14);
+  drawCentered(
+    page,
+    fontRegular,
+    "This certifies that",
+    y,
+    15,
+    rgb(0.14, 0.14, 0.14)
+  );
   y -= 34;
 
-  drawCentered(page, fontBold, recipient, y, 28, rgb(0.08, 0.08, 0.08));
-  y -= 42;
+  drawCentered(
+    page,
+    fontBold,
+    recipient,
+    y,
+    30,
+    rgb(0.08, 0.08, 0.08)
+  );
+  y -= 44;
 
   drawCentered(
     page,
     fontRegular,
     "has successfully completed the DROPS e-learning programme",
     y,
-    14
+    13.5,
+    rgb(0.12, 0.12, 0.12)
   );
   y -= 28;
 
   const statement =
     "covering sustainable development, TEAL methodology, and green skills for transformative education.";
-  const lines = wrapText(fontBold, statement, 17, 520);
-  y = drawCenteredBlock(page, fontBold, lines, y, 17, 24, rgb(0.12, 0.16, 0.36));
-  y -= 18;
+  const lines = wrapText(fontBold, statement, 15.5, 620);
 
-  const footerText =
-    "including all required modules, activities, and assessments.";
-  drawCentered(page, fontRegular, footerText, y, 13);
+  y = drawCenteredBlock(
+    page,
+    fontBold,
+    lines,
+    y,
+    15.5,
+    22,
+    rgb(0.12, 0.16, 0.36)
+  );
 
-  const footerY = 105;
-  drawLeft(page, fontRegular, `Issued on: ${issued}`, 58, footerY, 11);
+  y -= 10;
+
+  drawCentered(
+    page,
+    fontRegular,
+    "including all required modules, activities, and assessments.",
+    y,
+    12.5,
+    rgb(0.12, 0.12, 0.12)
+  );
+
+  // Metadata row ABOVE the background logos
+  const metaY = 135;
+
+  drawLeft(
+    page,
+    fontRegular,
+    `Issued on: ${issued}`,
+    70,
+    metaY,
+    10,
+    rgb(0.2, 0.2, 0.2)
+  );
 
   if (cert.certificate_number) {
     drawRight(
       page,
       fontRegular,
       `Certificate ID: ${cert.certificate_number}`,
-      width - 58,
-      footerY + 82,
-      11
+      width - 70,
+      metaY + 8,
+      10,
+      rgb(0.12, 0.12, 0.12)
     );
   }
 
-  drawLeft(page, fontRegular, "__________________________", 58, 72, 11);
-  drawLeft(page, fontRegular, "Trainer / Project Lead", 58, 54, 10);
-
-  drawLeft(
-    page,
-    fontRegular,
-    "__________________________",
-    width - 278,
-    72,
-    11
-  );
-  drawLeft(page, fontRegular, "DROPS Representative", width - 278, 54, 10);
-
+  // QR block in free space on the right, above the logo zone
   if (cert.verification_code) {
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -292,9 +310,9 @@ if (bg) {
     const qrBytes = Buffer.from(qrDataUrl.split(",")[1], "base64");
     const qrImage = await pdfDoc.embedPng(qrBytes);
 
-    const qrSize = 72;
-    const qrX = width - 58 - qrSize;
-    const qrY = 84;
+    const qrSize = 56;
+    const qrX = width - 126;
+    const qrY = 86;
 
     page.drawImage(qrImage, {
       x: qrX,
@@ -303,7 +321,15 @@ if (bg) {
       height: qrSize,
     });
 
-    drawLeft(page, fontRegular, "scan to verify", qrX, qrY - 10, 9);
+    drawLeft(
+      page,
+      fontRegular,
+      "Scan to verify",
+      qrX - 2,
+      qrY - 12,
+      8.5,
+      rgb(0.12, 0.12, 0.12)
+    );
   }
 
   const pdfBytes = await pdfDoc.save();
