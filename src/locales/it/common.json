@@ -116,7 +116,8 @@
     "failedToLoadQuiz": "Impossibile caricare il quiz:",
     "failedToLoadQuestions": "Impossibile caricare le domande:",
     "pleaseAnswerAll": "Rispondi a tutte le domande prima di inviare.",
-    "networkError": "Errore di rete"
+    "networkError": "Errore di rete",
+    "requiredQuestion": "Domanda obbligatoria"
   },
   "quizPaper": {
     "intro": "Questo breve quiz valuta la tua comprensione dell'approccio TEAL. Rispondi alle seguenti domande in base a ciò che hai imparato nell'ATTIVITÀ 1.1: Esplorare TEAL del MODULO 1: Introduzione alla metodologia di insegnamento TEAL. Il quiz verifica la definizione di TEAL, i suoi componenti principali (apprendimento attivo, integrazione della tecnologia e collaborazione), le sue origini e le differenze rispetto ai metodi tradizionali.",

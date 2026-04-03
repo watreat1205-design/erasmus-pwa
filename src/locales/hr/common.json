@@ -116,7 +116,8 @@
     "failedToLoadQuiz": "Neuspjelo učitavanje kviza:",
     "failedToLoadQuestions": "Neuspjelo učitavanje pitanja:",
     "pleaseAnswerAll": "Odgovorite na sva pitanja prije slanja.",
-    "networkError": "Greška mreže"
+    "networkError": "Greška mreže",
+    "requiredQuestion": "Obavezno pitanje"
   },
   "quizPaper": {
     "intro": "Ovaj kratki kviz provjerava vaše razumijevanje TEAL pristupa. Odgovorite na sljedeća pitanja na temelju onoga što ste naučili u AKTIVNOSTI 1.1: Istraživanje TEAL-a u MODULU 1: Uvod u TEAL metodu poučavanja. Kviz provjerava definiciju TEAL-a, njegove ključne komponente (aktivno učenje, integraciju tehnologije i suradnju), podrijetlo te razlike u odnosu na tradicionalne metode poučavanja.",

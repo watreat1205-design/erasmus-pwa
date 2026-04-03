@@ -55,10 +55,10 @@ export default function QuizPaper({
                 <h1 className="mt-2 text-xl font-semibold text-gray-900">
                   {quizTitle}
                 </h1>
-
-                <div className="mt-3 text-xs text-gray-500">
-                  <span className="text-red-600">*</span> Required question
-                </div>
+                  <div className="mt-3 text-xs text-gray-500">
+                   <span className="text-red-600">*</span> {t("quizzes.requiredQuestion")}
+                 </div>
+               
               </div>
             </div>
 

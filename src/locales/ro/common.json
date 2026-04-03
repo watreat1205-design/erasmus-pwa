@@ -116,7 +116,8 @@
     "failedToLoadQuiz": "Nu s-a putut încărca chestionarul:",
     "failedToLoadQuestions": "Nu s-au putut încărca întrebările:",
     "pleaseAnswerAll": "Răspunde la toate întrebările înainte de trimitere.",
-    "networkError": "Eroare de rețea"
+    "networkError": "Eroare de rețea",
+    "requiredQuestion": "Întrebare obligatorie"
   },
   "quizPaper": {
     "intro": "Acest chestionar scurt evaluează înțelegerea ta asupra abordării TEAL. Răspunde la următoarele întrebări pe baza a ceea ce ai învățat în ACTIVITATEA 1.1: Explorarea TEAL din MODULUL 1: Introducere în metodologia de predare TEAL. Chestionarul verifică definiția TEAL, componentele sale de bază (învățare activă, integrarea tehnologiei și colaborare), originea și diferențele față de metodele tradiționale.",

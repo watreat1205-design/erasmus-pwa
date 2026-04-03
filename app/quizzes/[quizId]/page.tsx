@@ -9,9 +9,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
+type Lang = "en" | "el" | "it" | "es" | "ro" | "hr";
+
 type ModuleQuiz = {
   id: string;
   title: string;
+  title_i18n?: Record<string, string> | null;
+  description: string | null;
+  description_i18n?: Record<string, string> | null;
   pass_score: number;
   course_quiz_id: string | null;
 };
@@ -19,7 +24,9 @@ type ModuleQuiz = {
 type QuizQuestion = {
   id: string;
   prompt: string;
+  prompt_i18n?: Record<string, string> | null;
   options: string[];
+  options_i18n?: Record<string, string[]> | null;
   position: number;
 };
 
@@ -29,6 +36,32 @@ type ReviewItem = {
   is_correct: boolean;
   correct_index: number | null;
 };
+
+function normalizeLang(input?: string | null): Lang {
+  const short = (input || "en").slice(0, 2).toLowerCase();
+  if (["en", "el", "it", "es", "ro", "hr"].includes(short)) {
+    return short as Lang;
+  }
+  return "en";
+}
+
+function pickI18nText(
+  i18nValue: Record<string, string> | null | undefined,
+  lang: Lang,
+  fallback = ""
+) {
+  if (!i18nValue || typeof i18nValue !== "object") return fallback;
+  return i18nValue[lang] || i18nValue.en || fallback;
+}
+
+function pickI18nOptions(
+  i18nValue: Record<string, string[]> | null | undefined,
+  lang: Lang,
+  fallback: string[] = []
+) {
+  if (!i18nValue || typeof i18nValue !== "object") return fallback;
+  return i18nValue[lang] || i18nValue.en || fallback;
+}
 
 function BackgroundShell({ children }: { children: React.ReactNode }) {
   return (
@@ -48,29 +81,60 @@ function BackgroundShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function getQuizIntro(quizTitle: string) {
-  const title = quizTitle.toLowerCase();
+function getQuizIntro(quizId: string, lang: Lang) {
+  if (quizId === "0691176a-40d3-49f7-8b16-6f22274aff03") {
+    const map = {
+      en: {
+        intro:
+          "This short quiz assesses your understanding of the TEAL approach. Please answer the following questions based on what you have learned in ACTIVITY 1.1: Exploring TEAL of MODULE 1: Introduction to TEAL teaching methodology. The quiz will examine your knowledge of the definition of TEAL, its core components (active learning, technology integration, and collaboration), its origins, and how it compares to traditional teaching methods.",
+        quote:
+          "\"The best teachers are those who show you where to look, but don't tell you what to see.\" – Alexandra K. Trenfor. We hope this quiz helps you see how TEAL can enhance your teaching!",
+        note:
+          "Note: The quiz is for learning. You can retake it if needed.",
+      },
+      it: {
+        intro:
+          "Questo breve quiz valuta la tua comprensione dell’approccio TEAL. Rispondi alle seguenti domande in base a ciò che hai appreso nell’ATTIVITÀ 1.1: Esplorando il TEAL del MODULO 1: Introduzione alla metodologia didattica TEAL. Il quiz verificherà la tua conoscenza della definizione di TEAL, dei suoi componenti principali (apprendimento attivo, integrazione tecnologica e collaborazione), delle sue origini e del confronto con i metodi di insegnamento tradizionali.",
+        quote:
+          "\"I migliori insegnanti sono quelli che ti mostrano dove guardare, ma non ti dicono cosa vedere.\" – Alexandra K. Trenfor. Speriamo che questo quiz ti aiuti a capire come il TEAL possa migliorare il tuo insegnamento!",
+        note:
+          "Nota: il quiz è pensato per l’apprendimento. Puoi ripeterlo se necessario.",
+      },
+      el: {
+        intro:
+          "Αυτό το σύντομο κουίζ αξιολογεί την κατανόησή σου για την προσέγγιση TEAL. Απάντησε στις παρακάτω ερωτήσεις με βάση όσα έμαθες στη ΔΡΑΣΤΗΡΙΟΤΗΤΑ 1.1: Εξερεύνηση του TEAL της ΕΝΟΤΗΤΑΣ 1: Εισαγωγή στη διδακτική μεθοδολογία TEAL. Το κουίζ εξετάζει τη γνώση σου σχετικά με τον ορισμό του TEAL, τα βασικά του στοιχεία (ενεργητική μάθηση, ενσωμάτωση τεχνολογίας και συνεργασία), την προέλευσή του και τη σύγκρισή του με τις παραδοσιακές διδακτικές μεθόδους.",
+        quote:
+          "\"Οι καλύτεροι δάσκαλοι είναι εκείνοι που σου δείχνουν πού να κοιτάξεις, αλλά δεν σου λένε τι να δεις.\" – Alexandra K. Trenfor. Ελπίζουμε αυτό το κουίζ να σε βοηθήσει να δεις πώς το TEAL μπορεί να ενισχύσει τη διδασκαλία σου!",
+        note:
+          "Σημείωση: Το κουίζ είναι για μάθηση. Μπορείς να το επαναλάβεις αν χρειαστεί.",
+      },
+      es: {
+        intro:
+          "Este breve cuestionario evalúa tu comprensión del enfoque TEAL. Responde a las siguientes preguntas según lo que aprendiste en la ACTIVIDAD 1.1: Explorando TEAL del MÓDULO 1: Introducción a la metodología de enseñanza TEAL. El cuestionario evaluará tu conocimiento de la definición de TEAL, sus componentes principales (aprendizaje activo, integración tecnológica y colaboración), sus orígenes y su comparación con los métodos de enseñanza tradicionales.",
+        quote:
+          "\"Los mejores profesores son aquellos que te muestran dónde mirar, pero no te dicen qué ver.\" – Alexandra K. Trenfor. Esperamos que este cuestionario te ayude a ver cómo TEAL puede mejorar tu enseñanza.",
+        note:
+          "Nota: Este cuestionario es para aprender. Puedes repetirlo si lo necesitas.",
+      },
+      ro: {
+        intro:
+          "Acest scurt test evaluează înțelegerea ta asupra abordării TEAL. Te rugăm să răspunzi la următoarele întrebări pe baza a ceea ce ai învățat în ACTIVITATEA 1.1: Explorarea TEAL din MODULUL 1: Introducere în metodologia de predare TEAL. Testul va verifica cunoștințele tale despre definiția TEAL, componentele sale de bază (învățare activă, integrarea tehnologiei și colaborare), originile sale și comparația cu metodele tradiționale de predare.",
+        quote:
+          "\"Cei mai buni profesori sunt cei care îți arată unde să te uiți, dar nu îți spun ce să vezi.\" – Alexandra K. Trenfor. Sperăm ca acest test să te ajute să vezi cum TEAL îți poate îmbunătăți predarea!",
+        note:
+          "Notă: Testul este pentru învățare. Îl poți relua dacă este nevoie.",
+      },
+      hr: {
+        intro:
+          "Ovaj kratki kviz procjenjuje tvoje razumijevanje TEAL pristupa. Odgovori na sljedeća pitanja na temelju onoga što si naučio/la u AKTIVNOSTI 1.1: Istraživanje TEAL-a u MODULU 1: Uvod u TEAL metodologiju poučavanja. Kviz će provjeriti tvoje znanje o definiciji TEAL-a, njegovim ključnim komponentama (aktivno učenje, integracija tehnologije i suradnja), njegovim korijenima i usporedbi s tradicionalnim metodama poučavanja.",
+        quote:
+          "\"Najbolji učitelji su oni koji ti pokažu gdje gledati, ali ti ne govore što da vidiš.\" – Alexandra K. Trenfor. Nadamo se da će ti ovaj kviz pomoći da vidiš kako TEAL može unaprijediti tvoje poučavanje!",
+        note:
+          "Napomena: Ovaj kviz služi učenju. Možeš ga ponoviti ako je potrebno.",
+      },
+    } as const;
 
-  if (title.includes("module 1")) {
-    return {
-      intro:
-        "This short quiz assesses your understanding of the TEAL approach. Please answer the following questions based on what you have learned in ACTIVITY 1.1: Exploring TEAL of MODULE 1: Introduction to TEAL teaching methodology. The quiz will examine your knowledge of the definition of TEAL, its core components (active learning, technology integration, and collaboration), its origins, and how it compares to traditional teaching methods.",
-      quote:
-        "\"The best teachers are those who show you where to look, but don't tell you what to see.\" – Alexandra K. Trenfor. We hope this quiz helps you see how TEAL can enhance your teaching!",
-      note:
-        "Note: The quiz is for learning. You can retake it if needed.",
-    };
-  }
-
-  if (title.includes("module 2")) {
-    return {
-      intro:
-        "This short quiz assesses your understanding of the topics covered in Module 2. Please answer the following questions based on the material you studied about the Agenda 2030 and the Sustainable Development Goals (SDGs).",
-      quote:
-        "\"There is a lot of important information about the SDGs that is worth knowing and sharing with your friends, family, and society.\"",
-      note:
-        "Note: The quiz is for learning. You can retake it if needed.",
-    };
+    return map[lang] ?? map.en;
   }
 
   return {
@@ -82,11 +146,12 @@ function getQuizIntro(quizTitle: string) {
 }
 
 export default function QuizDetailPage() {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const router = useRouter();
   const params = useParams();
   const quizId = String((params as Record<string, unknown>).quizId ?? "");
   const supabase = useMemo(() => createClient(), []);
+  const lang = normalizeLang(i18n.resolvedLanguage || i18n.language);
 
   const [quiz, setQuiz] = useState<ModuleQuiz | null>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -96,6 +161,11 @@ export default function QuizDetailPage() {
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
   const [review, setReview] = useState<ReviewItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!quizId) return;
@@ -108,7 +178,7 @@ export default function QuizDetailPage() {
 
       const { data: quizData, error: quizErr } = await supabase
         .from("module_quizzes")
-        .select("id,title,pass_score,course_quiz_id")
+        .select("id,title,title_i18n,description,description_i18n,pass_score,course_quiz_id")
         .eq("id", quizId)
         .single();
 
@@ -124,7 +194,7 @@ export default function QuizDetailPage() {
 
       const { data: qData, error: qErr } = await supabase
         .from("module_quiz_questions")
-        .select("id, prompt, options, position")
+        .select("id, prompt, prompt_i18n, options, options_i18n, position")
         .eq("quiz_id", quizData.id)
         .order("position", { ascending: true });
 
@@ -136,13 +206,18 @@ export default function QuizDetailPage() {
         return;
       }
 
-      const normalized: QuizQuestion[] =
-        (qData ?? []).map((q: any) => ({
-          id: q.id,
-          prompt: q.prompt,
-          options: Array.isArray(q.options) ? q.options : [],
-          position: Number(q.position ?? 0),
-        })) ?? [];
+      const normalized: QuizQuestion[] = (qData ?? []).map((q: any) => ({
+        id: q.id,
+        prompt: pickI18nText(q.prompt_i18n, lang, q.prompt ?? ""),
+        prompt_i18n: q.prompt_i18n,
+        options: pickI18nOptions(
+          q.options_i18n,
+          lang,
+          Array.isArray(q.options) ? q.options : []
+        ),
+        options_i18n: q.options_i18n,
+        position: Number(q.position ?? 0),
+      }));
 
       setQuestions(normalized);
       setAnswers(new Array(normalized.length).fill(null));
@@ -154,7 +229,7 @@ export default function QuizDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [quizId, supabase]);
+  }, [quizId, supabase, lang]);
 
   async function submit() {
     setSubmitting(true);
@@ -202,12 +277,18 @@ export default function QuizDetailPage() {
     setSubmitting(false);
   }
 
+  if (!mounted) {
+    return (
+      <BackgroundShell>
+        <div className="mx-auto max-w-3xl p-6 text-white">Loading...</div>
+      </BackgroundShell>
+    );
+  }
+
   if (loading) {
     return (
       <BackgroundShell>
-        <div className="mx-auto max-w-3xl p-6 text-white">
-          {t("quizzes.loading")}
-        </div>
+        <div className="mx-auto max-w-3xl p-6 text-white">Loading...</div>
       </BackgroundShell>
     );
   }
@@ -235,15 +316,26 @@ export default function QuizDetailPage() {
     );
   }
 
-  const quizIntro = getQuizIntro(quiz.title);
+  const resolvedQuizTitle = pickI18nText(quiz.title_i18n, lang, quiz.title);
+  const resolvedQuizDescription = pickI18nText(
+    quiz.description_i18n,
+    lang,
+    quiz.description ?? ""
+  );
+
+  const quizIntro = getQuizIntro(quizId, lang);
 
   return (
     <BackgroundShell>
       <QuizPaper
-        activityTitle={quiz.title}
-        quizTitle={t("quizzes.welcomeTitle", { title: quiz.title })}
+        activityTitle={resolvedQuizTitle}
+        quizTitle={t("quizzes.welcomeTitle", { title: resolvedQuizTitle })}
       >
         <div className="mb-6 rounded-md border border-gray-200 bg-white p-5 text-sm text-gray-700">
+          {resolvedQuizDescription ? (
+            <p className="mb-3">{resolvedQuizDescription}</p>
+          ) : null}
+
           <p>{quizIntro.intro}</p>
 
           {quizIntro.quote ? <p className="mt-3">{quizIntro.quote}</p> : null}
@@ -262,7 +354,13 @@ export default function QuizDetailPage() {
             );
 
             return (
-              <QuestionCard key={q.id} index={qi + 1} prompt={q.prompt} required points={1}>
+              <QuestionCard
+                key={q.id}
+                index={qi + 1}
+                prompt={q.prompt}
+                required
+                points={1}
+              >
                 {q.options.map((opt, oi) => {
                   const chosen = answers[qi] === oi;
                   const isSelectedCorrect = !!reviewItem?.is_correct && chosen;

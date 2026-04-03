@@ -116,7 +116,8 @@
     "failedToLoadQuiz": "No se pudo cargar el cuestionario:",
     "failedToLoadQuestions": "No se pudieron cargar las preguntas:",
     "pleaseAnswerAll": "Responde todas las preguntas antes de enviar.",
-    "networkError": "Error de red"
+    "networkError": "Error de red",
+    "requiredQuestion": "Pregunta obligatoria"
   },
   "quizPaper": {
     "intro": "Este breve cuestionario evalúa tu comprensión del enfoque TEAL. Responde las siguientes preguntas basándote en lo aprendido en la ACTIVIDAD 1.1: Explorando TEAL del MÓDULO 1: Introducción a la metodología de enseñanza TEAL. El cuestionario examina tu conocimiento de la definición de TEAL, sus componentes principales (aprendizaje activo, integración tecnológica y colaboración), su origen y cómo se compara con los métodos tradicionales.",
