@@ -1,4 +1,4 @@
-//  app/courses/[courseId]/lessons/[lessonId]/page.tsx
+// app/courses/[courseId]/lessons/[lessonId]/page.tsx
 
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
@@ -155,11 +155,56 @@ function lessonUiText(lang: Lang) {
 
 function pickLessonContentI18n(contentI18n: any, lang: Lang) {
   if (!contentI18n) return null;
-
   if (contentI18n[lang]) return contentI18n[lang];
   if (contentI18n["en"]) return contentI18n["en"];
-
   return null;
+}
+
+function isRealStorageFile(x: any) {
+  return !!x?.name && !x.name.startsWith(".") && x.metadata !== null;
+}
+
+async function listLessonFilesForLanguage(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  basePath: string,
+  lang: Lang
+): Promise<{ files: { name: string }[]; resolvedLang: Lang; resolvedPath: string }> {
+  const preferredPath = `${basePath}/${lang}`;
+  const fallbackPath = `${basePath}/en`;
+
+  const { data: preferredData, error: preferredErr } = await supabase.storage
+    .from("course-assets")
+    .list(preferredPath, { limit: 100 });
+
+  const preferredFiles = preferredErr
+    ? []
+    : (preferredData ?? [])
+        .filter(isRealStorageFile)
+        .map((x) => ({ name: x.name }));
+
+  if (preferredFiles.length > 0) {
+    return {
+      files: preferredFiles,
+      resolvedLang: lang,
+      resolvedPath: preferredPath,
+    };
+  }
+
+  const { data: fallbackData, error: fallbackErr } = await supabase.storage
+    .from("course-assets")
+    .list(fallbackPath, { limit: 100 });
+
+  const fallbackFiles = fallbackErr
+    ? []
+    : (fallbackData ?? [])
+        .filter(isRealStorageFile)
+        .map((x) => ({ name: x.name }));
+
+  return {
+    files: fallbackFiles,
+    resolvedLang: "en",
+    resolvedPath: fallbackPath,
+  };
 }
 
 export const dynamic = "force-dynamic";
@@ -170,12 +215,12 @@ export default async function LessonPage({
 }: {
   params: Promise<{ courseId: string; lessonId: string }>;
 }) {
-   noStore(); 
+  noStore();
 
   const { courseId, lessonId } = await params;
   const { lang } = await getServerTranslation();
-
-  const ui = lessonUiText(normalizeLang(lang));
+  const normalizedLang = normalizeLang(lang);
+  const ui = lessonUiText(normalizedLang);
 
   if (!courseId || !lessonId) {
     return (
@@ -189,7 +234,7 @@ export default async function LessonPage({
 
   const supabase = await createSupabaseServerClient();
 
-    const {
+  const {
     data: { user },
   } = await supabase.auth.getUser();
 
@@ -222,7 +267,8 @@ export default async function LessonPage({
       </div>
     );
   }
-    const { data: course, error: cErr } = await supabase
+
+  const { data: course, error: cErr } = await supabase
     .from("courses")
     .select("id, title, title_i18n")
     .eq("id", courseId)
@@ -237,6 +283,7 @@ export default async function LessonPage({
       </div>
     );
   }
+
   const { data: sections, error: sErr } = await supabase
     .from("course_sections")
     .select("id, title, position, title_i18n")
@@ -293,24 +340,27 @@ export default async function LessonPage({
     );
   }
 
-  // Load resources from Storage folder
+  // Load resources from Storage language folder with EN fallback
   let lessonFiles: { name: string }[] = [];
+  let resolvedAssetsPath = current.assets_path ?? "";
+  let resolvedAssetsLang: Lang = "en";
 
   if (current.assets_path) {
-    const { data, error: listErr } = await supabase.storage
-      .from("course-assets")
-      .list(current.assets_path, { limit: 100 });
+    const result = await listLessonFilesForLanguage(
+      supabase,
+      current.assets_path,
+      normalizedLang
+    );
 
-    if (!listErr) {
-      lessonFiles = (data ?? [])
-        .filter((x) => x?.name && !x.name.startsWith("."))
-        .filter((x: any) => x.metadata !== null)
-        .map((x) => ({ name: x.name }));
-    }
+    lessonFiles = result.files;
+    resolvedAssetsPath = result.resolvedPath;
+    resolvedAssetsLang = result.resolvedLang;
   }
 
   // Put the lesson PDF first
-  const isLessonPdf = (name: string) => /activity-.*pages-.*\.pdf$/i.test(name);
+  const isLessonPdf = (name: string) =>
+  /activity-.*pages-.*\.pdf$/i.test(name) ||
+  /^a\d+-\d+-presentation\.pdf$/i.test(name);
 
   lessonFiles = [...lessonFiles].sort((a, b) => {
     const aName = a.name ?? "";
@@ -329,7 +379,9 @@ export default async function LessonPage({
 
   const { data: moduleQuiz } = await supabase
     .from("module_quizzes")
-    .select("id, title, description, pass_score, is_published, title_i18n, description_i18n")
+    .select(
+      "id, title, description, pass_score, is_published, title_i18n, description_i18n"
+    )
     .eq("course_id", courseId)
     .eq("section_id", current.section_id)
     .eq("is_published", true)
@@ -361,86 +413,83 @@ export default async function LessonPage({
   const next = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : null;
 
   const section = (sections ?? []).find((s) => s.id === current.section_id);
-  console.log("LESSON DEBUG", {
-  title: current.title,
-  position: current.position,
-  });
+
   const resolvedCourseTitle = pickI18n(
-  (course as any).title_i18n,
-  lang,
-  course.title
-);
-
-const resolvedLessonTitle = pickI18n(
-  (current as any).title_i18n,
-  lang,
-  current.title
-);
-
-const normalizedLang = normalizeLang(lang);
-
-const dbContent = pickLessonContentI18n(
-  (current as any).content_i18n,
-  normalizedLang
-);
-
-const activityContent =
-  dbContent ??
-  getActivityContentByLesson(
-    resolvedCourseTitle,
-    resolvedLessonTitle,
-    current.position
+    (course as any).title_i18n,
+    lang,
+    course.title
   );
 
-  console.log("ACTIVITY MATCHED", activityContent?.slug ?? null);
+  const resolvedLessonTitle = pickI18n(
+    (current as any).title_i18n,
+    lang,
+    current.title
+  );
 
-  // Split: lesson PDF (render inline) vs other PDFs (iframe)
+  const dbContent = pickLessonContentI18n(
+    (current as any).content_i18n,
+    normalizedLang
+  );
+
+  const activityContent =
+    dbContent ??
+    getActivityContentByLesson(
+      resolvedCourseTitle,
+      resolvedLessonTitle,
+      current.position
+    );
+
+  // Split: lesson PDF (render inline) vs other PDFs/resources
   const lessonPdf = lessonFiles.find((f) => isLessonPdf(f.name));
   const otherFiles = lessonFiles.filter(
-  (f) =>
-    !/^activity-.*\.pdf$/i.test(f.name) &&
-    !/^case-study-/i.test(f.name)
-);
+    (f) =>
+      !/^activity-.*\.pdf$/i.test(f.name) &&
+      !/^case-study-/i.test(f.name)
+  );
+
   const getPublicUrl = (name: string) =>
     supabase.storage
       .from("course-assets")
-      .getPublicUrl(`${current.assets_path}/${name}`).data.publicUrl;
-       return (
-  <div className="mx-auto max-w-5xl px-6 pt-10 pb-6">
-    {/* Header */}
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div className="min-w-0">
-        <div className="text-sm !text-white">
-          {pickI18n((course as any).title_i18n, lang, course.title)}
+      .getPublicUrl(`${resolvedAssetsPath}/${name}`).data.publicUrl;
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 pt-10 pb-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className="text-sm !text-white">
+            {pickI18n((course as any).title_i18n, lang, course.title)}
+          </div>
+
+          <h1 className="text-3xl font-semibold leading-tight !text-white sm:text-4xl">
+            {pickI18n((current as any).title_i18n, lang, current.title)}
+          </h1>
+
+          <div className="mt-1 text-sm !text-white">
+            {section ? (
+              <>
+                {ui.module} {section.position}:{" "}
+                {pickI18n((section as any).title_i18n, lang, section.title)} •{" "}
+                {ui.lesson} {current.position}
+              </>
+            ) : (
+              <>
+                {ui.lesson} {current.position}
+              </>
+            )}
+          </div>
         </div>
 
-        <h1 className="text-3xl font-semibold leading-tight !text-white sm:text-4xl">
-          {pickI18n((current as any).title_i18n, lang, current.title)}
-        </h1>
-
-        <div className="mt-1 text-sm !text-white">
-          {section ? (
-            <>
-             {ui.module} {section.position}:{" "}
-             {pickI18n((section as any).title_i18n, lang, section.title)} • {ui.lesson}{" "}
-             {current.position}
-            </>
-          ) : (
-            <>{ui.lesson} {current.position}</>
-          )}
+        <div className="w-full sm:w-auto">
+          <LessonActionsClient
+            courseId={courseId}
+            lessonId={lessonId}
+            isCompleted={isCompleted}
+          />
         </div>
       </div>
 
-      <div className="w-full sm:w-auto">
-        <LessonActionsClient
-          courseId={courseId}
-          lessonId={lessonId}
-          isCompleted={isCompleted}
-        />
-      </div>
-    </div>
-
-    {/* Optional lesson text */}
+      {/* Optional lesson text */}
       {current.content && (
         <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
           <div className="prose max-w-none whitespace-pre-wrap text-gray-800">
@@ -449,63 +498,82 @@ const activityContent =
         </div>
       )}
 
-            {/* Structured activity content */}
+      {/* Structured activity content */}
       {activityContent ? (
         <div className="mt-6">
-          <ActivityContentRenderer activity={activityContent} lang={normalizedLang} />
+          <ActivityContentRenderer
+            activity={activityContent}
+            lang={normalizedLang}
+          />
         </div>
       ) : null}
+
+      {/* Inline lesson PDF */}
+      {lessonPdf && current.assets_path && (
+        <div className="mt-6 overflow-hidden rounded-[30px] border border-white/50 bg-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
+          <PdfDocumentViewerNoSSR
+            url={getPublicUrl(lessonPdf.name)}
+            title={lessonPdf.name}
+          />
+        </div>
+      )}
 
       {/* Other files / slides */}
       {otherFiles.length > 0 && current.assets_path && (
         <div className="mt-6 rounded-[30px] border border-white/50 bg-emerald-50/70 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-           <div className="flex items-center gap-3">
-           <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-           📚
-         </div>
-         <div>
-           
-         <h3 className="text-lg font-semibold text-gray-900">{ui.resources}</h3>
-         <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
-         </div>
-        </div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
+              📚
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {ui.resources}
+              </h3>
+              <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+            </div>
+          </div>
+
+          <div className="mt-2 text-xs text-gray-500">
+            Files language: {resolvedAssetsLang.toUpperCase()}
+          </div>
+
           <div className="mt-4 grid gap-4">
-                {otherFiles.map((file) => {
-                 const publicUrl = getPublicUrl(file.name);
-const isPdf = file.name.toLowerCase().endsWith(".pdf");
-const isPpt =
-  file.name.toLowerCase().endsWith(".ppt") ||
-  file.name.toLowerCase().endsWith(".pptx");
+            {otherFiles.map((file) => {
+              const publicUrl = getPublicUrl(file.name);
+              const isPdf = file.name.toLowerCase().endsWith(".pdf");
+              const isPpt =
+                file.name.toLowerCase().endsWith(".ppt") ||
+                file.name.toLowerCase().endsWith(".pptx");
 
-return (
-  <div
-    key={file.name}
-    className="flex flex-col gap-3 rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm transition hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
-  >
-    <div>
-      <div className="text-sm font-semibold text-gray-900">{file.name}</div>
-      <div className="mt-1 text-sm text-gray-600">
-        {isPpt
-          ? ui.presentationFile
-          : isPdf
-          ? ui.supportingPdf
-          : ui.supportingFile
-        }
-      </div>
-    </div>
+              return (
+                <div
+                  key={file.name}
+                  className="flex flex-col gap-3 rounded-3xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm transition hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      {file.name}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600">
+                      {isPpt
+                        ? ui.presentationFile
+                        : isPdf
+                        ? ui.supportingPdf
+                        : ui.supportingFile}
+                    </div>
+                  </div>
 
-    <Link
-  href={`/courses/${courseId}/lessons/${lessonId}/external?url=${encodeURIComponent(
-    publicUrl
-  )}`}
-  className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
->
-  {ui.openFile}
-</Link>
-
-  </div>
-);
-              })}
+                  <Link
+                    href={`/courses/${courseId}/lessons/${lessonId}/external?url=${encodeURIComponent(
+                      publicUrl
+                    )}`}
+                    className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
+                  >
+                    {ui.openFile}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -520,19 +588,23 @@ return (
             <div>
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/70 text-lg shadow-sm">
-                 🧠
-                 </div>
-                 <div>
-                   <h2 className="text-lg font-semibold tracking-tight text-gray-900">{ui.moduleQuiz}</h2>
-                   <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
+                  🧠
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight text-gray-900">
+                    {ui.moduleQuiz}
+                  </h2>
+                  <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
                 </div>
               </div>
+
               <p className="mt-1 text-sm text-gray-700">
                 {pickI18n((moduleQuiz as any).title_i18n, lang, moduleQuiz.title)}
               </p>
 
               <p className="mt-2 text-sm text-gray-600">
-                {ui.passScore}: <span className="font-medium">{moduleQuiz.pass_score}%</span>
+                {ui.passScore}:{" "}
+                <span className="font-medium">{moduleQuiz.pass_score}%</span>
               </p>
 
               {lastAttempt ? (
