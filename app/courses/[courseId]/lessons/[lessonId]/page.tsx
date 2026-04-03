@@ -4,7 +4,6 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import LessonActionsClient from "./LessonActionsClient";
-import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
 import { getServerTranslation } from "@/lib/i18n/server";
 import { pickI18n } from "@/lib/i18n/pick";
 import ActivityContentRenderer from "@/components/activity/ActivityContentRenderer";
@@ -508,14 +507,6 @@ export default async function LessonPage({
         </div>
       ) : null}
 
-      {/* Inline lesson PDF */}
-      {lessonPdf && current.assets_path && (
-        <div className="mt-6 overflow-hidden rounded-[30px] border border-white/50 bg-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
-          <PdfDocumentViewerNoSSR
-            url={getPublicUrl(lessonPdf.name)}
-        />
-        </div>
-      )}
 
       {/* Other files / slides */}
       {otherFiles.length > 0 && current.assets_path && (
