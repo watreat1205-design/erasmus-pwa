@@ -513,8 +513,7 @@ export default async function LessonPage({
         <div className="mt-6 overflow-hidden rounded-[30px] border border-white/50 bg-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-md">
           <PdfDocumentViewerNoSSR
             url={getPublicUrl(lessonPdf.name)}
-            title={lessonPdf.name}
-          />
+        />
         </div>
       )}
 
