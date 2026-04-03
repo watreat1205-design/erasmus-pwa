@@ -10,6 +10,158 @@ import { pickI18n } from "@/lib/i18n/pick";
 import ActivityContentRenderer from "@/components/activity/ActivityContentRenderer";
 import { getActivityContentByLesson } from "@/src/lib/activity/content";
 
+type Lang = "en" | "el" | "it" | "es" | "ro" | "hr";
+
+function normalizeLang(input?: string | null): Lang {
+  const short = (input || "en").slice(0, 2).toLowerCase();
+  if (["en", "el", "it", "es", "ro", "hr"].includes(short)) {
+    return short as Lang;
+  }
+  return "en";
+}
+
+function lessonUiText(lang: Lang) {
+  const t = {
+    en: {
+      resources: "Resources",
+      supportingPdf: "Supporting PDF",
+      presentationFile: "Presentation file",
+      supportingFile: "Supporting file",
+      openFile: "Open file",
+      moduleQuiz: "Module Quiz",
+      passScore: "Pass score",
+      lastAttempt: "Last attempt",
+      passed: "Passed",
+      notPassed: "Not passed",
+      noAttemptsYet: "No attempts yet.",
+      viewQuiz: "View quiz",
+      retakeQuiz: "Retake quiz",
+      startQuiz: "Start quiz",
+      next: "Next",
+      previous: "Previous",
+      endOfCourse: "End of course ✅",
+      module: "Module",
+      lesson: "Lesson",
+    },
+    it: {
+      resources: "Risorse",
+      supportingPdf: "PDF di supporto",
+      presentationFile: "File di presentazione",
+      supportingFile: "File di supporto",
+      openFile: "Apri file",
+      moduleQuiz: "Quiz del modulo",
+      passScore: "Punteggio minimo",
+      lastAttempt: "Ultimo tentativo",
+      passed: "Superato",
+      notPassed: "Non superato",
+      noAttemptsYet: "Nessun tentativo ancora.",
+      viewQuiz: "Apri quiz",
+      retakeQuiz: "Ripeti quiz",
+      startQuiz: "Inizia quiz",
+      next: "Avanti",
+      previous: "Precedente",
+      endOfCourse: "Fine del corso ✅",
+      module: "Modulo",
+      lesson: "Lezione",
+    },
+    el: {
+      resources: "Πόροι",
+      supportingPdf: "Υποστηρικτικό PDF",
+      presentationFile: "Αρχείο παρουσίασης",
+      supportingFile: "Υποστηρικτικό αρχείο",
+      openFile: "Άνοιγμα αρχείου",
+      moduleQuiz: "Κουίζ ενότητας",
+      passScore: "Βαθμός επιτυχίας",
+      lastAttempt: "Τελευταία προσπάθεια",
+      passed: "Επιτυχία",
+      notPassed: "Μη επιτυχία",
+      noAttemptsYet: "Καμία προσπάθεια ακόμη.",
+      viewQuiz: "Άνοιγμα κουίζ",
+      retakeQuiz: "Επανάληψη κουίζ",
+      startQuiz: "Έναρξη κουίζ",
+      next: "Επόμενο",
+      previous: "Προηγούμενο",
+      endOfCourse: "Τέλος μαθήματος ✅",
+      module: "Ενότητα",
+      lesson: "Μάθημα",
+    },
+    es: {
+      resources: "Recursos",
+      supportingPdf: "PDF de apoyo",
+      presentationFile: "Archivo de presentación",
+      supportingFile: "Archivo de apoyo",
+      openFile: "Abrir archivo",
+      moduleQuiz: "Cuestionario del módulo",
+      passScore: "Puntuación mínima",
+      lastAttempt: "Último intento",
+      passed: "Aprobado",
+      notPassed: "No aprobado",
+      noAttemptsYet: "Aún no hay intentos.",
+      viewQuiz: "Ver cuestionario",
+      retakeQuiz: "Repetir cuestionario",
+      startQuiz: "Empezar cuestionario",
+      next: "Siguiente",
+      previous: "Anterior",
+      endOfCourse: "Fin del curso ✅",
+      module: "Módulo",
+      lesson: "Lección",
+    },
+    ro: {
+      resources: "Resurse",
+      supportingPdf: "PDF suport",
+      presentationFile: "Fișier de prezentare",
+      supportingFile: "Fișier suport",
+      openFile: "Deschide fișierul",
+      moduleQuiz: "Testul modulului",
+      passScore: "Prag de promovare",
+      lastAttempt: "Ultima încercare",
+      passed: "Promovat",
+      notPassed: "Nepromovat",
+      noAttemptsYet: "Nicio încercare încă.",
+      viewQuiz: "Deschide testul",
+      retakeQuiz: "Reia testul",
+      startQuiz: "Începe testul",
+      next: "Următorul",
+      previous: "Anteriorul",
+      endOfCourse: "Sfârșitul cursului ✅",
+      module: "Modul",
+      lesson: "Lecția",
+    },
+    hr: {
+      resources: "Resursi",
+      supportingPdf: "PDF podrške",
+      presentationFile: "Datoteka prezentacije",
+      supportingFile: "Datoteka podrške",
+      openFile: "Otvori datoteku",
+      moduleQuiz: "Kviz modula",
+      passScore: "Prag prolaza",
+      lastAttempt: "Posljednji pokušaj",
+      passed: "Položeno",
+      notPassed: "Nije položeno",
+      noAttemptsYet: "Još nema pokušaja.",
+      viewQuiz: "Otvori kviz",
+      retakeQuiz: "Ponovi kviz",
+      startQuiz: "Započni kviz",
+      next: "Dalje",
+      previous: "Prethodno",
+      endOfCourse: "Kraj tečaja ✅",
+      module: "Modul",
+      lesson: "Lekcija",
+    },
+  } as const;
+
+  return t[lang] ?? t.en;
+}
+
+function pickLessonContentI18n(contentI18n: any, lang: Lang) {
+  if (!contentI18n) return null;
+
+  if (contentI18n[lang]) return contentI18n[lang];
+  if (contentI18n["en"]) return contentI18n["en"];
+
+  return null;
+}
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -22,6 +174,8 @@ export default async function LessonPage({
 
   const { courseId, lessonId } = await params;
   const { lang } = await getServerTranslation();
+
+  const ui = lessonUiText(normalizeLang(lang));
 
   if (!courseId || !lessonId) {
     return (
@@ -223,11 +377,21 @@ const resolvedLessonTitle = pickI18n(
   current.title
 );
 
-const activityContent = getActivityContentByLesson(
-  resolvedCourseTitle,
-  resolvedLessonTitle,
-  current.position
+const normalizedLang = normalizeLang(lang);
+
+const dbContent = pickLessonContentI18n(
+  (current as any).content_i18n,
+  normalizedLang
 );
+
+const activityContent =
+  dbContent ??
+  getActivityContentByLesson(
+    resolvedCourseTitle,
+    resolvedLessonTitle,
+    current.position
+  );
+
   console.log("ACTIVITY MATCHED", activityContent?.slug ?? null);
 
   // Split: lesson PDF (render inline) vs other PDFs (iframe)
@@ -257,12 +421,12 @@ const activityContent = getActivityContentByLesson(
         <div className="mt-1 text-sm !text-white">
           {section ? (
             <>
-              Module {section.position}:{" "}
-              {pickI18n((section as any).title_i18n, lang, section.title)} • Lesson{" "}
-              {current.position}
+             {ui.module} {section.position}:{" "}
+             {pickI18n((section as any).title_i18n, lang, section.title)} • {ui.lesson}{" "}
+             {current.position}
             </>
           ) : (
-            <>Lesson {current.position}</>
+            <>{ui.lesson} {current.position}</>
           )}
         </div>
       </div>
@@ -288,7 +452,7 @@ const activityContent = getActivityContentByLesson(
             {/* Structured activity content */}
       {activityContent ? (
         <div className="mt-6">
-          <ActivityContentRenderer activity={activityContent} />
+          <ActivityContentRenderer activity={activityContent} lang={normalizedLang} />
         </div>
       ) : null}
 
@@ -301,7 +465,7 @@ const activityContent = getActivityContentByLesson(
          </div>
          <div>
            
-         <h3 className="text-lg font-semibold text-gray-900">Resources</h3>
+         <h3 className="text-lg font-semibold text-gray-900">{ui.resources}</h3>
          <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
          </div>
         </div>
@@ -322,10 +486,11 @@ return (
       <div className="text-sm font-semibold text-gray-900">{file.name}</div>
       <div className="mt-1 text-sm text-gray-600">
         {isPpt
-          ? "Presentation file"
+          ? ui.presentationFile
           : isPdf
-          ? "Supporting PDF"
-          : "Supporting file"}
+          ? ui.supportingPdf
+          : ui.supportingFile
+        }
       </div>
     </div>
 
@@ -335,7 +500,7 @@ return (
   )}`}
   className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
 >
-  Open file
+  {ui.openFile}
 </Link>
 
   </div>
@@ -358,7 +523,7 @@ return (
                  🧠
                  </div>
                  <div>
-                   <h2 className="text-lg font-semibold tracking-tight text-gray-900">Module Quiz</h2>
+                   <h2 className="text-lg font-semibold tracking-tight text-gray-900">{ui.moduleQuiz}</h2>
                    <div className="mt-1 h-[2px] w-16 rounded-full bg-gradient-to-r from-emerald-500/70 to-transparent" />
                 </div>
               </div>
@@ -367,12 +532,12 @@ return (
               </p>
 
               <p className="mt-2 text-sm text-gray-600">
-                Pass score: <span className="font-medium">{moduleQuiz.pass_score}%</span>
+                {ui.passScore}: <span className="font-medium">{moduleQuiz.pass_score}%</span>
               </p>
 
               {lastAttempt ? (
                 <div className="mt-3 text-sm text-gray-700">
-                  <span className="font-medium">Last attempt:</span>{" "}
+                  <span className="font-medium">{ui.lastAttempt}:</span>{" "}
                   {lastAttempt.score_percent}%{" "}
                   <span
                     className={
@@ -382,11 +547,11 @@ return (
                         : "bg-red-100 text-red-700")
                     }
                   >
-                    {lastAttempt.passed ? "Passed" : "Not passed"}
+                    {lastAttempt.passed ? ui.passed : ui.notPassed}
                   </span>
                 </div>
               ) : (
-                <p className="mt-3 text-sm text-gray-600">No attempts yet.</p>
+                <p className="mt-3 text-sm text-gray-600">{ui.noAttemptsYet}</p>
               )}
             </div>
 
@@ -396,9 +561,9 @@ return (
             >
               {lastAttempt
                 ? lastAttempt.passed
-                  ? "View quiz"
-                  : "Retake quiz"
-                : "Start quiz"}
+                  ? ui.viewQuiz
+                  : ui.retakeQuiz
+                : ui.startQuiz}
             </Link>
           </div>
         </div>
@@ -411,7 +576,7 @@ return (
             href={`/courses/${courseId}/lessons/${prev.id}`}
             className="rounded-md border border-gray-300 bg-gray-800 px-4 py-2 text-sm font-medium !text-white hover:bg-gray-100"
           >
-            ← Previous
+            ← {ui.previous}
           </Link>
         ) : (
           <div />
@@ -422,10 +587,10 @@ return (
             href={`/courses/${courseId}/lessons/${next.id}`}
             className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium !text-white hover:bg-emerald-800"
           >
-            Next →
+            {ui.next} →
           </Link>
         ) : (
-          <div className="text-sm text-gray-500">End of course ✅</div>
+          <div className="text-sm text-gray-500">{ui.endOfCourse}</div>
         )}
       </div>
     </div>

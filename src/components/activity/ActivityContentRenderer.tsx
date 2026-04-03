@@ -8,6 +8,99 @@ import type {
 } from "@/src/lib/activity/content-types";
 import { openInPlatform } from "@/components/lesson/openInPlatform";
 
+type Lang = "en" | "el" | "it" | "es" | "ro" | "hr";
+
+function uiText(lang: Lang) {
+  const t = {
+    en: {
+      activityFlow: "Activity Flow",
+      activityFlowSub: "A simple guide to complete this activity",
+      stepByStepPart1: "Step-by-Step Activity (Part 1)",
+      stepByStepPart2: "Step-by-Step Activity (Part 2)",
+      openLink: "Open link →",
+      openMaterial: "Open material →",
+      openInsidePlatform: "Open inside platform →",
+      videoPreview: "Video preview",
+      caseStudiesAndFurtherReading: "Case Studies and Further Reading",
+      resources: "Resources",
+      step: "Step",
+      video: "Video",
+    },
+    it: {
+      activityFlow: "Flusso dell'attività",
+      activityFlowSub: "Una guida semplice per completare questa attività",
+      stepByStepPart1: "Attività passo dopo passo (Parte 1)",
+      stepByStepPart2: "Attività passo dopo passo (Parte 2)",
+      openLink: "Apri link →",
+      openMaterial: "Apri materiale →",
+      openInsidePlatform: "Apri nella piattaforma →",
+      videoPreview: "Anteprima video",
+      caseStudiesAndFurtherReading: "Casi di studio e ulteriori letture",
+      resources: "Risorse",
+      step: "Passo",
+      video: "Video",
+    },
+    el: {
+      activityFlow: "Ροή δραστηριότητας",
+      activityFlowSub: "Ένας απλός οδηγός για την ολοκλήρωση αυτής της δραστηριότητας",
+      stepByStepPart1: "Δραστηριότητα βήμα προς βήμα (Μέρος 1)",
+      stepByStepPart2: "Δραστηριότητα βήμα προς βήμα (Μέρος 2)",
+      openLink: "Άνοιγμα συνδέσμου →",
+      openMaterial: "Άνοιγμα υλικού →",
+      openInsidePlatform: "Άνοιγμα στην πλατφόρμα →",
+      videoPreview: "Προεπισκόπηση βίντεο",
+      caseStudiesAndFurtherReading: "Μελέτες περίπτωσης και περαιτέρω ανάγνωση",
+      resources: "Πόροι",
+      step: "Βήμα",
+      video: "Βίντεο",
+    },
+    es: {
+      activityFlow: "Flujo de la actividad",
+      activityFlowSub: "Una guía sencilla para completar esta actividad",
+      stepByStepPart1: "Actividad paso a paso (Parte 1)",
+      stepByStepPart2: "Actividad paso a paso (Parte 2)",
+      openLink: "Abrir enlace →",
+      openMaterial: "Abrir material →",
+      openInsidePlatform: "Abrir dentro de la plataforma →",
+      videoPreview: "Vista previa del vídeo",
+      caseStudiesAndFurtherReading: "Casos prácticos y lecturas complementarias",
+      resources: "Recursos",
+      step: "Paso",
+      video: "Vídeo",
+    },
+    ro: {
+      activityFlow: "Fluxul activității",
+      activityFlowSub: "Un ghid simplu pentru a finaliza această activitate",
+      stepByStepPart1: "Activitate pas cu pas (Partea 1)",
+      stepByStepPart2: "Activitate pas cu pas (Partea 2)",
+      openLink: "Deschide linkul →",
+      openMaterial: "Deschide materialul →",
+      openInsidePlatform: "Deschide în platformă →",
+      videoPreview: "Previzualizare video",
+      caseStudiesAndFurtherReading: "Studii de caz și lecturi suplimentare",
+      resources: "Resurse",
+      step: "Pasul",
+      video: "Video",
+    },
+    hr: {
+      activityFlow: "Tijek aktivnosti",
+      activityFlowSub: "Jednostavan vodič za dovršavanje ove aktivnosti",
+      stepByStepPart1: "Aktivnost korak po korak (1. dio)",
+      stepByStepPart2: "Aktivnost korak po korak (2. dio)",
+      openLink: "Otvori poveznicu →",
+      openMaterial: "Otvori materijal →",
+      openInsidePlatform: "Otvori unutar platforme →",
+      videoPreview: "Pregled videa",
+      caseStudiesAndFurtherReading: "Studije slučaja i dodatna literatura",
+      resources: "Resursi",
+      step: "Korak",
+      video: "Video",
+    },
+  } as const;
+
+  return t[lang] ?? t.en;
+}
+
 function getSectionIcon(section: ActivitySection) {
   switch (section.type) {
     case "cards":
@@ -94,8 +187,10 @@ function SectionCard({
 function renderTextWithMarkdownLink(
   p: string,
   key: string,
+  lang: Lang,
   buttonClassName?: string
 ) {
+  const t = uiText(lang);
   const markdownMatch = p.match(/^\[(.*?)\]\((.*?)\)$/);
 
   if (markdownMatch) {
@@ -132,7 +227,7 @@ function renderTextWithMarkdownLink(
           "mt-3 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
         }
       >
-        Open link →
+        {t.openLink}
       </button>
     );
   }
@@ -152,7 +247,7 @@ function renderTextWithMarkdownLink(
           "mt-3 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
         }
       >
-        Open link →
+        {t.openLink}
       </button>
     );
   }
@@ -167,8 +262,10 @@ function renderTextWithMarkdownLink(
 function renderStepBodyText(
   p: string,
   key: string,
+  lang: Lang,
   buttonClassName?: string
 ) {
+  const t = uiText(lang);
   const fullLineMarkdownMatch = p.match(/^\[(.*?)\]\((.*?)\)$/);
 
   if (fullLineMarkdownMatch) {
@@ -205,7 +302,7 @@ function renderStepBodyText(
           "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
         }
       >
-        Open link →
+        {t.openLink}
       </button>
     );
   }
@@ -225,7 +322,7 @@ function renderStepBodyText(
           "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
         }
       >
-        Open link →
+        {t.openLink}
       </button>
     );
   }
@@ -276,7 +373,12 @@ function renderStepBodyText(
   );
 }
 
-function renderSection(section: ActivitySection, stepStartNumber = 1) {
+function renderSection(
+  section: ActivitySection,
+  stepStartNumber = 1,
+  lang: Lang = "en"
+) {
+  const t = uiText(lang);
   const icon = getSectionIcon(section);
 
   switch (section.type) {
@@ -285,7 +387,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
         <SectionCard key={section.id} title={section.title} icon={icon}>
           <div className="space-y-4 text-gray-700">
             {section.body.map((p: string, i: number) =>
-              renderTextWithMarkdownLink(p, `text-${section.id}-${i}`)
+              renderTextWithMarkdownLink(p, `text-${section.id}-${i}`, lang)
             )}
           </div>
         </SectionCard>
@@ -372,6 +474,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                       renderStepBodyText(
                         p,
                         `step-${section.id}-${i}-${idx}`,
+                        lang,
                         "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700 shadow-sm hover:bg-emerald-100"
                       )
                     )}
@@ -423,14 +526,14 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-sm text-gray-500">
-                        Video preview
+                        {t.videoPreview}
                       </div>
                     )}
                   </div>
 
                   <div className="p-5">
                     <div className="text-sm font-medium text-emerald-700">
-                      Video
+                      {t.video}
                     </div>
                     <div className="mt-2 text-base font-semibold text-gray-900">
                       {item.title}
@@ -441,7 +544,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                       </p>
                     ) : null}
                     <div className="mt-4 text-sm font-medium text-blue-700">
-                      Open inside platform →
+                      {t.openInsidePlatform}
                     </div>
                   </div>
                 </button>
@@ -493,7 +596,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
             {furtherReadingItems.length > 0 ? (
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Case Studies and Further Reading
+                  {t.caseStudiesAndFurtherReading}
                 </h3>
 
                 {furtherReadingItems.map(
@@ -529,7 +632,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                           ) : null}
 
                           <div className="mt-4 text-sm font-medium text-emerald-700">
-                            Open material →
+                            {t.openMaterial}
                           </div>
                         </div>
                       </div>
@@ -542,7 +645,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
             {slideItems.length > 0 ? (
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Resources
+                  {t.resources}
                 </h3>
 
                 {slideItems.map(
@@ -578,7 +681,7 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
                           ) : null}
 
                           <div className="mt-4 text-sm font-medium text-emerald-700">
-                            Open material →
+                            {t.openMaterial}
                           </div>
                         </div>
                       </div>
@@ -599,9 +702,13 @@ function renderSection(section: ActivitySection, stepStartNumber = 1) {
 
 export default function ActivityContentRenderer({
   activity,
+  lang = "en",
 }: {
   activity: ActivityContent;
+  lang?: Lang;
 }) {
+  const t = uiText(lang);
+
   const stepsSection = activity.sections.find(
     (section) => section.type === "steps"
   );
@@ -665,7 +772,7 @@ export default function ActivityContentRenderer({
         const requirements = activity.sections.find(
           (section) => section.id === "requirements"
         );
-        return requirements ? renderSection(requirements) : null;
+        return requirements ? renderSection(requirements, 1, lang) : null;
       })()}
 
       {flowSteps.length > 0 ? (
@@ -678,11 +785,9 @@ export default function ActivityContentRenderer({
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Activity Flow
+                  {t.activityFlow}
                 </h2>
-                <p className="text-sm text-gray-600">
-                  A simple guide to complete this activity
-                </p>
+                <p className="text-sm text-gray-600">{t.activityFlowSub}</p>
               </div>
             </div>
 
@@ -700,7 +805,7 @@ export default function ActivityContentRenderer({
                     className="rounded-2xl border border-white/60 bg-[#f2f9f2]/92 p-4 shadow-sm"
                   >
                     <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                      Step {index + 1}
+                      {t.step} {index + 1}
                     </div>
                     <div className="mt-2 text-sm font-medium text-gray-900">
                       {step.title}
@@ -718,7 +823,7 @@ export default function ActivityContentRenderer({
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "learning-focus");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {shouldSplitSpecial ? (
@@ -727,7 +832,7 @@ export default function ActivityContentRenderer({
             const part1 = activity.sections.find((s) => s.id === "steps-part-1");
 
             if (part1 && part1.type === "steps") {
-              return renderSection(part1, 1);
+              return renderSection(part1, 1, lang);
             }
 
             const fallbackSteps = activity.sections.find((s) => s.type === "steps");
@@ -735,10 +840,10 @@ export default function ActivityContentRenderer({
               const splitPart1 = {
                 ...fallbackSteps,
                 id: `${fallbackSteps.id}-part-1`,
-                title: "Step-by-Step Activity (Part 1)",
+                title: t.stepByStepPart1,
                 steps: fallbackSteps.steps.slice(0, 3),
               };
-              return renderSection(splitPart1, 1);
+              return renderSection(splitPart1, 1, lang);
             }
 
             return null;
@@ -746,14 +851,14 @@ export default function ActivityContentRenderer({
 
           {(() => {
             const videos = activity.sections.find((s) => s.type === "videos");
-            return videos ? renderSection(videos) : null;
+            return videos ? renderSection(videos, 1, lang) : null;
           })()}
 
           {(() => {
             const part2 = activity.sections.find((s) => s.id === "steps-part-2");
 
             if (part2 && part2.type === "steps") {
-              return renderSection(part2, 4);
+              return renderSection(part2, 4, lang);
             }
 
             const fallbackSteps = activity.sections.find((s) => s.type === "steps");
@@ -761,10 +866,10 @@ export default function ActivityContentRenderer({
               const splitPart2 = {
                 ...fallbackSteps,
                 id: `${fallbackSteps.id}-part-2`,
-                title: "Step-by-Step Activity (Part 2)",
+                title: t.stepByStepPart2,
                 steps: fallbackSteps.steps.slice(3),
               };
-              return splitPart2.steps.length ? renderSection(splitPart2, 4) : null;
+              return splitPart2.steps.length ? renderSection(splitPart2, 4, lang) : null;
             }
 
             return null;
@@ -774,12 +879,12 @@ export default function ActivityContentRenderer({
         <>
           {(() => {
             const section = activity.sections.find((s) => s.type === "steps");
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
 
           {(() => {
             const section = activity.sections.find((s) => s.type === "videos");
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
         </>
       )}
@@ -788,95 +893,95 @@ export default function ActivityContentRenderer({
         <>
           {(() => {
             const section = activity.sections.find((s) => s.id === "case-study-1");
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
 
           {(() => {
             const section = activity.sections.find(
               (s) => s.id === "case-study-1-image"
             );
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
 
           {(() => {
             const section = activity.sections.find((s) => s.id === "case-study-2");
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
 
           {(() => {
             const section = activity.sections.find(
               (s) => s.id === "case-study-2-image"
             );
-            return section ? renderSection(section) : null;
+            return section ? renderSection(section, 1, lang) : null;
           })()}
         </>
       ) : null}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "case-study");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "case-study-image");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "pledge");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
-            {(() => {
+      {(() => {
         const section = activity.sections.find((s) => s.id === "scenario-mockup");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "funding-proposals");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "stakeholder-roles");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "forum-rules");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "facilitator-notes");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find(
           (s) => s.id === "expected-learning-outcomes"
         );
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "extension");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "assessment");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "resources");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
 
       {(() => {
         const section = activity.sections.find((s) => s.id === "further-reading");
-        return section ? renderSection(section) : null;
+        return section ? renderSection(section, 1, lang) : null;
       })()}
     </div>
   );
