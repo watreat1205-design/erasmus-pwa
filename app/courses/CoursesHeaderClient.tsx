@@ -1,4 +1,3 @@
-// app/courses/CoursesHeaderClient.tsx
 "use client";
 
 import Link from "next/link";
@@ -58,25 +57,7 @@ export default function CoursesHeaderClient() {
 
   return (
     <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-      {loggedIn ? (
-        <>
-          <Link
-            href="/dashboard"
-            prefetch={false}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-3 text-sm font-medium text-black hover:bg-gray-100 sm:w-auto"
-          >
-            {t("nav.dashboard")}
-          </Link>
-
-          <Link
-            href="/welcome"
-            prefetch={false}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-medium !text-white hover:bg-gray-900 sm:w-auto"
-          >
-            {t("common.backToWelcome")}
-          </Link>
-        </>
-      ) : (
+      {loggedIn ? null : (
         <>
           <Link
             href="/login"

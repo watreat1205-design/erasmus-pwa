@@ -251,10 +251,10 @@ for (const quiz of quizzes) {
                   </div>
 
                   {course.description ? (
-                    <p className="mt-4 text-sm leading-6 text-gray-700">
+                    <p className="mt-4 whitespace-pre-line text-sm leading-6 text-gray-700">
                       {course.description}
                     </p>
-                  ) : (
+                  ) : (  
                     <p className="mt-4 text-sm leading-6 text-gray-600">
                       {t("courses.noDescription", {
                         defaultValue:
