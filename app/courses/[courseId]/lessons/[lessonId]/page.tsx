@@ -168,41 +168,36 @@ async function listLessonFilesForLanguage(
   basePath: string,
   lang: Lang
 ): Promise<{ files: { name: string }[]; resolvedLang: Lang; resolvedPath: string }> {
-  const preferredPath = `${basePath}/${lang}`;
-  const fallbackPath = `${basePath}/en`;
+  const candidatePaths = [
+    { path: `${basePath}/${lang}`, resolvedLang: lang as Lang },
+    { path: `${basePath}/en`, resolvedLang: "en" as Lang },
+    { path: basePath, resolvedLang: lang as Lang }, // fallback for old/plain folder structure
+  ];
 
-  const { data: preferredData, error: preferredErr } = await supabase.storage
-    .from("course-assets")
-    .list(preferredPath, { limit: 100 });
+  for (const candidate of candidatePaths) {
+    const { data, error } = await supabase.storage
+      .from("course-assets")
+      .list(candidate.path, { limit: 100 });
 
-  const preferredFiles = preferredErr
-    ? []
-    : (preferredData ?? [])
-        .filter(isRealStorageFile)
-        .map((x) => ({ name: x.name }));
+    const files = error
+      ? []
+      : (data ?? [])
+          .filter(isRealStorageFile)
+          .map((x) => ({ name: x.name }));
 
-  if (preferredFiles.length > 0) {
-    return {
-      files: preferredFiles,
-      resolvedLang: lang,
-      resolvedPath: preferredPath,
-    };
+    if (files.length > 0) {
+      return {
+        files,
+        resolvedLang: candidate.resolvedLang,
+        resolvedPath: candidate.path,
+      };
+    }
   }
 
-  const { data: fallbackData, error: fallbackErr } = await supabase.storage
-    .from("course-assets")
-    .list(fallbackPath, { limit: 100 });
-
-  const fallbackFiles = fallbackErr
-    ? []
-    : (fallbackData ?? [])
-        .filter(isRealStorageFile)
-        .map((x) => ({ name: x.name }));
-
   return {
-    files: fallbackFiles,
+    files: [],
     resolvedLang: "en",
-    resolvedPath: fallbackPath,
+    resolvedPath: basePath,
   };
 }
 

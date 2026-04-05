@@ -1,3 +1,4 @@
+// src/lib/activity/content/activity-4-2.ts
 import type { ActivityContent } from "@/src/lib/activity/content-types";
 
 export const activity42Content: ActivityContent = {
