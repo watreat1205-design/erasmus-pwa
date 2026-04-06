@@ -5,12 +5,23 @@ import CoursesHeaderClient from "./CoursesHeaderClient";
 import CoursesPublicHeader from "./CoursesPublicHeader";
 import { getServerTranslation } from "@/lib/i18n/server";
 
+function pickI18n(
+  i18n: Record<string, string> | null | undefined,
+  lang: string,
+  fallback: string
+) {
+  if (!i18n) return fallback;
+  return i18n[lang] || i18n["en"] || fallback;
+}
+
 export const dynamic = "force-dynamic";
 
 type CourseRow = {
   id: string;
   title: string;
+  title_i18n?: Record<string, string> | null;
   description: string | null;
+  description_i18n?: Record<string, string> | null;
   position: number | null;
 };
 
@@ -31,7 +42,7 @@ type ModuleQuizRow = {
 
 export default async function CoursesPublicPage() {
   const supabase = await createSupabaseServerClient();
-  const { t } = await getServerTranslation();
+  const { t, lang } = await getServerTranslation();
 
   const {
     data: { user },
@@ -39,7 +50,7 @@ export default async function CoursesPublicPage() {
 
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, description, position")
+    .select("id, title, title_i18n, description, description_i18n, position")
     .eq("is_published", true)
     .order("position", { ascending: true, nullsFirst: false })
     .order("title", { ascending: true });
@@ -215,7 +226,7 @@ export default async function CoursesPublicPage() {
               return (
                 <div key={course.id} className="rounded-[26px] bg-white/80 p-6">
                   <h2 className="text-lg font-semibold">
-                    {course.title}
+                    {pickI18n(course.title_i18n, lang, course.title)}
                   </h2>
 
                   <div className="mt-2 text-sm">
@@ -223,10 +234,11 @@ export default async function CoursesPublicPage() {
                     {t("courses.moduleQuiz")}
                   </div>
 
-                  <p className="mt-4 text-sm">
-                    {course.description ||
-                      t("courses.noDescription")}
-                  </p>
+                     <p className="mt-4 whitespace-pre-line text-sm leading-6 text-gray-700">
+                        {course.description
+                        ? pickI18n(course.description_i18n, lang, course.description)
+                        : t("courses.noDescription")}
+                     </p>               
 
                   <Link
                     href={`/courses/${course.id}`}
