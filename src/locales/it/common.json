@@ -47,8 +47,17 @@
     "open": "Apri",
     "openCourse": "Apri corso",
     "activities": "Attività",
-    "quizzes": "Quiz"
-  },
+    "quizzes": "Quiz",
+    "activities": "Attività",
+    "moduleQuiz": "Quiz del modulo",
+    "openCourse": "Apri corso",
+    "progress": "Progresso",
+    "activitiesCompleted": "attività completate",
+    "quizzesPassed": "quiz superati",
+    "noDescription": "Esplora le attività di questo modulo.",
+    "empty": "Non ci sono ancora corsi pubblicati.",
+    "loadError": "Impossibile caricare i corsi."
+   },
   "common": {
     "back": "Indietro",
     "open": "Apri",

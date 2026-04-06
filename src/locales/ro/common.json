@@ -47,8 +47,17 @@
     "open": "Deschide",
     "openCourse": "Deschide cursul",
     "activities": "Activități",
-    "quizzes": "Chestionare"
-  },
+    "quizzes": "Chestionare",
+    "activities": "Activități",
+    "moduleQuiz": "Testul modulului",
+    "openCourse": "Deschide cursul",
+    "progress": "Progres",
+    "activitiesCompleted": "activități finalizate",
+    "quizzesPassed": "teste promovate",
+    "noDescription": "Explorează activitățile din acest modul.",
+    "empty": "Nu există încă cursuri publicate disponibile.",
+    "loadError": "Cursurile nu au putut fi încărcate."
+   },
   "common": {
     "back": "Înapoi",
     "open": "Deschide",

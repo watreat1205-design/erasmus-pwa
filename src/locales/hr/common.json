@@ -47,8 +47,17 @@
     "open": "Otvori",
     "openCourse": "Otvori tečaj",
     "activities": "Aktivnosti",
-    "quizzes": "Kvizovi"
-  },
+    "quizzes": "Kvizovi",
+    "activities": "Aktivnosti",
+    "moduleQuiz": "Kviz modula",
+    "openCourse": "Otvori tečaj",
+    "progress": "Napredak",
+    "activitiesCompleted": "završenih aktivnosti",
+    "quizzesPassed": "položenih kvizova",
+    "noDescription": "Istraži aktivnosti u ovom modulu.",
+    "empty": "Još nema dostupnih objavljenih tečajeva.",
+    "loadError": "Nije moguće učitati tečajeve."
+   },
   "common": {
     "back": "Natrag",
     "open": "Otvori",

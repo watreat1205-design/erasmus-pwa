@@ -102,12 +102,12 @@ export default async function CoursesPublicPage() {
   }
 
   const quizCountByCourse = new Map<string, number>();
-for (const quiz of quizzes) {
-  quizCountByCourse.set(
-    quiz.course_id,
-    (quizCountByCourse.get(quiz.course_id) ?? 0) + 1
-  );
-}
+  for (const quiz of quizzes) {
+    quizCountByCourse.set(
+      quiz.course_id,
+      (quizCountByCourse.get(quiz.course_id) ?? 0) + 1
+    );
+  }
 
   const completedLessonsByCourse = new Map<string, number>();
   const passedQuizzesByCourse = new Map<string, number>();
@@ -122,7 +122,7 @@ for (const quiz of quizzes) {
       : { data: [] as { lesson_id: string }[] };
 
     for (const row of lessonProgressData ?? []) {
-      const courseId = lessonToCourse.get((row as { lesson_id: string }).lesson_id);
+      const courseId = lessonToCourse.get(row.lesson_id);
       if (!courseId) continue;
 
       completedLessonsByCourse.set(
@@ -143,11 +143,10 @@ for (const quiz of quizzes) {
     const countedPassedQuizzes = new Set<string>();
 
     for (const row of passedQuizAttempts ?? []) {
-      const quizId = (row as { quiz_id: string }).quiz_id;
-      if (countedPassedQuizzes.has(quizId)) continue;
-      countedPassedQuizzes.add(quizId);
+      if (countedPassedQuizzes.has(row.quiz_id)) continue;
+      countedPassedQuizzes.add(row.quiz_id);
 
-      const courseId = quizToCourse.get(quizId);
+      const courseId = quizToCourse.get(row.quiz_id);
       if (!courseId) continue;
 
       passedQuizzesByCourse.set(
@@ -161,20 +160,15 @@ for (const quiz of quizzes) {
     return (
       <div className="relative z-10">
         <div className="mx-auto max-w-5xl px-6 py-10">
-          <div className="flex items-start justify-between gap-4">
-            <CoursesPublicHeader />
-            <div className="shrink-0">
-              <CoursesHeaderClient />
-            </div>
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-white/20 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
-            <h1 className="text-2xl font-semibold text-gray-900">Courses</h1>
-            <p className="mt-2 text-gray-800">Could not load courses.</p>
-
-            <pre className="mt-4 overflow-auto rounded-xl bg-black/80 p-4 text-xs text-white">
-              {error.message}
-            </pre>
+          <div className="mt-8 rounded-2xl border bg-white/80 p-6">
+            <h1 className="text-2xl font-semibold">
+              {t("courses.title", { defaultValue: "Courses" })}
+            </h1>
+            <p className="mt-2">
+              {t("courses.loadError", {
+                defaultValue: "Could not load courses.",
+              })}
+            </p>
           </div>
         </div>
       </div>
@@ -186,28 +180,30 @@ for (const quiz of quizzes) {
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="flex items-start justify-between gap-4">
           <CoursesPublicHeader />
-          <div className="shrink-0">
-            <CoursesHeaderClient />
-          </div>
+          <CoursesHeaderClient />
         </div>
 
         {!courses.length ? (
-          <div className="mt-8 rounded-2xl border border-white/20 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
-            <p className="text-gray-800">No published courses available yet.</p>
+          <div className="mt-8 rounded-2xl bg-white/80 p-6">
+            <p>
+              {t("courses.empty", {
+                defaultValue: "No published courses available yet.",
+              })}
+            </p>
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
             {courses.map((course) => {
               const lessonCount = lessonCountByCourse.get(course.id) ?? 0;
-
-              // For the current approval phase, each module card should show only 1 module quiz
-              const quizCount = Math.min(quizCountByCourse.get(course.id) ?? 0, 1);
+              const quizCount = Math.min(
+                quizCountByCourse.get(course.id) ?? 0,
+                1
+              );
 
               const completedLessons =
                 completedLessonsByCourse.get(course.id) ?? 0;
-              const passedQuizzesRaw =
-                passedQuizzesByCourse.get(course.id) ?? 0;
-              const passedQuizzes = Math.min(passedQuizzesRaw, 1);
+              const passedQuizzes =
+                Math.min(passedQuizzesByCourse.get(course.id) ?? 0, 1);
 
               const totalUnits = lessonCount + quizCount;
               const completedUnits = completedLessons + passedQuizzes;
@@ -217,92 +213,50 @@ for (const quiz of quizzes) {
                   : 0;
 
               return (
-                <div
-                  key={course.id}
-                  className="group rounded-[26px] border border-white/25 bg-white/78 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition hover:-translate-y-[2px] hover:bg-white/84 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/60 bg-emerald-50/90 text-lg shadow-sm">
-                        📘
-                      </div>
+                <div key={course.id} className="rounded-[26px] bg-white/80 p-6">
+                  <h2 className="text-lg font-semibold">
+                    {course.title}
+                  </h2>
 
-                      <div className="min-w-0">
-                        <h2 className="text-lg font-semibold tracking-tight text-gray-900">
-                          {course.title}
-                        </h2>
-
-                        <div className="mt-2 text-sm text-gray-600">
-                          {lessonCount}{" "}
-                          {t("courses.activities", {
-                            defaultValue: "Activities",
-                          })}{" "}
-                          • {quizCount}{" "}
-                          {t("courses.moduleQuiz", {
-                            defaultValue: "Module quiz",
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    <span className="mt-1 text-gray-400 transition group-hover:translate-x-1">
-                      →
-                    </span>
+                  <div className="mt-2 text-sm">
+                    {lessonCount} {t("courses.activities")} • {quizCount}{" "}
+                    {t("courses.moduleQuiz")}
                   </div>
 
-                  {course.description ? (
-                    <p className="mt-4 whitespace-pre-line text-sm leading-6 text-gray-700">
-                      {course.description}
-                    </p>
-                  ) : (  
-                    <p className="mt-4 text-sm leading-6 text-gray-600">
-                      {t("courses.noDescription", {
-                        defaultValue:
-                          "Explore the activities in this module to deepen your understanding of TEAL pedagogy.",
-                      })}
-                    </p>
-                  )}
+                  <p className="mt-4 text-sm">
+                    {course.description ||
+                      t("courses.noDescription")}
+                  </p>
 
                   <Link
                     href={`/courses/${course.id}`}
-                    className="mt-5 inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                    className="mt-5 inline-flex rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white"
                   >
-                    {t("courses.openCourse", {
-                      defaultValue: "Open course",
-                    })}
+                    {t("courses.openCourse")}
                   </Link>
 
-                  {user ? (
+                  {user && (
                     <div className="mt-5">
-                      <div className="flex items-center justify-between text-xs font-medium text-gray-700">
-                        <span>
-                          {t("courses.progress", {
-                            defaultValue: "Progress",
-                          })}
-                        </span>
+                      <div className="flex justify-between text-xs">
+                        <span>{t("courses.progress")}</span>
                         <span>{progressPercent}%</span>
                       </div>
 
-                      <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white/70">
+                      <div className="mt-2 h-2.5 bg-white/70 rounded-full">
                         <div
-                          className="h-full rounded-full bg-emerald-600 transition-all"
+                          className="h-full bg-emerald-600 rounded-full"
                           style={{ width: `${progressPercent}%` }}
                         />
                       </div>
 
-                      <div className="mt-2 text-xs text-gray-600">
+                      <div className="mt-2 text-xs">
                         {completedLessons}/{lessonCount}{" "}
-                        {t("courses.activitiesCompleted", {
-                          defaultValue: "activities completed",
-                        })}
-                        {" • "}
+                        {t("courses.activitiesCompleted")} •{" "}
                         {passedQuizzes}/{quizCount}{" "}
-                        {t("courses.quizzesPassed", {
-                          defaultValue: "quizzes passed",
-                        })}
+                        {t("courses.quizzesPassed")}
                       </div>
                     </div>
-                  ) : null}
+                  )}
                 </div>
               );
             })}

@@ -47,7 +47,16 @@
     "open": "Abrir",
     "openCourse": "Abrir curso",
     "activities": "Actividades",
-    "quizzes": "Cuestionarios"
+    "quizzes": "Cuestionarios",
+    "activities": "Actividades",
+    "moduleQuiz": "Cuestionario del módulo",
+    "openCourse": "Abrir curso",
+    "progress": "Progreso",
+    "activitiesCompleted": "actividades completadas",
+    "quizzesPassed": "cuestionarios aprobados",
+    "noDescription": "Explora las actividades de este módulo.",
+    "empty": "Todavía no hay cursos publicados disponibles.",
+    "loadError": "No se pudieron cargar los cursos."
   },
   "common": {
     "back": "Atrás",

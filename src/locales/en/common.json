@@ -47,8 +47,17 @@
     "open": "Open", 
     "openCourse": "Open course",
     "activities": "Activities",
-    "quizzes": "Quizzes"
- },
+    "quizzes": "Quizzes",
+    "activities": "Activities",
+    "moduleQuiz": "Module quiz",
+    "openCourse": "Open course",
+    "progress": "Progress",
+    "activitiesCompleted": "activities completed",
+    "quizzesPassed": "quizzes passed",
+    "noDescription": "Explore the activities in this module.",
+    "empty": "No published courses available yet.",
+    "loadError": "Could not load courses."
+  },
   "common": {
     "back": "Back",
     "open": "Open",
