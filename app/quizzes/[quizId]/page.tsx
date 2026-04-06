@@ -323,7 +323,10 @@ export default function QuizDetailPage() {
     quiz.description ?? ""
   );
 
-  const quizIntro = getQuizIntro(quizId, lang);
+  const quizIntro =
+  quizId === "0691176a-40d3-49f7-8b16-6f22274aff03"
+    ? getQuizIntro(quizId, lang)
+    : null;
 
   return (
     <BackgroundShell>
@@ -331,17 +334,17 @@ export default function QuizDetailPage() {
         activityTitle={resolvedQuizTitle}
         quizTitle={t("quizzes.welcomeTitle", { title: resolvedQuizTitle })}
       >
-        <div className="mb-6 rounded-md border border-gray-200 bg-white p-5 text-sm text-gray-700">
-          {resolvedQuizDescription ? (
-            <p className="mb-3">{resolvedQuizDescription}</p>
-          ) : null}
-
-          <p>{quizIntro.intro}</p>
-
-          {quizIntro.quote ? <p className="mt-3">{quizIntro.quote}</p> : null}
-
-          <p className="mt-3">{quizIntro.note}</p>
-        </div>
+      <div className="mb-6 rounded-md border border-gray-200 bg-white p-5 text-sm text-gray-700">
+          {quizIntro ? (
+      <>
+        <p>{quizIntro.intro}</p>
+           {quizIntro.quote ? <p className="mt-3">{quizIntro.quote}</p> : null}
+        <p className="mt-3">{quizIntro.note}</p>
+      </>
+       ) : resolvedQuizDescription ? (
+        <p className="whitespace-pre-line">{resolvedQuizDescription}</p>
+       ) : null}
+      </div>
 
         {!questions.length ? (
           <div className="rounded-md bg-white p-4 text-sm text-gray-700">
