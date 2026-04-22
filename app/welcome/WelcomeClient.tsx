@@ -136,16 +136,18 @@ export default function WelcomeClient({
         </nav>
       </header>
 
-      <main className="flex items-start">
+      <main className="flex items-start pt-2 pb-24 sm:pb-32">
         <section className="w-full pt-0">
-          <div className="max-w-2xl animate-[fadeUp_.35s_ease-out]">
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-white/80 drop-shadow-sm sm:text-5xl">
+          <div className="max-w-5xl animate-[fadeUp_.35s_ease-out]">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
               {mounted
-                ? t("welcome.title", { defaultValue: "Welcome" })
-                : "Welcome"}
+                ? t("welcome.title", {
+                    defaultValue: "DROPS of Sustainable Development",
+                  })
+                : "DROPS of Sustainable Development"}
             </h1>
 
-            <p className="mt-3 text-base font-medium leading-7 text-white/90 sm:text-lg">
+            <p className="mt-3 text-base font-semibold leading-7 text-white sm:text-lg">
               {mounted
                 ? t("welcome.subtitle", {
                     defaultValue:
@@ -155,7 +157,7 @@ export default function WelcomeClient({
             </p>
 
             {loggedIn ? (
-              <p className="mt-3 text-sm font-medium text-white/90">
+              <p className="mt-3 text-sm font-semibold text-white">
                 {mounted
                   ? displayName
                     ? t("welcome.backWithName", {
@@ -169,42 +171,62 @@ export default function WelcomeClient({
               </p>
             ) : null}
 
-            <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center">
-            <div className="grid gap-3 sm:flex sm:flex-wrap">
-            <Link
-              href={loggedIn ? "/courses" : "/login?next=/courses"}
-              prefetch={false}
-              className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
-            >
-             {mounted
-             ? t("buttons.goToCourses", { defaultValue: "Go to Courses" })
-             : "Go to Courses"}
-            </Link>
+            {/* Intro text without glass card */}
+            <div className="mt-10 max-w-4xl">
+              <p className="text-base font-bold leading-8 text-white sm:text-lg">
+                {mounted
+                  ? t("welcome.intro", {
+                      defaultValue:
+                        "Welcome to the DROPS of Sustainable Development e-learning platform. This learning space supports trainers, educators and NGO professionals in developing sustainability competences through innovative methodologies, environmental education, green skills and active citizenship. Through practical modules, activities and quizzes, participants are encouraged to connect knowledge with action and apply sustainable practices in education, work and community life.",
+                    })
+                  : "Welcome to the DROPS of Sustainable Development e-learning platform. This learning space supports trainers, educators and NGO professionals in developing sustainability competences through innovative methodologies, environmental education, green skills and active citizenship. Through practical modules, activities and quizzes, participants are encouraged to connect knowledge with action and apply sustainable practices in education, work and community life."}
+              </p>
+            </div>
 
-            <Link
-              href={loggedIn ? "/dashboard" : "/login?next=/dashboard"}
-              prefetch={false}
-              className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
-            >
-             {mounted
-             ? t("buttons.goToDashboard", {
-              defaultValue: "Go to Dashboard",
-            })
-              : "Go to Dashboard"}
-            </Link>
-           </div>
+            {/* Buttons with more space below */}
+            <div className="mt-10 mb-16 flex flex-col gap-3 lg:flex-row lg:items-center sm:mb-24">
+              <div className="grid gap-3 sm:flex sm:flex-wrap">
+                <Link
+                  href={loggedIn ? "/courses" : "/login?next=/courses"}
+                  prefetch={false}
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
+                >
+                  {mounted
+                    ? t("buttons.goToCourses", {
+                        defaultValue: "Go to Courses",
+                      })
+                    : "Go to Courses"}
+                </Link>
 
-             <a
-              href="https://drops-sustainability.eu/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 self-start rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 lg:ml-24 lg:self-auto xl:ml-32"
-             >
-                Visit Project Website
-             <span className="transition-transform hover:translate-x-1">→</span>
-            </a>
-           </div>
-                
+                <Link
+                  href={loggedIn ? "/dashboard" : "/login?next=/dashboard"}
+                  prefetch={false}
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 sm:w-auto"
+                >
+                  {mounted
+                    ? t("buttons.goToDashboard", {
+                        defaultValue: "Go to Dashboard",
+                      })
+                    : "Go to Dashboard"}
+                </Link>
+              </div>
+
+              <a
+                href="https://drops-sustainability.eu/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 self-start rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 lg:ml-20 lg:self-auto xl:ml-24"
+              >
+                {mounted
+                  ? t("buttons.visitProjectWebsite", {
+                      defaultValue: "Visit Project Website",
+                    })
+                  : "Visit Project Website"}
+                <span className="transition-transform hover:translate-x-1">
+                  →
+                </span>
+              </a>
+            </div>
           </div>
         </section>
       </main>

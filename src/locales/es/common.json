@@ -24,11 +24,13 @@
     "title": "DROPS del Desarrollo Sostenible",
     "subtitle": "Plataforma de aprendizaje digital para formadores y educadores.",
     "back": "¡Bienvenido/a de nuevo! 👋",
-    "backWithName": "¡Bienvenido/a de nuevo, {{name}}! 👋"
+    "backWithName": "¡Bienvenido/a de nuevo, {{name}}! 👋",
+    "intro": "Bienvenidos a la plataforma de e-learning DROPS of Sustainable Development. Este espacio de aprendizaje apoya a formadores, educadores y profesionales de ONG en el desarrollo de competencias para la sostenibilidad mediante metodologías innovadoras, educación ambiental, competencias verdes y ciudadanía activa. A través de módulos prácticos, actividades y cuestionarios, se anima a los participantes a conectar el conocimiento con la acción y a aplicar prácticas sostenibles en la educación, el trabajo y la vida comunitaria."
   },
   "buttons": {
     "goToCourses": "Ir a Cursos",
-    "goToDashboard": "Ir al Panel"
+    "goToDashboard": "Ir al Panel",
+    "visitProjectWebsite": "Visitar el Sitio Web del Proyecto"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -56,7 +58,8 @@
     "quizzesPassed": "cuestionarios aprobados",
     "noDescription": "Explora las actividades de este módulo.",
     "empty": "Todavía no hay cursos publicados disponibles.",
-    "loadError": "No se pudieron cargar los cursos."
+    "loadError": "No se pudieron cargar los cursos.",
+    "backToCourses": "Cursos"
   },
   "common": {
     "back": "Atrás",

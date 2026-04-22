@@ -24,11 +24,13 @@
     "title": "DROPS of Sustainable Development",
     "subtitle": "Digital learning platform for trainers and educators.",
     "back": "Welcome back 👋",
-    "backWithName": "Welcome back, {{name}} 👋"
+    "backWithName": "Welcome back, {{name}} 👋",
+    "intro": "Welcome to the DROPS of Sustainable Development e-learning platform. This learning space supports trainers, educators, and NGO professionals in developing sustainability competences through innovative methodologies, environmental education, green skills, and active citizenship. Through practical modules, activities, and quizzes, participants are encouraged to connect knowledge with action and apply sustainable practices in education, work, and community life."
   },
   "buttons": {
     "goToCourses": "Go to Courses",
-    "goToDashboard": "Go to Dashboard"
+    "goToDashboard": "Go to Dashboard",
+    "visitProjectWebsite": "Visit Project Website"
   },
   "auth": {
     "login": "Login",
@@ -56,7 +58,8 @@
     "quizzesPassed": "quizzes passed",
     "noDescription": "Explore the activities in this module.",
     "empty": "No published courses available yet.",
-    "loadError": "Could not load courses."
+    "loadError": "Could not load courses.",
+    "backToCourses": "Courses"
   },
   "common": {
     "back": "Back",

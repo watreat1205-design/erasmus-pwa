@@ -24,11 +24,13 @@
     "title": "DROPS održivog razvoja",
     "subtitle": "Digitalna platforma za učenje za trenere i edukatore.",
     "back": "Dobrodošli natrag 👋",
-    "backWithName": "Dobrodošli natrag, {{name}} 👋"
+    "backWithName": "Dobrodošli natrag, {{name}} 👋",
+    "intro": "Dobrodošli na e-learning platformu DROPS of Sustainable Development. Ovaj prostor za učenje podržava trenere, edukatore i stručnjake iz nevladinih organizacija u razvoju kompetencija za održivost kroz inovativne metodologije, obrazovanje o okolišu, zelene vještine i aktivno građanstvo. Kroz praktične module, aktivnosti i kvizove, sudionici se potiču povezivati znanje s djelovanjem i primjenjivati održive prakse u obrazovanju, radu i životu zajednice."
   },
   "buttons": {
     "goToCourses": "Idi na tečajeve",
-    "goToDashboard": "Idi na nadzornu ploču"
+    "goToDashboard": "Idi na nadzornu ploču",
+    "visitProjectWebsite": "Posjeti Web-stranicu Projekta"
   },
   "auth": {
     "login": "Prijava",
@@ -56,7 +58,8 @@
     "quizzesPassed": "položenih kvizova",
     "noDescription": "Istraži aktivnosti u ovom modulu.",
     "empty": "Još nema dostupnih objavljenih tečajeva.",
-    "loadError": "Nije moguće učitati tečajeve."
+    "loadError": "Nije moguće učitati tečajeve.",
+    "backToCourses": "Tečajevi"
    },
   "common": {
     "back": "Natrag",

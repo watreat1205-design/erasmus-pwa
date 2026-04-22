@@ -24,11 +24,13 @@
     "title": "DROPS pentru Dezvoltare Durabilă",
     "subtitle": "Platformă digitală de învățare pentru formatori și educatori.",
     "back": "Bine ai revenit 👋",
-    "backWithName": "Bine ai revenit, {{name}} 👋"
+    "backWithName": "Bine ai revenit, {{name}} 👋",
+    "intro": "Bine ați venit pe platforma de e-learning DROPS of Sustainable Development. Acest spațiu de învățare sprijină formatorii, educatorii și profesioniștii din ONG-uri în dezvoltarea competențelor pentru sustenabilitate prin metodologii inovatoare, educație pentru mediu, competențe verzi și cetățenie activă. Prin module practice, activități și teste, participanții sunt încurajați să conecteze cunoașterea cu acțiunea și să aplice practici sustenabile în educație, muncă și viața comunității."
   },
   "buttons": {
     "goToCourses": "Mergi la Cursuri",
-    "goToDashboard": "Mergi la Panou"
+    "goToDashboard": "Mergi la Panou",
+    "visitProjectWebsite": "Vizitează Site-ul Proiectului"
   },
   "auth": {
     "login": "Autentificare",
@@ -56,7 +58,8 @@
     "quizzesPassed": "teste promovate",
     "noDescription": "Explorează activitățile din acest modul.",
     "empty": "Nu există încă cursuri publicate disponibile.",
-    "loadError": "Cursurile nu au putut fi încărcate."
+    "loadError": "Cursurile nu au putut fi încărcate.",
+    "backToCourses": "Cursuri"
    },
   "common": {
     "back": "Înapoi",

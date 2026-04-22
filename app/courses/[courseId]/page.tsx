@@ -133,7 +133,7 @@ export default async function CourseViewPage({
 }) {
   noStore();
 
-  const { lang } = await getServerTranslation();
+  const { t, lang } = await getServerTranslation();
   const { courseId } = await params;
 
   if (!courseId) {
@@ -145,7 +145,7 @@ export default async function CourseViewPage({
           </h2>
           <p className="mt-3 text-red-600">Missing courseId in URL.</p>
           <Link href="/courses" className="mt-4 inline-block text-sm underline">
-            ← {uiLabel(lang, "backToCourses")}
+            ← {t("courses.title")}
           </Link>
         </div>
       </div>
