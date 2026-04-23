@@ -1,3 +1,4 @@
+// app/reset-password/ResetPasswordClient.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -20,6 +21,8 @@ export default function ResetPasswordClient() {
 
     async function init() {
       try {
+        setMessage("");
+
         const code = searchParams.get("code");
 
         if (code) {
@@ -27,8 +30,8 @@ export default function ResetPasswordClient() {
 
           if (error) {
             if (!cancelled) {
-              setMessage("Invalid or expired reset link.");
               setReady(false);
+              setMessage("Invalid or expired reset link.");
             }
             return;
           }
@@ -38,6 +41,41 @@ export default function ResetPasswordClient() {
             setMessage("");
           }
           return;
+        }
+
+        const hash = window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash;
+
+        if (hash) {
+          const hashParams = new URLSearchParams(hash);
+          const accessToken = hashParams.get("access_token");
+          const refreshToken = hashParams.get("refresh_token");
+          const type = hashParams.get("type");
+
+          if (accessToken && refreshToken && type === "recovery") {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
+            if (error) {
+              if (!cancelled) {
+                setReady(false);
+                setMessage("Invalid or expired reset link.");
+              }
+              return;
+            }
+
+            if (!cancelled) {
+              setReady(true);
+              setMessage("");
+
+              const cleanUrl = window.location.pathname;
+              window.history.replaceState({}, document.title, cleanUrl);
+            }
+            return;
+          }
         }
 
         const {
@@ -62,7 +100,7 @@ export default function ResetPasswordClient() {
       }
     }
 
-    init();
+    void init();
 
     return () => {
       cancelled = true;
@@ -72,6 +110,11 @@ export default function ResetPasswordClient() {
   async function handleReset() {
     if (!password.trim()) {
       setMessage("Please enter a password.");
+      return;
+    }
+
+    if (password.trim().length < 6) {
+      setMessage("Password must be at least 6 characters.");
       return;
     }
 
