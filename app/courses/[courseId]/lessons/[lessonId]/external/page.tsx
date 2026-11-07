@@ -1,10 +1,13 @@
 // app/courses/[courseId]/lessons/[lessonId]/external/page.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { useParams, useSearchParams } from "next/navigation";
 import PdfDocumentViewerNoSSR from "@/components/lesson/PdfDocumentViewerNoSSR";
 import { toEmbed } from "@/src/lib/toEmbed";
+import { ensureI18n } from "@/src/i18n";
 
 function isAllowed(url: string) {
   try {
@@ -49,10 +52,56 @@ function isAllowed(url: string) {
   }
 }
 
+// Only Supabase presentation PDFs use language-specific filenames.
+function presentationUrls(rawUrl: string): { english: string; translated: (language: string) => string } | null {
+  try {
+    const url = new URL(rawUrl);
+    if (url.hostname !== "pjjslpdbnwfkvlrxrkpr.supabase.co") return null;
+    if (!url.pathname.includes("/storage/v1/object/public/course-assets/")) return null;
+    const decodedPath = decodeURIComponent(url.pathname);
+    const matched = decodedPath.match(/(a\d+-\d+-presentation)(?:-(?:en|el|it|es|ro|hr))?\.pdf$/i);
+    if (!matched) return null;
+    const basePath = decodedPath.slice(0, -matched[0].length) + matched[1];
+    const makeUrl = (suffix: string) => {
+      const next = new URL(url);
+      next.pathname = basePath + suffix + ".pdf";
+      return next.toString();
+    };
+    return { english: makeUrl(""), translated: (language: string) => makeUrl(`-${language}`) };
+  } catch { return null; }
+}
+
 export default function ExternalViewerPage() {
   const params = useParams<{ courseId: string; lessonId: string }>();
   const sp = useSearchParams();
   const rawUrl = (sp.get("url") ?? "").trim();
+  // When the user switches flags inside the open viewer, change only its PDF URL.
+  const { i18n } = useTranslation("common");
+  const language = (i18n.resolvedLanguage || i18n.language || "en")
+    .toLowerCase().split("-")[0];
+  const [activeUrl, setActiveUrl] = useState(rawUrl);
+
+  useEffect(() => { ensureI18n(); }, []);
+
+  useEffect(() => {
+    const variants = presentationUrls(rawUrl);
+    if (!variants) { setActiveUrl(rawUrl); return; }
+    let cancelled = false;
+    if (language === "en" || !["el", "it", "es", "ro", "hr"].includes(language)) {
+      setActiveUrl(variants.english);
+      return;
+    }
+    const candidate = variants.translated(language);
+    fetch(candidate, { method: "HEAD" })
+      .then((response) => {
+        if (!cancelled) setActiveUrl(response.ok ? candidate : variants.english);
+      })
+      .catch(() => {
+        if (!cancelled) setActiveUrl(variants.english);
+      });
+    return () => { cancelled = true; };
+  }, [rawUrl, language]);
+
 
   const backHref = `/courses/${params.courseId}/lessons/${params.lessonId}`;
 
@@ -79,8 +128,8 @@ export default function ExternalViewerPage() {
     );
   }
 
-  const embedUrl = toEmbed(rawUrl);
-  const lowerRaw = rawUrl.toLowerCase();
+  const embedUrl = toEmbed(activeUrl);
+  const lowerRaw = activeUrl.toLowerCase();
   const lowerEmbed = embedUrl.toLowerCase();
 
   const isVideo =
@@ -128,7 +177,7 @@ export default function ExternalViewerPage() {
 
             <div className="border-t border-gray-200 p-4">
               <a
-                href={rawUrl}
+                href={activeUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="text-sm font-medium text-blue-700 underline"
@@ -142,7 +191,7 @@ export default function ExternalViewerPage() {
             <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
               <div className="h-[80vh] w-full">
                 <iframe
-                  src={rawUrl}
+                  src={activeUrl}
                   title="PDF document"
                   className="h-full w-full"
                 />
@@ -150,7 +199,7 @@ export default function ExternalViewerPage() {
 
               <div className="border-t border-gray-200 p-4">
                 <a
-                  href={rawUrl}
+                  href={activeUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="text-sm font-medium text-blue-700 underline"
@@ -161,7 +210,7 @@ export default function ExternalViewerPage() {
             </div>
           ) : (
             <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
-              <PdfDocumentViewerNoSSR url={rawUrl} />
+              <PdfDocumentViewerNoSSR key={activeUrl} url={activeUrl} />
             </div>
           )
         ) : isForm ? (
@@ -190,7 +239,7 @@ export default function ExternalViewerPage() {
         ) : (
           <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5">
             <a
-              href={rawUrl}
+              href={activeUrl}
               target="_blank"
               rel="noreferrer"
               className="text-sm font-medium text-blue-700 underline"
