@@ -349,6 +349,38 @@ export default async function LessonPage({
     lessonFiles = result.files;
     resolvedAssetsPath = result.resolvedPath;
     resolvedAssetsLang = result.resolvedLang;
+
+    // Only select language variants in the existing flat activity folder.
+    // Leave the established /en, /el, etc. folder loading untouched.
+    const flatFolder =
+      result.resolvedPath.replace(/\/+$/, "") ===
+      current.assets_path.replace(/\/+$/, "");
+
+    if (flatFolder) {
+      const presentationPattern =
+        /^(.+presentation)(?:-(en|el|it|es|ro|hr))?\.pdf$/i;
+      const variants = lessonFiles.filter((file) =>
+        presentationPattern.test(file.name)
+      );
+      const variantLanguage = (name: string) =>
+        presentationPattern.exec(name)?.[2]?.toLowerCase() ?? "en";
+      const originalEnglish = variants.find((file) =>
+        /presentation\.pdf$/i.test(file.name)
+      );
+      const selected =
+        variants.find((file) =>
+          normalizedLang !== "en" &&
+          variantLanguage(file.name) === normalizedLang
+        ) ?? originalEnglish ??
+        variants.find((file) => variantLanguage(file.name) === "en");
+
+      lessonFiles = lessonFiles.filter(
+        (file) => !presentationPattern.test(file.name) || file === selected
+      );
+      if (selected) {
+        resolvedAssetsLang = variantLanguage(selected.name) as Lang;
+      }
+    }
   }
 
   // Put the lesson PDF first
